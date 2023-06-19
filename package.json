@@ -5,6 +5,7 @@
   "private": true,
   "dependencies": {
     "@aws-sdk/client-s3": "^3.353.0",
+    "@babel/plugin-proposal-private-property-in-object": "^7.21.11",
     "@cloudscape-design/components": "^3.0.283",
     "@cloudscape-design/design-tokens": "^3.0.11",
     "@cloudscape-design/global-styles": "^1.0.9",
