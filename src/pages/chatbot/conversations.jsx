@@ -97,7 +97,7 @@ const formatHtmlLines = (text)=>{
   return text.split("\n").map((it,idx) => (
     <span key={idx}>
       {it}
-      {/* <br /> */}
+      <br />
     </span>
   ));
 }
@@ -110,12 +110,12 @@ const MsgItem = ({ who, text }) => {
     _code || newlines.push(formatHtmlLines(before))
     if (code){
       newlines.push(formatHtmlLines(before))
-      code&&newlines.push(<CodeComponent language={languageType} code={code}/>)
+      code&&newlines.push(<CodeComponent key={generateUniqueId()}  language={languageType} code={code}/>)
       after&&newlines.push(formatHtmlLines(after))
     }else{
       if (_code){
           newlines.push(formatHtmlLines(_before))
-          _code&&newlines.push(<CodeComponent language={_languageType} code={_code}/>)
+          _code&&newlines.push(<CodeComponent key={generateUniqueId()}  language={_languageType} code={_code}/>)
       }else{
         // newlines = formatHtmlLines(text);
       }

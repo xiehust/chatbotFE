@@ -398,6 +398,7 @@ const PromptPanel = ({ sendMessage }) => {
                 // setMsgItems((prev) => prev.slice(0,1));
                 setConversations([]);
                 setMsgItems([]);
+                setLoading(false);
               }}
             >
               {t("reset")}

@@ -30,7 +30,7 @@ const queryDynamoDb = async (key) => {
 
 const createToken = (payload) => {
   return jwt.sign({ payload: payload }, process.env.TOKEN_KEY, {
-    expiresIn: "24h",
+    expiresIn: "168h",
   });
 };
 
