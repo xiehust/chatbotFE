@@ -401,7 +401,7 @@ const PromptPanel = ({ sendMessage }) => {
                 setLoading(false);
               }}
             >
-              {t("reset")}
+              {t("clear")}
             </Button>
           </SpaceBetween>
           <FormField label={t("use_qa")}>

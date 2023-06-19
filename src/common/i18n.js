@@ -141,7 +141,8 @@ i18n
             openai_api_key:'OPENAI API KEY',
             settings:'Settings',
             lang_settings:'Display Language',
-            close:'Close'
+            close:'Close',
+            clear:'Clear'
 
         }
       },
@@ -271,6 +272,7 @@ i18n
             settings:'设置',
             lang_settings:'语言设置',
             close:'关闭',
+            clear:'清空'
         }
       }
     }
