@@ -15,7 +15,7 @@ import DocsTable from "./pages/docs/docs.index";
 import UserApp from "./pages/admin/user/user-table.index"
 import AddUserApp from "./pages/admin/adduser/adduser";
 import "@cloudscape-design/global-styles/index.css";
-import "@babel/plugin-proposal-private-property-in-object";
+// import "@babel/plugin-proposal-private-property-in-object";
 export default function App() {
   return (
 
