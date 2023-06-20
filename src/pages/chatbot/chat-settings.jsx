@@ -54,7 +54,7 @@ const SettingsPanel = ()=>{
         setModelParams({ ...localStoredParams,
           embedding_endpoint:localStoredParams?.embedding_endpoint||'',
           apigateway_endpoint:localStoredParams?.apigateway_endpoint||'',
-          OPENAI_API_KEY:localStoredParams?.apigateway_endpoint||'',
+          OPENAI_API_KEY:localStoredParams?.OPENAI_API_KEY||'',
           s3_region:localStoredParams?.s3_region||'',
           s3_bucket:localStoredParams?.s3_bucket||'',
           ak:localStoredParams?.ak||'',
