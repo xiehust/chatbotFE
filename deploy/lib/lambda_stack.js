@@ -48,6 +48,7 @@ export class LambdaStack extends NestedStack {
     super(scope, id, props);
 
     const user_table = props.user_table;
+    const doc_index_table = props.doc_index_table;
     this.handlersMap = new Map();
 
     const createNodeJsLambdaFn = (scope, path, index_fname, api, envProps) => {
@@ -209,6 +210,9 @@ export class LambdaStack extends NestedStack {
       "lambda_list_idx",
       {
         ...commonProps,
+        environment: {
+          DOC_INDEX_TABLE:doc_index_table.tableName
+        },
       }
     );
   
@@ -227,7 +231,7 @@ export class LambdaStack extends NestedStack {
         },
       }
     );
-
+    doc_index_table.grantReadWriteData(this.lambda_list_idx )
     const bucket = s3.Bucket.fromBucketName(this, 'DocUploadBucket',process.env.UPLOAD_BUCKET);
     bucket.grantReadWrite(this.lambda_handle_upload);
 

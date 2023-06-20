@@ -23,9 +23,21 @@ export class BackendCdkStack extends Stack {
       removalPolicy: RemovalPolicy.DESTROY, // NOT recommended for production code
     });
    
-
+    const doc_index_table = new Table(this, "doc_index", {
+      partitionKey: {
+        name: "filename",
+        type: AttributeType.STRING,
+      },
+      sortKey: {
+        name: "embedding_model",
+        type: AttributeType.STRING,
+      },
+      tableName:'chatbot_doc_index',
+      removalPolicy: RemovalPolicy.DESTROY, // NOT recommended for production code
+    });
     const lambdastack = new LambdaStack(this, "lambdas", {
-      user_table
+      user_table,
+      doc_index_table
     });
 
     new CfnOutput(this, `API gateway endpoint url`, {
@@ -34,6 +46,10 @@ export class BackendCdkStack extends Stack {
 
     new CfnOutput(this, "ChatBotWsApi_URL", {
       value: lambdastack.webSocketURL,
+    });
+
+    new CfnOutput(this, "Doc index table Arn", {
+      value: doc_index_table.tableArn,
     });
 
   }
