@@ -34,6 +34,8 @@ export const defaultModelParams = {
   embedding_model_name: embeddings[0].value,
   embedding_model_name_opt: embeddings[0],
   obj_prefix:'ai-content/',
+  system_role:'AWSBot',
+  system_role_prompt:"你是云服务AWS的智能客服机器人AWSBot"
 };
 
 const ExpandableSettingPanel = () => {
@@ -54,6 +56,12 @@ const ExpandableSettingPanel = () => {
   );
   const [temperatureValue, setTempValue] = useState(
     localStoredParams?.temperature || defaultModelParams.temperature
+  );
+  const [systemRoleValue, setSystemRoleValue] = useState(
+    localStoredParams?.system_role || defaultModelParams.system_role
+  );
+  const [systemRolePromptValue, setSystemRolePromptValue] = useState(
+    localStoredParams?.system_role_prompt || defaultModelParams.system_role_prompt
   );
   const { modelParams, setModelParams } = useChatData();
   const [alldocs, setAlldocs] = useState([]);
@@ -154,6 +162,8 @@ const ExpandableSettingPanel = () => {
       use_qa:localStoredParams?.use_qa ||defaultModelParams.use_qa,
       model_name:localStoredParams?.model_name||defaultModelParams.model_name,
       embedding_model_name:localStoredParams?.embedding_model_name||defaultModelParams.embedding_model_name,
+      system_role:localStoredParams?.system_role||defaultModelParams.system_role,
+      system_role_prompt:localStoredParams?.system_role_prompt||defaultModelParams.system_role_prompt,
       username: authuser.username });
   }, []);
 
@@ -214,6 +224,38 @@ const ExpandableSettingPanel = () => {
           />
         </FormField>
         
+        <FormField label={t("system_role")}>
+          <Input
+            onChange={({ detail }) => {
+              setSystemRoleValue(detail.value);
+              setModelParams((prev) => ({
+                ...prev,
+                system_role: detail.value,
+              }));
+              setLocalStoredParams({
+                ...localStoredParams,
+                system_role: detail.value,
+              });
+            }}
+            value={systemRoleValue}
+          />
+        </FormField>
+        <FormField label={t("system_role_prompt")}>
+          <Input
+            onChange={({ detail }) => {
+              setSystemRolePromptValue(detail.value);
+              setModelParams((prev) => ({
+                ...prev,
+                system_role_prompt: detail.value,
+              }));
+              setLocalStoredParams({
+                ...localStoredParams,
+                system_role_prompt: detail.value,
+              });
+            }}
+            value={systemRolePromptValue}
+          />
+        </FormField>
         {/* <FormField label={t("embedding_model_name")}>
           <Select
             selectedOption={embselectedOption}

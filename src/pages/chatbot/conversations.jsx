@@ -277,26 +277,26 @@ const ConversationsPanel = ()=>{
           queryParams: authtoken,
           onOpen: () =>
             {
-              setInit(true);
-              setAlertOpen(false);
-              const msgid = generateUniqueId();
-              const initMessage = {
-                id: msgid,
-                who: BOTNAME,
-                text: "您好，我是AWS知识库机器人，有什么可以帮助您?",
-              }
-              if (!isInit){
-              setMsgItems((prev) => [
-              ...prev,
-              initMessage,
-            ]);
-            setConversations((prev) => [
-                ...prev,
-                { role: BOTNAME, content: initMessage.text },
-              ]
-            );
+            //   setInit(true);
+            //   setAlertOpen(false);
+            //   const msgid = generateUniqueId();
+            //   const initMessage = {
+            //     id: msgid,
+            //     who: BOTNAME,
+            //     text: "您好，我是AWS知识库机器人，有什么可以帮助您?",
+            //   }
+            //   if (!isInit){
+            //   setMsgItems((prev) => [
+            //   ...prev,
+            //   initMessage,
+            // ]);
+            // setConversations((prev) => [
+            //     ...prev,
+            //     { role: BOTNAME, content: initMessage.text },
+            //   ]
+            // );
             setLoading(false);
-        }
+            // }
           },
           onMessage: onMessageCallback,
           retryOnError: true,

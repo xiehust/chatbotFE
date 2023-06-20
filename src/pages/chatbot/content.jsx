@@ -22,7 +22,7 @@ import ModelSettings from './chat-settings';
 const Content=() =>{
     const [msgItems,setMsgItems] = useState([]);
     const [modelParams, setModelParams] = useState({});
-    const [loading, setLoading] = useState(true);
+    const [loading, setLoading] = useState(false);
     const [conversations, setConversations] = useState([]);
     const {t} = useTranslation();
     const [alertopen, setAlertOpen] = useState(false);

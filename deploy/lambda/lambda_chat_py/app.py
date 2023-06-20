@@ -69,6 +69,8 @@ def handler(event,lambda_context):
                 "prompt":messages[-1].get('content'),
                 "model":params.get('model_name'),
                 "use_qa":params.get('use_qa'),
+                "system_role":params.get('system_role'),
+                "system_role_prompt":params.get('system_role_prompt'),
                 "embedding_model":params.get('embedding_endpoint') 
                                         if params.get('embedding_endpoint') 
                                         else os.getenv('embedding_endpoint')

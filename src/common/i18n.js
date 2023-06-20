@@ -142,7 +142,9 @@ i18n
             settings:'Settings',
             lang_settings:'Display Language',
             close:'Close',
-            clear:'Clear'
+            clear:'Clear',
+            system_role:"System Role Name",
+            system_role_prompt:"System Role Prompt",
 
         }
       },
@@ -272,7 +274,9 @@ i18n
             settings:'设置',
             lang_settings:'语言设置',
             close:'关闭',
-            clear:'清空'
+            clear:'清空',
+            system_role:'系统角色名',
+            system_role_prompt:'系统角色提示词'
         }
       }
     }
