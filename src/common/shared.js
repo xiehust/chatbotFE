@@ -1,6 +1,8 @@
 export const models = [
   { label:'chatglm-6b',
   value:'chatglm'},
+  { label:'claude',
+  value:'claude'},
   { label:'gpt-3.5-turbo-16k',
   value:'gpt-3.5-turbo-16k'},
   { label:'gpt-3.5-turbo',

@@ -1,8 +1,8 @@
 // Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
 // SPDX-License-Identifier: MIT-0
-import { DynamoDBClient, ScanCommand } from "@aws-sdk/client-dynamodb";
+import { DynamoDBClient, ScanCommand,DeleteItemCommand } from "@aws-sdk/client-dynamodb";
 
-const TABLE_NAME = process.env.DOC_INDEX_TABLE;
+const TABLE_NAME = 'chatbot_doc_index';
 const cors_headers = {
     "Access-Control-Allow-Headers" : "Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token,X-Amz-User-Agent",
     "Access-Control-Allow-Origin": "*",
@@ -37,7 +37,25 @@ const scanTableData = async () => {
     }
   };
   
-  
+const deleteItem = async (filename,embedding_model)=>{
+  const client = new DynamoDBClient();
+  const params = {
+    TableName: TABLE_NAME,
+    Key: {
+      'filename': { S: filename },
+      'embedding_model': { S: embedding_model }
+    }
+  };
+  const command = new DeleteItemCommand(params);
+  try{
+    await client.send(command);
+    console.log('Item deleted successfully:');
+    return true
+  }catch(err){
+    console.log('Error deleting item:', err);
+    return false
+  }
+}
 
 
 export const handler = async(event) => {
@@ -48,6 +66,11 @@ export const handler = async(event) => {
           statusCode: 200,
           headers:cors_headers,
           body:JSON.stringify(records)
+        }
+    }else if (event.httpMethod === 'DELETE' && event.resource === '/docs'){
+        const ret = await deleteItem()
+        if (ret){
+          //to add call remote call, 
         }
     }
 };

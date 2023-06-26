@@ -154,7 +154,6 @@ const ExpandableSettingPanel = () => {
       }
     })
   }
-
   useEffect(() => {
     setModelParams({ ...localStoredParams,
       max_tokens:localStoredParams?.max_tokens|| defaultModelParams.max_tokens,
@@ -165,7 +164,9 @@ const ExpandableSettingPanel = () => {
       system_role:localStoredParams?.system_role||defaultModelParams.system_role,
       system_role_prompt:localStoredParams?.system_role_prompt||defaultModelParams.system_role_prompt,
       username: authuser.username });
+     
   }, []);
+  console.log('modelParams:',modelParams);
 
   return (
     <ExpandableSection headerText={t('addtional_settings')} variant="footer">

@@ -51,7 +51,9 @@ const SettingsPanel = ()=>{
         localStoredParams?.obj_prefix || defaultModelParams.obj_prefix
       );
     useEffect(() => {
-        setModelParams({ ...localStoredParams,
+        setModelParams( prev => ({ 
+          ...prev,
+          ...localStoredParams,
           embedding_endpoint:localStoredParams?.embedding_endpoint||'',
           apigateway_endpoint:localStoredParams?.apigateway_endpoint||'',
           OPENAI_API_KEY:localStoredParams?.OPENAI_API_KEY||'',
@@ -60,7 +62,7 @@ const SettingsPanel = ()=>{
           ak:localStoredParams?.ak||'',
           sk:localStoredParams?.sk||'',
           obj_prefix:localStoredParams?.obj_prefix||defaultModelParams.obj_prefix,
-          });
+          }));
       }, []);
 
     return (

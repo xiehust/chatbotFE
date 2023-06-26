@@ -7,3 +7,4 @@ UPLOAD_BUCKET=
 UPLOAD_OBJ_PREFIX=ai-content/
 MAIN_FUN_ARN=arn:aws:lambda:us-east-2:946277762357:function:QAChatDeployStack-lambdamainbrain
 embedding_endpoint=st-paraphrase-mpnet-base-v2-cuda-embedding-endpoint
+  
