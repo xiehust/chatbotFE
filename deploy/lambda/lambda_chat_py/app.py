@@ -45,7 +45,7 @@ def handler(event,lambda_context):
     openai.api_key = openai_apikey if openai_apikey else os.getenv("OPENAI_API_KEY")
 
     wsclient = boto3.client('apigatewaymanagementapi', endpoint_url=ws_endpoint)
-    if params.get('model_name').startswith('gpt-3.5-turbo'):
+    if params.get('model_name').startswith('##gpt-3.5-turbo'):
         try: 
             response = chat(messages,params)
             for chunk in response: ## the first content is 'assistant' ignored
@@ -65,6 +65,9 @@ def handler(event,lambda_context):
                 
     else:
         payload = {
+                "OPENAI_API_KEY":openai_apikey,
+                "ws_endpoint":ws_endpoint,
+                "msgid":msgid,
                 "chat_name":connectionId,
                 "prompt":messages[-1].get('content'),
                 "model":params.get('model_name'),
@@ -83,10 +86,12 @@ def handler(event,lambda_context):
                 payload_json = response.json()
                 print(payload_json)
                 body = payload_json['body']
-                answer = body[0]['choices'][0]['text']
-                data = json.dumps({ 'msgid':msgid, 'role': "AI", 'text': {'content':answer} })
-                postMessage(wsclient,data,connectionId)
-                
+                use_stream = body[0].get('use_stream')
+                if not use_stream:
+                    answer = body[0]['choices'][0]['text']
+                    data = json.dumps({ 'msgid':msgid, 'role': "AI", 'text': {'content':answer} })
+                    postMessage(wsclient,data,connectionId)
+
             except Exception as e:
                 data = json.dumps({ 'msgid':msgid, 'role': "AI", 'text': {'content':f'something wrong with api, {str(e)}'} })
                 postMessage(wsclient,data,connectionId)
@@ -103,9 +108,11 @@ def handler(event,lambda_context):
             statusCode = payload_json['statusCode']
             print(body)
             if statusCode == 200:
-                answer = body[0]['choices'][0]['text']
-                data = json.dumps({ 'msgid':msgid, 'role': "AI", 'text': {'content':answer} })
-                postMessage(wsclient,data,connectionId)
+                use_stream = body[0].get('use_stream')
+                if not use_stream:
+                    answer = body[0]['choices'][0]['text']
+                    data = json.dumps({ 'msgid':msgid, 'role': "AI", 'text': {'content':answer} })
+                    postMessage(wsclient,data,connectionId)
             else:
                 data = json.dumps({ 'msgid':msgid, 'role': "AI", 'text': {'content':'something wrong'} })
                 postMessage(wsclient,data,connectionId)
