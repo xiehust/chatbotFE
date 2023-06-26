@@ -75,7 +75,7 @@ def handler(event,lambda_context):
                                         if params.get('embedding_endpoint') 
                                         else os.getenv('embedding_endpoint')
             }
-        api = params.get('api') 
+        api = params.get('apigateway_endpoint') 
         if api:
             print(f"invoke api {api} for model:{params.get('model_name')}")
             try:
