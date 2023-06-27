@@ -4,8 +4,8 @@
 import axios from 'axios';
 import { S3Client,PutObjectCommand } from "@aws-sdk/client-s3"
 
-export const API_http = 'https://38wjxhliha.execute-api.us-east-2.amazonaws.com/prod/';
-export const API_socket = 'wss://3g36ob2mc2.execute-api.us-east-2.amazonaws.com/Prod';
+export const API_http = 'https://rf52ycna47.execute-api.us-west-2.amazonaws.com/prod/';
+export const API_socket = 'wss://7bk6ty9c65.execute-api.us-east-2.amazonaws.com/Prod';
 
 export const API_login = 'login';
 export const API_users = 'users';
