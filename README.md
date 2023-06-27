@@ -33,8 +33,15 @@ please open ports 80 and 3000 for the security group
 ![Alt text](image-2.png)  
 
 ## Go the dynamodb and create a admin account  
-![Alt text](image-1.png)  
-
+![Alt text](image-6.png)  
+### data fields samples
+username:yourname  
+password:yourpassword   
+email:youremail@xx.com  
+groupname:admin  
+status:active  
+createtime:2023-06-26T16:30:37.120Z   
+![Alt text](image-7.png)  
 ## Visit the dns of ALB, and login you are supposed to see the pages   
 ![Alt text](image-4.png)  
 
