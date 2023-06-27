@@ -1,6 +1,8 @@
 export const models = [
   { label:'chatglm-6b',
   value:'chatglm'},
+  { label:'chatglm-6b-stream',
+  value:'chatglm-stream'},
   { label:'claude',
   value:'claude'},
   { label:'gpt-3.5-turbo-16k',
