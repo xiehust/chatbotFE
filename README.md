@@ -1,6 +1,6 @@
 # How to deploy on EC2  
 ## Create an ec2 server from AWS console,
-select unbuntu 22.02 linux  
+select unbuntu 22.04 linux  
 please open ports 80 and 3000 for the security group
 ## Login in ec2 server and download code  
 `git clone https://github.com/xiehust/chatbotFE.git`  

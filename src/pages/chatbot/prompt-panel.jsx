@@ -166,7 +166,7 @@ const ExpandableSettingPanel = () => {
       username: authuser.username });
      
   }, []);
-  console.log('modelParams:',modelParams);
+  // console.log('modelParams:',modelParams);
 
   return (
     <ExpandableSection headerText={t('addtional_settings')} variant="footer">
