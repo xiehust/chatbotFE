@@ -50,6 +50,9 @@ const SettingsPanel = ()=>{
       const [obj_prefix, setObjPrefix] = useState(
         localStoredParams?.obj_prefix || defaultModelParams.obj_prefix
       );
+      const [main_fun_arn, setMainFunArn] = useState(
+        localStoredParams?.main_fun_arn || ''
+      );
     useEffect(() => {
         setModelParams( prev => ({ 
           ...prev,
@@ -62,6 +65,7 @@ const SettingsPanel = ()=>{
           ak:localStoredParams?.ak||'',
           sk:localStoredParams?.sk||'',
           obj_prefix:localStoredParams?.obj_prefix||defaultModelParams.obj_prefix,
+          main_fun_arn:localStoredParams?.main_fun_arn || '',
           }));
       }, []);
 
@@ -97,6 +101,22 @@ const SettingsPanel = ()=>{
               });
             }}
             value={apigateway_endpoint}
+          />
+        </FormField>
+        <FormField label={"Main Function ARN"}>
+          <Input
+            onChange={({ detail }) => {
+              setMainFunArn(detail.value);
+              setModelParams((prev) => ({
+                ...prev,
+                main_fun_arn: detail.value,
+              }));
+              setLocalStoredParams({
+                ...localStoredParams,
+                main_fun_arn: detail.value,
+              });
+            }}
+            value={main_fun_arn}
           />
         </FormField>
         <FormField label={t("openai_api_key")}>

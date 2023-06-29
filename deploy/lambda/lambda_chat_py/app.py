@@ -40,7 +40,7 @@ def handler(event,lambda_context):
     print(f"{connectionId}\n{messages}\n{params}\n{msgid}")
 
     lambda_client = boto3.client('lambda')
-    main_func = os.getenv('MAIN_FUN_ARN')
+    main_func = params.get('main_fun_arn') if params.get('main_fun_arn') else os.getenv('MAIN_FUN_ARN')
     openai_apikey = params.get('OPENAI_API_KEY') 
     openai.api_key = openai_apikey if openai_apikey else os.getenv("OPENAI_API_KEY")
 
