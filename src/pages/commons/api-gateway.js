@@ -88,14 +88,27 @@ export const uploadFile = async(filename,formdata,headers) =>{
 }
 
 
-export const listDocIdx = async(headers) =>{
+export const listDocIdx = async(headers,queryParams={}) =>{
+    // Build the query string parameters
+    const queryString = Object.keys(queryParams)
+    .map(key => `${encodeURIComponent(key)}=${encodeURIComponent(queryParams[key])}`)
+    .join('&');
+
     try {
-        const resp = await axios.get(`${API_http}/docs`, {headers});
+        const resp = await axios.get(`${API_http}/docs?${queryString}`, {headers});
         return resp.data;
     } catch (err) {
         throw err;
     }
+}
 
+export const deleteDoc = async(headers,body) =>{
+    try {
+        const resp = await axios.delete(`${API_http}/docs`, {headers,data:JSON.stringify(body)});
+        return resp.data;
+    } catch (err) {
+        throw err;
+    }
 }
 
 export const getAnswer = async(respid,text,model_params,headers) =>{

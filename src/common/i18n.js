@@ -145,6 +145,8 @@ i18n
             clear:'Clear',
             system_role:"System Role Name",
             system_role_prompt:"System Role Prompt",
+            delete:'Delete',
+            delete_doc_index:'Delete doc index'
 
         }
       },
@@ -276,7 +278,9 @@ i18n
             close:'关闭',
             clear:'清空',
             system_role:'系统角色名',
-            system_role_prompt:'系统角色提示词'
+            system_role_prompt:'系统角色提示词',
+            delete:'删除',
+            delete_doc_index:'删除文档索引'
         }
       }
     }

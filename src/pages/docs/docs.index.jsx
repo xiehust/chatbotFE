@@ -4,7 +4,7 @@ import React, { useEffect, useRef, useState } from 'react';
 import { useCollection } from '@cloudscape-design/collection-hooks';
 import { COLUMN_DEFINITIONS, DEFAULT_PREFERENCES, Preferences,} from './table-config';
 import { Flashbar, Pagination, Table, TextFilter } from '@cloudscape-design/components';
-import { FullPageHeader ,Breadcrumbs,} from './common-components';
+import { FullPageHeader ,Breadcrumbs,DeleteConfirmModal} from './common-components';
 import {
   CustomAppLayout,
   Navigation,
@@ -20,7 +20,7 @@ import {useSimpleNotifications} from '../commons/use-notifications';
 import {useAuthorizedHeader} from "../commons/use-auth";
 import {listDocIdx} from '../commons/api-gateway';
 import { useTranslation } from 'react-i18next';
-
+import {params_local_storage_key} from "../chatbot/common-components";
 
 function TableContent({ 
   resourceName,
@@ -97,11 +97,27 @@ export default function DocsTable () {
   const [refresh, setRefresh] = useState(false);
   const refreshAction =()=>{
     setRefresh(v => !v);
+  };
+  const [localStoredParams] = useLocalStorage(
+    params_local_storage_key,
+    null
+  );
+  const main_fun_arn = localStoredParams.main_fun_arn;
+  const apigateway_endpoint = localStoredParams.apigateway_endpoint;
+  const queryParams = {
+    main_fun_arn:main_fun_arn,
+    apigateway_endpoint:apigateway_endpoint
   }
   useEffect(()=>{
-    listDocIdx(headers)
+    listDocIdx(headers,queryParams)
     .then(data =>{
-      setDocsItems(data);
+      // console.log(data);
+      const items = data.body.map( it =>({embedding_model:it.embedding_model.S,
+        filename:it.filename.S,
+        index_name:it.index_name.S,
+        username:it.username.S,
+      }))
+      setDocsItems(items);
         setLoadingState(false);
     })
     .catch(err =>{
@@ -113,6 +129,7 @@ export default function DocsTable () {
 },[refresh]);
 
   return (
+
     <CustomAppLayout
       ref={appLayout}
       navigation={<Navigation activeHref={'/docs'} />}
@@ -130,5 +147,6 @@ export default function DocsTable () {
       toolsOpen={toolsOpen}
       onToolsChange={({ detail }) => setToolsOpen(detail.open)}
     />
+
   );
 }

@@ -36,24 +36,24 @@ export const COLUMN_DEFINITIONS = addColumnSortLabels([
   {
     id: 'index_name',
     header: i18n.t('index_name'),
-    cell: item => <Link href={`/docs/${item.index_name}`}>{item.index_name}</Link>,
+    cell: item => <Link href={`/docs/${item?.index_name}`}>{item?.index_name}</Link>,
     sortingField: "index_name",
   },
   {
     id: 'embedding_model',
-    cell: item =>item.embedding_model,
+    cell: item =>item?.embedding_model,
     header: i18n.t('embedding_model_name'),
     sortingField: "embedding_model",
   },
   {
     id: 'filename',
-    cell: item =>item.filename,
+    cell: item =>item?.filename,
     header: i18n.t('filename'),
     sortingField: "filename",
   },
   {
     id: 'username',
-    cell: item =>item.username,
+    cell: item =>item?.username,
     header: i18n.t('created_by'),
     sortingField: "username",
   },

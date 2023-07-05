@@ -48,7 +48,7 @@ export class LambdaStack extends NestedStack {
     super(scope, id, props);
 
     const user_table = props.user_table;
-    const doc_index_table = props.doc_index_table;
+    // const doc_index_table = props.doc_index_table;
     this.handlersMap = new Map();
 
     const createNodeJsLambdaFn = (scope, path, index_fname, api, envProps) => {
@@ -211,7 +211,7 @@ export class LambdaStack extends NestedStack {
       {
         ...commonProps,
         environment: {
-          DOC_INDEX_TABLE:doc_index_table.tableName
+          DOC_INDEX_TABLE:'chatbot_doc_index'
         },
       }
     );
@@ -231,7 +231,7 @@ export class LambdaStack extends NestedStack {
         },
       }
     );
-    doc_index_table.grantReadWriteData(this.lambda_list_idx )
+    // doc_index_table.grantReadWriteData(this.lambda_list_idx )
     const bucket = s3.Bucket.fromBucketName(this, 'DocUploadBucket',process.env.UPLOAD_BUCKET);
     bucket.grantReadWrite(this.lambda_handle_upload);
 
@@ -285,6 +285,7 @@ export class LambdaStack extends NestedStack {
     const docsIntegration = new LambdaIntegration(this.lambda_list_idx );
     const docs = api.root.addResource('docs');
     docs.addMethod('GET',docsIntegration,{authorizer});
+    docs.addMethod('DELETE',docsIntegration,{authorizer});
 
     const loginIntegration = new LambdaIntegration(this.login_fn);
     const login = api.root.addResource("login");
