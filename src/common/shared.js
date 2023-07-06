@@ -9,8 +9,8 @@ export const models = [
   value:'gpt-3.5-turbo-16k'},
   { label:'gpt-3.5-turbo',
   value:'gpt-3.5-turbo'},
-  { label:'aquila-7b',
-  value:'aquila-7b'},
+  // { label:'aquila-7b',
+  // value:'aquila-7b'},
 ]
 export const embeddings = [
   { label:'paraphrase-mpnet-v2',
