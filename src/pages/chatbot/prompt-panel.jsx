@@ -331,7 +331,7 @@ const ExpandableSettingPanel = () => {
              }
              }
             value={files}
-            accept='.pdf,.txt,.faq'
+            accept='.pdf,.txt,.faq,.md,.example,.examples'
             multiple
             constraintText = {helperMsg}
             showFileLastModified
