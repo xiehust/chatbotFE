@@ -25,8 +25,8 @@ export default function App() {
         <Routes>
           <Route path="/" element={<SignIn/>} />
           <Route path="/login" element={<SignIn/>} />
-          <Route path="/chat" element={<RequireAuth requireAdmin redirectPath="/login"><ChatBot/></RequireAuth>}/>
-          <Route path="/docs" element={<RequireAuth requireAdmin redirectPath="/login"><DocsTable/></RequireAuth>}/>
+          <Route path="/chat" element={<RequireAuth redirectPath="/login"><ChatBot/></RequireAuth>}/>
+          <Route path="/docs" element={<RequireAuth redirectPath="/login"><DocsTable/></RequireAuth>}/>
           <Route path="/admin/user" element={<RequireAuth  requireAdmin redirectPath="/login"><UserApp/></RequireAuth>}/>
           <Route path="/admin/adduser" element={<RequireAuth requireAdmin redirectPath="/login"><AddUserApp/></RequireAuth>}/>
 
