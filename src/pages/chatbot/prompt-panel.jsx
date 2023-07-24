@@ -31,7 +31,7 @@ export const defaultModelParams = {
   max_tokens: 2000,
   model_name: models[0].value,
   model_name_opt: models[0],
-  use_qa: false,
+  use_qa: true,
   embedding_model_name: embeddings[0].value,
   embedding_model_name_opt: embeddings[0],
   obj_prefix:'ai-content/',
@@ -48,6 +48,7 @@ const ExpandableSettingPanel = () => {
     params_local_storage_key+username,
     null
   );
+  console.log('localStoredParams:',localStoredParams);
   const [selectedOption, setSelectedOption] = useState(
     localStoredParams?.model_name_opt || defaultModelParams.model_name_opt
   );
@@ -68,6 +69,7 @@ const ExpandableSettingPanel = () => {
     localStoredParams?.system_role_prompt || defaultModelParams.system_role_prompt
   );
   const { modelParams, setModelParams } = useChatData();
+  console.log('modelParams:',modelParams);
   const [alldocs, setAlldocs] = useState([]);
   const [selectDoc, setSelectDoc] = useState(
     localStoredParams?.file_idx_opt || []

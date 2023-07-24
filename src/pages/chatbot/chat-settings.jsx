@@ -234,7 +234,7 @@ const ModelSettings =() =>{
             <Box float="right">
               <SpaceBetween direction="horizontal" size="xs">
                 <Button variant="link" onClick={ ()=> setModelSettingVisible(false)}>{t('close')}</Button>
-                <Button variant="primary" onClick={ ()=> setModelSettingVisible(false)}>{t('confirm')}</Button>
+                <Button variant="primary" href = '/chat' onClick={ ()=> setModelSettingVisible(false)}>{t('confirm')}</Button>
               </SpaceBetween>
             </Box>
           }
