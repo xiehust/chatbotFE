@@ -17,7 +17,7 @@ import { getFilterCounterText } from '../../common/tableCounterStrings';
 import { useColumnWidths } from '../commons/use-column-widths';
 import { useLocalStorage } from '../../common/localStorage';
 import {useSimpleNotifications} from '../commons/use-notifications';
-import {useAuthorizedHeader} from "../commons/use-auth";
+import {useAuthUserInfo, useAuthorizedHeader} from "../commons/use-auth";
 import {listDocIdx} from '../commons/api-gateway';
 import { useTranslation } from 'react-i18next';
 import {params_local_storage_key} from "../chatbot/common-components";
@@ -98,8 +98,10 @@ export default function DocsTable () {
   const refreshAction =()=>{
     setRefresh(v => !v);
   };
+  const userinfo = useAuthUserInfo();
+  const username = userinfo?.username || 'default';
   const [localStoredParams] = useLocalStorage(
-    params_local_storage_key,
+    params_local_storage_key+username,
     null
   );
   const main_fun_arn = localStoredParams.main_fun_arn;
