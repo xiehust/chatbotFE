@@ -13,7 +13,7 @@ import { useTranslation, Trans } from "react-i18next";
 import { useLocalStorage } from "../../common/localStorage";
 import {params_local_storage_key} from "../chatbot/common-components";
 import {deleteDoc} from "../commons/api-gateway";
-import {useAuthorizedHeader} from "../commons/use-auth";
+import {useAuthorizedHeader,useAuthUserInfo} from "../commons/use-auth";
 import {useSimpleNotifications} from '../commons/use-notifications';
 
 
@@ -67,8 +67,11 @@ export const DeleteConfirmModal = ({selectItem,visible,setVisible,refreshAction}
   const headers = useAuthorizedHeader();
 
   const [loading, setLoading] = useState(false);
+
+  const userinfo = useAuthUserInfo();
+  const username = userinfo?.username || 'default';
   const [localStoredParams] = useLocalStorage(
-    params_local_storage_key,
+    params_local_storage_key+username,
     null
   );
   const msgid = `msg-${Math.random().toString(8)}`;
