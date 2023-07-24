@@ -18,11 +18,15 @@ import { useTranslation } from "react-i18next";
 import { useLocalStorage } from "../../common/localStorage";
 import {params_local_storage_key} from "./common-components";
 import { defaultModelParams } from "./prompt-panel";
+import { useAuthUserInfo } from "../commons/use-auth";
+
 
 const SettingsPanel = ()=>{
     const { t } = useTranslation();
+    const userinfo = useAuthUserInfo();
+    const username = userinfo?.username || 'default';
     const [localStoredParams, setLocalStoredParams] = useLocalStorage(
-      params_local_storage_key,
+      params_local_storage_key+username,
       null
     );
     const {modelParams, setModelParams } = useChatData();

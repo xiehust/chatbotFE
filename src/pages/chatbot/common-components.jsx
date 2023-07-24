@@ -12,7 +12,7 @@ export const useChatData = ()=>{
   return useContext(ChatDataCtx)
 }
 
-export const params_local_storage_key = "chat-params-prompt-panel";
+export const params_local_storage_key = "chat-params-prompt-panel-";
 
 
 export function generateUniqueId() {

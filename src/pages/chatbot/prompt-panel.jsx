@@ -25,6 +25,7 @@ import { useLocalStorage } from "../../common/localStorage";
 import { listDocIdx,uploadFile,uploadS3 } from "../commons/api-gateway";
 import {params_local_storage_key} from "./common-components";
 
+
 export const defaultModelParams = {
   temperature: 0.01,
   max_tokens: 2000,
@@ -40,8 +41,11 @@ export const defaultModelParams = {
 
 const ExpandableSettingPanel = () => {
   const { t } = useTranslation();
+  
+  const userinfo = useAuthUserInfo();
+  const username = userinfo?.username || 'default';
   const [localStoredParams, setLocalStoredParams] = useLocalStorage(
-    params_local_storage_key,
+    params_local_storage_key+username,
     null
   );
   const [selectedOption, setSelectedOption] = useState(
