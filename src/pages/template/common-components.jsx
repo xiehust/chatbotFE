@@ -1,21 +1,60 @@
 // Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
 // SPDX-License-Identifier: MIT-0
-import React,{useState} from "react";
+import React,{useState,useEffect} from "react";
 import {
   BreadcrumbGroup,
   SpaceBetween,
   Button,
   Modal,
-  Box
+  Box,
+  CodeEditor
 } from "@cloudscape-design/components";
 import { TableHeader } from "../commons/common-components";
 import { useTranslation, Trans } from "react-i18next";
 import { useLocalStorage } from "../../common/localStorage";
 import {params_local_storage_key} from "../chatbot/common-components";
-import {deleteDoc} from "../commons/api-gateway";
+import {deleteTemplate} from "../commons/api-gateway";
 import {useAuthorizedHeader,useAuthUserInfo} from "../commons/use-auth";
 import {useSimpleNotifications} from '../commons/use-notifications';
 
+import 'ace-builds/css/ace.css';
+import 'ace-builds/css/theme/dawn.css';
+import 'ace-builds/css/theme/tomorrow_night_bright.css';
+
+// const ace = await import('ace-builds');
+// ace.config.set('useStrictCSP', true);
+
+
+export const TemplateEditor = (props) =>{
+  const [preferences, setPreferences] = useState(
+    undefined
+  );
+  const [ace, setAce] = useState();
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    async function loadAce() {
+      const ace = await import('ace-builds');
+      await import('ace-builds/webpack-resolver');
+      ace.config.set('useStrictCSP', true);
+
+      return ace;
+    }
+
+    loadAce()
+      .then(ace => setAce(ace))
+      .finally(() => setLoading(false));
+  }, []);
+  return <CodeEditor 
+         {...props}
+         preferences={preferences}
+        onPreferencesChange={e => setPreferences(e.detail)}
+          ace={ace}
+          loading={loading}
+          language="python"
+          themes={{ dark: ['dawn'], light: ['tomorrow_night_bright'] }}
+/>
+}
 
 export const Breadcrumbs = () => {
   const { t, i18n } = useTranslation();
@@ -25,7 +64,7 @@ export const Breadcrumbs = () => {
       href: "/",
     },
     {
-      text: t("docs"),
+      text: t("prompt_template"),
     },
   ];
   return (
@@ -47,12 +86,12 @@ export const BreadcrumbsDynmic = ({ id }) => {
           href: "/home",
         },
         {
-          text: t("docs"),
-          href: "/docs",
+          text: t("prompt_template"),
+          href: "/template",
         },
         {
           text: id,
-          href: "/docs/" + id,
+          href: "/template/" + id,
         },
       ]}
       expandAriaLabel="Show path"
@@ -77,22 +116,22 @@ export const DeleteConfirmModal = ({selectItem,visible,setVisible,refreshAction}
   const msgid = `msg-${Math.random().toString(8)}`;
   const main_fun_arn = localStoredParams.main_fun_arn;
   const apigateway_endpoint = localStoredParams.apigateway_endpoint;
-  const deleteDocIdx = () =>{
+  const deleteAction = () =>{
     setLoading(true);
     const payload = {
       ...selectItem,
       main_fun_arn:main_fun_arn,
       apigateway_endpoint:apigateway_endpoint
-    }
-    // console.log(payload);
-    deleteDoc(headers,payload)
+    };
+    console.log(payload);
+    deleteTemplate(headers,payload)
     .then(res=>{
       setNotificationItems((item) => [
         ...item,
         {
-          header: t('delete_doc_index'),
+          header: t('delete_template'),
           type: "success",
-          content: t('delete_doc_index')+':'+selectItem?.filename +' success',
+          content: t('delete_template')+' success',
           dismissible: true,
           dismissLabel: "Dismiss message",
           onDismiss: () =>
@@ -109,7 +148,7 @@ export const DeleteConfirmModal = ({selectItem,visible,setVisible,refreshAction}
     .catch(err =>{
       setNotificationItems(() => [
         {
-          header: t("delete_doc_index"),
+          header: t("delete_template"),
           content: `${err.message}`,
           type: "error",
           dismissible: true,
@@ -135,14 +174,14 @@ export const DeleteConfirmModal = ({selectItem,visible,setVisible,refreshAction}
             >{t('cancel')}</Button>
             <Button variant="primary"
             loading = {loading}
-             onClick={deleteDocIdx}
+             onClick={deleteAction}
             >{t('confirm')}</Button>
           </SpaceBetween>
         </Box>
       }
       header={t('delete')}
     >
-      {t('delete_doc_index')+':'+selectItem?.filename}
+      {t('delete_template')+':'+selectItem?.template_name}
     </Modal>
   );
 
@@ -181,11 +220,18 @@ export const FullPageHeader = ({
           >
             {t('delete')}
           </Button>
+          {/* <Button
+            disabled={!isOnlyOneSelected}
+            name="edit"
+            onClick={deleteAction}
+          >
+            {t('edit')}
+          </Button> */}
           <Button
-            // onClick={props.createAction}
-            href={'/docs/create'}
+            href={'/template/create'}
             variant="primary"
-          >{t('create')}</Button>
+          >{t('create')}
+          </Button>
         </SpaceBetween>
       }
       {...props}

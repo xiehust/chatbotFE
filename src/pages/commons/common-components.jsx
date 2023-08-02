@@ -41,6 +41,7 @@ const navItems_admin = [
     items: [
       { type: 'link', text: i18n.t('chatbot'), href: '/chat' },
       { type: 'link', text: i18n.t('docs'), href: '/docs' },
+      { type: 'link', text: i18n.t('prompt_template'), href: '/template' },
     ],
   }, 
   {
@@ -59,6 +60,7 @@ const navItems = [
     items: [
       { type: 'link', text: i18n.t('chatbot'), href: '/chat' },
       { type: 'link', text: i18n.t('docs'), href: '/docs' },
+      { type: 'link', text: i18n.t('prompt_template'), href: '/template' },
     ],
   }, 
 ];

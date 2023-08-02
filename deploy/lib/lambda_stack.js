@@ -287,6 +287,13 @@ export class LambdaStack extends NestedStack {
     docs.addMethod('GET',docsIntegration,{authorizer});
     docs.addMethod('DELETE',docsIntegration,{authorizer});
 
+    const templateIntegration = new LambdaIntegration(this.lambda_list_idx );
+    const template = api.root.addResource('template');
+    template.addMethod('GET',templateIntegration,{authorizer});
+    template.addMethod('POST',templateIntegration,{authorizer});
+    template.addMethod('DELETE',templateIntegration,{authorizer});
+
+
     const loginIntegration = new LambdaIntegration(this.login_fn);
     const login = api.root.addResource("login");
     login.addMethod("POST", loginIntegration);

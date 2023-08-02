@@ -146,8 +146,16 @@ i18n
             system_role:"System Role Name",
             system_role_prompt:"System Role Prompt",
             delete:'Delete',
-            delete_doc_index:'Delete doc index'
-
+            delete_doc_index:'Delete doc index',
+            prompt_template:'Prompt template',
+            template_name:'Template name',
+            template_id:'Template Id',
+            comment:'Comment',
+            delete_template:'Delete template',
+            edit:'Edit',
+            template:'Template',
+            add_template:'Add a template',
+            preview:'Preview'
         }
       },
       zh:{
@@ -280,7 +288,17 @@ i18n
             system_role:'系统角色名',
             system_role_prompt:'系统角色提示词',
             delete:'删除',
-            delete_doc_index:'删除文档索引'
+            delete_doc_index:'删除文档索引',
+            prompt_template:'提示词模板',
+            template_name:'模板名称',
+            template_id:'模板Id',
+            comment:'备注',
+            delete_template:'删除模板',
+            edit:'编辑',
+            template:'模板',
+            add_template:'添加模板',
+            preview:'预览'
+
         }
       }
     }

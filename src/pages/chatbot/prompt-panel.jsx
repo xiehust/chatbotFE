@@ -22,7 +22,7 @@ import { useTranslation } from "react-i18next";
 import { useAuthUserInfo, useAuthToken } from "../commons/use-auth";
 import { models, embeddings } from "../../common/shared";
 import { useLocalStorage } from "../../common/localStorage";
-import { listDocIdx,uploadFile,uploadS3 } from "../commons/api-gateway";
+import { listTemplate,uploadFile,uploadS3 } from "../commons/api-gateway";
 import {params_local_storage_key} from "./common-components";
 
 
@@ -36,7 +36,9 @@ export const defaultModelParams = {
   embedding_model_name_opt: embeddings[0],
   obj_prefix:'ai-content/',
   system_role:'AWSBot',
-  system_role_prompt:"你是云服务AWS的智能客服机器人AWSBot"
+  system_role_prompt:"你是云服务AWS的智能客服机器人AWSBot",
+  template_id:'default',
+  template_opt: { label: "default", value: "default" },
 };
 
 const ExpandableSettingPanel = () => {
@@ -48,7 +50,7 @@ const ExpandableSettingPanel = () => {
     params_local_storage_key+username,
     null
   );
-  console.log('localStoredParams:',localStoredParams);
+  // console.log('localStoredParams:',localStoredParams);
   const [selectedOption, setSelectedOption] = useState(
     localStoredParams?.model_name_opt || defaultModelParams.model_name_opt
   );
@@ -69,10 +71,13 @@ const ExpandableSettingPanel = () => {
     localStoredParams?.system_role_prompt || defaultModelParams.system_role_prompt
   );
   const { modelParams, setModelParams } = useChatData();
-  console.log('modelParams:',modelParams);
+  // console.log('modelParams:',modelParams);
   const [alldocs, setAlldocs] = useState([]);
-  const [selectDoc, setSelectDoc] = useState(
-    localStoredParams?.file_idx_opt || []
+  // const [selectDoc, setSelectDoc] = useState(
+  //   localStoredParams?.file_idx_opt || []
+  // );
+  const [selectTemplate, setSelectTemplate] = useState(
+    localStoredParams?.template_opt || defaultModelParams.template_opt
   );
   const [loadStatus, setLoadStatus] = useState('loading');
   const [uploadErrtxt, setUploadErr] = useState();
@@ -82,7 +87,12 @@ const ExpandableSettingPanel = () => {
   const [loading, setLoading] = useState(false);
   const [uploadsuccess, setUploadSuccess] = useState(false);
   const [helperMsg, setHelperMsg] = useState("Upload pdf or txt file");
-
+  const main_fun_arn = localStoredParams.main_fun_arn;
+  const apigateway_endpoint = localStoredParams.apigateway_endpoint;
+  const queryParams = {
+    main_fun_arn:main_fun_arn,
+    apigateway_endpoint:apigateway_endpoint
+  }
 
   const handleLoadItems = async ({ detail: { filteringText, firstPage, samePage } }) => {
     const headers = {
@@ -90,8 +100,18 @@ const ExpandableSettingPanel = () => {
     };
     setLoadStatus('loading');
     try {
-        const data = await listDocIdx(headers);
-        setAlldocs(data);
+        const data = await listTemplate(headers,queryParams);
+        let items = data.body.map( it =>({
+          template_name:it.template_name.S,
+          id:it.id.S,
+          username:it.username.S,
+        }))
+        items.unshift({
+          id:defaultModelParams.template_id,
+          template_name:defaultModelParams.template_id,
+          username:'system'
+        })
+        setAlldocs(items);
         setLoadStatus('finished');
       }catch(error){
         console.log(error);
@@ -164,11 +184,12 @@ const ExpandableSettingPanel = () => {
     setModelParams({ ...localStoredParams,
       max_tokens:localStoredParams?.max_tokens|| defaultModelParams.max_tokens,
       temperature:localStoredParams?.temperature || defaultModelParams.temperature,
-      use_qa:localStoredParams?.use_qa ||defaultModelParams.use_qa,
+      use_qa:(localStoredParams?.use_qa !== undefined) ?localStoredParams?.use_qa:defaultModelParams.use_qa,
       model_name:localStoredParams?.model_name||defaultModelParams.model_name,
       embedding_model_name:localStoredParams?.embedding_model_name||defaultModelParams.embedding_model_name,
       system_role:localStoredParams?.system_role||defaultModelParams.system_role,
       system_role_prompt:localStoredParams?.system_role_prompt||defaultModelParams.system_role_prompt,
+      template_id:localStoredParams?.template_id||defaultModelParams.template_id,
       username: authuser.username });
      
   }, []);
@@ -263,6 +284,32 @@ const ExpandableSettingPanel = () => {
             value={systemRolePromptValue}
           />
         </FormField>
+        <FormField label={t("prompt_template")}>
+          <Select
+           statusType = {loadStatus}
+           onLoadItems={handleLoadItems}
+            selectedOption={selectTemplate}
+            onChange={({ detail }) => {
+              setSelectTemplate(detail.selectedOption);
+              setModelParams((prev) => ({
+                ...prev,
+                template_id: detail.selectedOption.value,
+              }));
+              setLocalStoredParams({
+                ...localStoredParams,
+                template_id: detail.selectedOption.value,
+                template_opt: detail.selectedOption,
+              });
+            }}
+            options={alldocs.map(
+              ({ template_name, id,username }) => ({
+                label: `${id}/${template_name}/${username}`,
+                value: id,
+              })
+            )}
+            selectedAriaLabel="Selected"
+          />
+        </FormField>
         {/* <FormField label={t("embedding_model_name")}>
           <Select
             selectedOption={embselectedOption}
@@ -284,47 +331,7 @@ const ExpandableSettingPanel = () => {
         </FormField> */}
         </ColumnLayout>
         <ColumnLayout  borders="vertical" columns="2" variant="text-grid">
-        {/* <FormField label={t("knowledge_index")}>
-          <Select
-           statusType = {loadStatus}
-           onLoadItems={handleLoadItems}
-            selectedOption={selectDoc}
-            onChange={({ detail }) => {
-              setSelectDoc(detail.selectedOption);
-              setModelParams((prev) => ({
-                ...prev,
-                file_idx: detail.selectedOption.value,
-                use_qa: true,
-              }));
-              setLocalStoredParams({
-                ...localStoredParams,
-                file_idx: detail.selectedOption.value,
-                file_idx_opt: detail.selectedOption,
-                use_qa: true,
-              });
-            }}
-            options={alldocs.map(
-              ({ filename, index_name, embedding_model }) => ({
-                label: `${filename} /${embedding_model.toLowerCase()}`,
-                value: index_name,
-              })
-            )}
-            selectedAriaLabel="Selected"
-          />
-        </FormField> */}
-        {/* <FormField label={t("use_qa")}>
-          <Toggle
-            onChange={({ detail }) => {
-              setChecked(detail.checked);
-              setModelParams((prev) => ({ ...prev, use_qa: detail.checked }));
-              setLocalStoredParams({
-                ...localStoredParams,
-                use_qa: detail.checked,
-              });
-            }}
-            checked={checked}
-          />
-        </FormField> */}
+       
         <FormField label={t("upload_file")}>
         <SpaceBetween size="s" direction="horizontal" >
 
@@ -385,13 +392,12 @@ const PromptPanel = ({ sendMessage }) => {
     setConversations,
   } = useChatData();
   const [localStoredParams, setLocalStoredParams] = useLocalStorage(
-    params_local_storage_key,
+    params_local_storage_key+userinfo.username,
     null
   );
   const [checked, setChecked] = useState(
-    localStoredParams?.use_qa || defaultModelParams.use_qa
+    (localStoredParams?.use_qa !== undefined) ?localStoredParams?.use_qa:defaultModelParams.use_qa,
   );
-
   const onSubmit = (values) => {
     const prompt = values.trimEnd();
     if (prompt === "") {
@@ -410,6 +416,8 @@ const PromptPanel = ({ sendMessage }) => {
       action: "sendprompt",
       payload: { msgid: respid, messages: messages, params: modelParams },
     });
+    console.log('modelParams:',modelParams);
+
     setPromptValue("");
   };
 
@@ -442,7 +450,8 @@ const PromptPanel = ({ sendMessage }) => {
             <Button
               variant="secondary"
               onClick={(event) => {
-                setPromptValue("");
+                // setPromptValue("");
+                onSubmit("/rs");
                 // setConversations((prev) => prev.slice(0,1));
                 // setMsgItems((prev) => prev.slice(0,1));
                 setConversations([]);

@@ -70,7 +70,7 @@ export const handler = async(event) => {
         if (apigateway_endpoint.length > 0){
           const options ={
             method:'POST',
-            body:JSON.stringify({method:'get'})
+            body:JSON.stringify({method:'get',resource:'docs'})
           }
             try {
                 const response = await fetch(apigateway_endpoint,options);
@@ -90,9 +90,9 @@ export const handler = async(event) => {
             }
             
         }
-        else if (main_fun_arn.length >0){
+        else if (main_fun_arn&&main_fun_arn.length >0){
           const params = {FunctionName: main_fun_arn,
-                Payload:{method:'get'}}
+                Payload:{method:'get',resource:'docs'}}
           try {
               const response =await lambdaClient.send(new InvokeCommand(params));
             return {
@@ -118,7 +118,7 @@ export const handler = async(event) => {
         if (apigateway_endpoint.length > 0){
           const options ={
             method:'POST',
-            body:JSON.stringify({...body,method:'delete'})
+            body:JSON.stringify({...body,method:'delete',resource:'docs'})
           }
             try {
                 await fetch(apigateway_endpoint,options);
@@ -135,9 +135,9 @@ export const handler = async(event) => {
             }
             
         }
-        else if (main_fun_arn.length >0){
+        else if (main_fun_arn&&main_fun_arn.length >0){
           const params = {FunctionName: main_fun_arn,
-                Payload:{...body,method:'delete'}}
+                Payload:{...body,method:'delete',resource:'docs'}}
 
           try {
               await lambdaClient.send(new InvokeCommand(params));
@@ -154,4 +154,148 @@ export const handler = async(event) => {
           }
       }
     }
+    else if (event.httpMethod === 'GET' && event.resource === '/template'){
+      const lambdaClient = new LambdaClient();
+      const queryParams = event.queryStringParameters;
+      const main_fun_arn = queryParams.main_fun_arn;
+      const id = queryParams.id;
+      const apigateway_endpoint = queryParams.apigateway_endpoint;
+      if (apigateway_endpoint.length > 0){
+        const options ={
+          method:'POST',
+          body:JSON.stringify({method:'get',resource:'template',id:id})
+        }
+          try {
+              const response = await fetch(apigateway_endpoint,options);
+              const ret = await response.json();
+              console.log(ret);
+              return {
+                statusCode: 200,
+                headers:cors_headers,
+                body:JSON.stringify(ret)
+              }
+          }catch(err){
+            return {
+              statusCode: 500,
+              headers:cors_headers,
+              body:JSON.stringify(err)
+            }
+          }
+          
+      }
+      else if (main_fun_arn&&main_fun_arn.length >0){
+        const params = {FunctionName: main_fun_arn,
+              Payload:{method:'get',resource:'template',id:id}}
+        try {
+            const response =await lambdaClient.send(new InvokeCommand(params));
+          return {
+            statusCode: 200,
+            headers:cors_headers,
+            body:JSON.stringify(response)
+          }
+        }catch(err){  
+          return {
+            statusCode: 500,
+            headers:cors_headers,
+            body:JSON.stringify(err)
+          }
+        }
+      }
+  }
+  else if (event.httpMethod === 'POST' && event.resource === '/template'){
+    const lambdaClient = new LambdaClient();
+    const body = JSON.parse(event.body);
+    console.log(event.body);
+    const main_fun_arn = body.main_fun_arn;
+    const apigateway_endpoint = body.apigateway_endpoint;
+    if (apigateway_endpoint.length > 0){
+      const options ={
+        method:'POST',
+        body:JSON.stringify({method:'post',resource:'template',body:body})
+      }
+        try {
+            const response = await fetch(apigateway_endpoint,options);
+            const ret = await response.json();
+            console.log(ret);
+            return {
+              statusCode: 200,
+              headers:cors_headers,
+              body:JSON.stringify(ret)
+            }
+        }catch(err){
+          return {
+            statusCode: 500,
+            headers:cors_headers,
+            body:JSON.stringify(err)
+          }
+        }
+        
+    }
+    else if (main_fun_arn&&main_fun_arn.length >0){
+      const params = {FunctionName: main_fun_arn,
+            Payload:{method:'post',resource:'template',body:body}}
+      try {
+          const response =await lambdaClient.send(new InvokeCommand(params));
+        return {
+          statusCode: 200,
+          headers:cors_headers,
+          body:JSON.stringify(response)
+        }
+      }catch(err){  
+        return {
+          statusCode: 500,
+          headers:cors_headers,
+          body:JSON.stringify(err)
+        }
+      }
+    }
+}
+else if (event.httpMethod === 'DELETE' && event.resource === '/template'){
+  const lambdaClient = new LambdaClient();
+  const body = JSON.parse(event.body);
+  console.log(event.body);
+  const main_fun_arn = body.main_fun_arn;
+  const apigateway_endpoint = body.apigateway_endpoint;
+  if (apigateway_endpoint.length > 0){
+    const options ={
+      method:'POST',
+      body:JSON.stringify({method:'delete',resource:'template',body:body})
+    }
+      try {
+          const response = await fetch(apigateway_endpoint,options);
+          const ret = await response.json();
+          console.log(ret);
+          return {
+            statusCode: 200,
+            headers:cors_headers,
+            body:JSON.stringify(ret)
+          }
+      }catch(err){
+        return {
+          statusCode: 500,
+          headers:cors_headers,
+          body:JSON.stringify(err)
+        }
+      }
+      
+  }
+  else if (main_fun_arn&&main_fun_arn.length >0){
+    const params = {FunctionName: main_fun_arn,
+          Payload:{method:'delete',resource:'template',body:body}}
+    try {
+        const response =await lambdaClient.send(new InvokeCommand(params));
+      return {
+        statusCode: 200,
+        headers:cors_headers,
+        body:JSON.stringify(response)
+      }
+    }catch(err){  
+      return {
+        statusCode: 500,
+        headers:cors_headers,
+        body:JSON.stringify(err)
+      }
+    }
+  }
+}
 }

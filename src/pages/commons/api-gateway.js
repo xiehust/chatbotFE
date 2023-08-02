@@ -102,6 +102,51 @@ export const listDocIdx = async(headers,queryParams={}) =>{
     }
 }
 
+
+export const listTemplate = async(headers,queryParams={}) =>{
+    // Build the query string parameters
+    const queryString = Object.keys(queryParams)
+    .map(key => `${encodeURIComponent(key)}=${encodeURIComponent(queryParams[key])}`)
+    .join('&');
+
+    try {
+        const resp = await axios.get(`${API_http}/template?${queryString}`, {headers});
+        return resp.data;
+    } catch (err) {
+        throw err;
+    }
+}
+
+export const addTemplate = async(headers,formdata) =>{
+    try {
+        const resp = await axios.post(`${API_http}/template`,JSON.stringify(formdata), {headers});
+        return resp.data;
+    } catch (err) {
+        throw err;
+    }
+}
+
+export const getTemplate = async(headers,queryParams) =>{
+    const queryString = Object.keys(queryParams)
+    .map(key => `${encodeURIComponent(key)}=${encodeURIComponent(queryParams[key])}`)
+    .join('&');
+    try {
+        const resp = await axios.get(`${API_http}/template?${queryString}`, {headers});
+        return resp.data;
+    } catch (err) {
+        throw err;
+    }
+}
+
+export const deleteTemplate = async(headers,formdata) =>{
+    try {
+        const resp = await axios.delete(`${API_http}/template`,{headers,data:JSON.stringify(formdata)});
+        return resp.data;
+    } catch (err) {
+        throw err;
+    }
+}
+
 export const deleteDoc = async(headers,body) =>{
     try {
         const resp = await axios.delete(`${API_http}/docs`, {headers,data:JSON.stringify(body)});

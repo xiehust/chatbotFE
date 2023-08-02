@@ -72,6 +72,7 @@ def handler(event,lambda_context):
                 "prompt":messages[-1].get('content'),
                 "model":params.get('model_name'),
                 "use_qa":params.get('use_qa'),
+                "template_id":params.get('template_id'),
                 "max_tokens":params.get('max_tokens'),
                 "temperature":params.get('temperature'),
                 "system_role":params.get('system_role'),
