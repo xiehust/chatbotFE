@@ -9,7 +9,7 @@ You can find it in the side nav bar, where you can see all the customized templa
 
 ## 3.How to create a template?
 You will see an example when you create a template firstly. and you must use the exact keywords {system_role_prompt},{question},{role_bot},{chat_history},{context} in your template. and those keywords will be replaced accordingly when the generate the final prompt input to LLM. You also can preview the result in prevew section.  
- ![Alt text](image-9.png)
+![Alt text](image-9.png)
  ### **Notes**
 1. **{system_role_prompt}** and **{role_bot}** will be replaced by the "System Role Prompt" and "System Role Name" in the addiontional setttings in the chat panel.  
 ![Alt text](image-12.png)
