@@ -190,7 +190,13 @@ const ExpandableSettingPanel = () => {
       system_role_prompt:localStoredParams?.system_role_prompt||defaultModelParams.system_role_prompt,
       template_id:localStoredParams?.template_id||defaultModelParams.template_id,
       username: authuser.username });
-     
+
+      setLocalStoredParams({
+        ...localStoredParams,
+        system_role: (localStoredParams?.system_role === undefined) && defaultModelParams.system_role,
+        system_role_prompt: (localStoredParams?.system_role_prompt === undefined)  && defaultModelParams.system_role_prompt,
+      });
+
   }, [localStoredParams]);
   // console.log('modelParams:',modelParams);
 
