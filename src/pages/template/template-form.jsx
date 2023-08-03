@@ -7,8 +7,8 @@ import {
   Container,
   Header,
   Input,
-  CodeEditor,
   Textarea,
+  Link,
 } from "@cloudscape-design/components";
 import { TemplateEditor } from "./common-components";
 import { useAuthorizedHeader,useAuthUserInfo } from "../commons/use-auth";
@@ -138,6 +138,14 @@ function AddPanel({ readOnlyWithErrors = false }) {
 
   const {t} = useTranslation();
   const { formData, setFormData,inValid,setInvalid } = useContext(addTemplateFormCtx);
+
+  const userinfo = useAuthUserInfo();
+  const username = userinfo?.username || 'default';
+  const [localStoredParams] = useLocalStorage(
+    params_local_storage_key+username,
+    null
+  );
+
   const getErrorText = (errorMessage) => {
     return readOnlyWithErrors ? errorMessage : undefined;
   };
@@ -145,7 +153,15 @@ function AddPanel({ readOnlyWithErrors = false }) {
     setFormData((prev) => ({ ...prev, 
       template:"{system_role_prompt} {role_bot}，请严格根据反括号中的资料提取相关信息，回答用户的各种问题\n```\n{chat_history}\n{context}\n```\n用户:{question}\n{role_bot}:"}));
   },
-  [])
+  []);
+  // console.log(localStoredParams);
+  function previewTemplate(rawText){
+    const system_role = localStoredParams.system_role;
+    const system_role_prompt = localStoredParams.system_role_prompt;
+    let text = rawText?.replaceAll('{system_role_prompt}',system_role_prompt);
+    text = text?.replaceAll('{role_bot}',system_role);
+    return text;
+  }
   return (
     <Container
     >
@@ -171,7 +187,9 @@ function AddPanel({ readOnlyWithErrors = false }) {
         </FormField>
         <FormField
           label={t("template")}
-          description={"Keywords: {system_role_prompt},{question},{role_bot},{chat_history},{context}"}
+          description={<>{"Keywords: {system_role_prompt},{question},{role_bot},{chat_history},{context} "}
+          <Link href="https://github.com/xiehust/chatbotFE/blob/main/HowToUsePromptTemplate.md"
+            external="true">{t('readme')}</Link></>}
         >
           <TemplateEditor
           invalid={inValid}
@@ -187,12 +205,11 @@ function AddPanel({ readOnlyWithErrors = false }) {
           label={t("preview")}
         >
           <Textarea
-          invalid={inValid}
           placeholder="Required"
           readOnly = {true}
             rows={6}
             ariaRequired={true}
-            value={formData.template}
+            value={previewTemplate(formData.template)}
             onChange={(event) =>{
               !readOnlyWithErrors &&
               setFormData((prev) => ({ ...prev, template: event.detail.value }));

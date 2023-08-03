@@ -1,6 +1,6 @@
 // Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
 // SPDX-License-Identifier: MIT-0
-import React, { useEffect, useState, useContext } from "react";
+import React, { useEffect, useState, } from "react";
 import {
   FormField,
   Container,
@@ -14,7 +14,6 @@ import {
   ExpandableSection,
   Select,
   ColumnLayout,
-  Form,
 } from "@cloudscape-design/components";
 
 import { useChatData, generateUniqueId } from "./common-components";
@@ -54,10 +53,10 @@ const ExpandableSettingPanel = () => {
   const [selectedOption, setSelectedOption] = useState(
     localStoredParams?.model_name_opt || defaultModelParams.model_name_opt
   );
-  const [embselectedOption, setembSelectedOption] = useState(
-    localStoredParams?.embedding_model_name_opt ||
-      defaultModelParams.embedding_model_name_opt
-  );
+  // const [embselectedOption, setembSelectedOption] = useState(
+  //   localStoredParams?.embedding_model_name_opt ||
+  //     defaultModelParams.embedding_model_name_opt
+  // );
   const [tokenSize, settokenSize] = useState(
     localStoredParams?.max_tokens || defaultModelParams.max_tokens
   );
@@ -85,7 +84,7 @@ const ExpandableSettingPanel = () => {
   const token = useAuthToken();
   const authuser = useAuthUserInfo();
   const [loading, setLoading] = useState(false);
-  const [uploadsuccess, setUploadSuccess] = useState(false);
+  // const [uploadsuccess, setUploadSuccess] = useState(false);
   const [helperMsg, setHelperMsg] = useState("Upload pdf or txt file");
   const main_fun_arn = localStoredParams.main_fun_arn;
   const apigateway_endpoint = localStoredParams.apigateway_endpoint;
@@ -137,7 +136,7 @@ const ExpandableSettingPanel = () => {
           modelParams.sk
           ).then(()=>{
             setLoading(false);
-            setUploadSuccess(true);
+            // setUploadSuccess(true);
             setLocalStoredParams({
               ...localStoredParams,
               lastuploadedfilename: file.name,
@@ -162,7 +161,7 @@ const ExpandableSettingPanel = () => {
           .then((response) => {
             // console.log(response);
             setLoading(false);
-            setUploadSuccess(true);
+            // setUploadSuccess(true);
             setLocalStoredParams({
               ...localStoredParams,
               lastuploadedfilename: file.name,
@@ -192,7 +191,7 @@ const ExpandableSettingPanel = () => {
       template_id:localStoredParams?.template_id||defaultModelParams.template_id,
       username: authuser.username });
      
-  }, []);
+  }, [localStoredParams]);
   // console.log('modelParams:',modelParams);
 
   return (
