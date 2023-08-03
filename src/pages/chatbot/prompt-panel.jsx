@@ -35,7 +35,7 @@ export const defaultModelParams = {
   embedding_model_name_opt: embeddings[0],
   obj_prefix:'ai-content/',
   system_role:'AWSBot',
-  system_role_prompt:"你是云服务AWS的智能客服机器人AWSBot",
+  system_role_prompt:"你是云服务AWS的智能客服机器人",
   template_id:'default',
   template_opt: { label: "default", value: "default" },
 };
@@ -86,8 +86,8 @@ const ExpandableSettingPanel = () => {
   const [loading, setLoading] = useState(false);
   // const [uploadsuccess, setUploadSuccess] = useState(false);
   const [helperMsg, setHelperMsg] = useState("Upload pdf or txt file");
-  const main_fun_arn = localStoredParams.main_fun_arn;
-  const apigateway_endpoint = localStoredParams.apigateway_endpoint;
+  const main_fun_arn = localStoredParams?.main_fun_arn;
+  const apigateway_endpoint = localStoredParams?.apigateway_endpoint;
   const queryParams = {
     main_fun_arn:main_fun_arn,
     apigateway_endpoint:apigateway_endpoint
@@ -126,6 +126,7 @@ const ExpandableSettingPanel = () => {
     };
     files.map( file =>{
       setLoading(true);
+      console.log(modelParams);
       if (modelParams.ak && modelParams.sk&&modelParams.obj_prefix
                && modelParams.s3_bucket && modelParams.s3_region){
         uploadS3(file,
@@ -179,8 +180,18 @@ const ExpandableSettingPanel = () => {
       }
     })
   }
+
+useEffect(()=>{
+  setLocalStoredParams({
+    ...localStoredParams,
+    system_role: (localStoredParams?.system_role === undefined) ? defaultModelParams.system_role: localStoredParams.system_role,
+    system_role_prompt: (localStoredParams?.system_role_prompt === undefined)  ? defaultModelParams.system_role_prompt: localStoredParams.system_role_prompt,
+  });
+},[])
+
   useEffect(() => {
     setModelParams({ ...localStoredParams,
+      obj_prefix:localStoredParams?.obj_prefix|| defaultModelParams.obj_prefix,
       max_tokens:localStoredParams?.max_tokens|| defaultModelParams.max_tokens,
       temperature:localStoredParams?.temperature || defaultModelParams.temperature,
       use_qa:(localStoredParams?.use_qa !== undefined) ?localStoredParams?.use_qa:defaultModelParams.use_qa,
@@ -190,12 +201,6 @@ const ExpandableSettingPanel = () => {
       system_role_prompt:localStoredParams?.system_role_prompt||defaultModelParams.system_role_prompt,
       template_id:localStoredParams?.template_id||defaultModelParams.template_id,
       username: authuser.username });
-
-      setLocalStoredParams({
-        ...localStoredParams,
-        system_role: (localStoredParams?.system_role === undefined) && defaultModelParams.system_role,
-        system_role_prompt: (localStoredParams?.system_role_prompt === undefined)  && defaultModelParams.system_role_prompt,
-      });
 
   }, [localStoredParams]);
   // console.log('modelParams:',modelParams);
