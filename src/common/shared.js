@@ -11,6 +11,8 @@ export const models = [
   value:'gpt-3.5-turbo'},
   { label:'baichuan-finetune-1.0',
   value:'baichuan-finetune-1.0'},
+  { label:'other-stream',
+  value:'other-stream'},
 ]
 export const embeddings = [
   { label:'paraphrase-mpnet-v2',
