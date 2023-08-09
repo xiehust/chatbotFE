@@ -21,13 +21,14 @@ import ModelSettings from './chat-settings';
 
 const Content=() =>{
     const [msgItems,setMsgItems] = useState([]);
+    const [hideRefDoc,setHideRefDoc] = useState(false);
     const [modelParams, setModelParams] = useState({});
     const [loading, setLoading] = useState(false);
     const [conversations, setConversations] = useState([]);
     const {t} = useTranslation();
     const [alertopen, setAlertOpen] = useState(false);
     return(
-      <ChatDataCtx.Provider value={{msgItems,setMsgItems,modelParams, setModelParams,loading,
+      <ChatDataCtx.Provider value={{msgItems,setMsgItems,modelParams, setModelParams,loading,hideRefDoc,setHideRefDoc,
       setLoading,conversations,setConversations,alertopen, setAlertOpen}}>
         <ModelSettings/>
         <ContentLayout

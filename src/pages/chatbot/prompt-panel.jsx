@@ -38,6 +38,7 @@ export const defaultModelParams = {
   system_role_prompt:"你是云服务AWS的智能客服机器人",
   template_id:'default',
   template_opt: { label: "default", value: "default" },
+  hide_ref:false,
 };
 
 const ExpandableSettingPanel = () => {
@@ -69,7 +70,7 @@ const ExpandableSettingPanel = () => {
   const [systemRolePromptValue, setSystemRolePromptValue] = useState(
     localStoredParams?.system_role_prompt || defaultModelParams.system_role_prompt
   );
-  const { modelParams, setModelParams } = useChatData();
+  const { modelParams, setModelParams} = useChatData();
   // console.log('modelParams:',modelParams);
   const [alldocs, setAlldocs] = useState([]);
   // const [selectDoc, setSelectDoc] = useState(
@@ -185,6 +186,8 @@ useEffect(()=>{
   setLocalStoredParams({
     ...localStoredParams,
     system_role: (localStoredParams?.system_role === undefined) ? defaultModelParams.system_role: localStoredParams.system_role,
+    use_qa:(localStoredParams?.use_qa === undefined) ?defaultModelParams.use_qa:localStoredParams?.use_qa,
+    hide_ref:(localStoredParams?.hide_ref === undefined) ?defaultModelParams.hide_ref:localStoredParams?.hide_ref,
     system_role_prompt: (localStoredParams?.system_role_prompt === undefined)  ? defaultModelParams.system_role_prompt: localStoredParams.system_role_prompt,
   });
 },[])
@@ -408,6 +411,11 @@ const PromptPanel = ({ sendMessage }) => {
   const [checked, setChecked] = useState(
     (localStoredParams?.use_qa !== undefined) ?localStoredParams?.use_qa:defaultModelParams.use_qa,
   );
+  const {setHideRefDoc} = useChatData();
+
+  const [hideRefchecked, setRefDocChecked] = useState(
+    (localStoredParams?.hide_ref !== undefined) ?localStoredParams?.hide_ref:defaultModelParams.hide_ref,
+  );
   const onSubmit = (values) => {
     const prompt = values.trimEnd();
     if (prompt === "") {
@@ -472,6 +480,7 @@ const PromptPanel = ({ sendMessage }) => {
               {t("clear")}
             </Button>
           </SpaceBetween>
+          <SpaceBetween size="xs">
           <FormField label={t("use_qa")}>
           <Toggle
             onChange={({ detail }) => {
@@ -485,6 +494,20 @@ const PromptPanel = ({ sendMessage }) => {
             checked={checked}
           />
         </FormField>
+        <FormField label={t("hide_ref_doc")}>
+          <Toggle
+            onChange={({ detail }) => {
+              setRefDocChecked(detail.checked);
+              setHideRefDoc(detail.checked);
+              setLocalStoredParams({
+                ...localStoredParams,
+                hide_ref: detail.checked,
+              });
+            }}
+            checked={hideRefchecked}
+          />
+        </FormField>
+        </SpaceBetween>
         </Grid>
       </FormField>
     </Container>

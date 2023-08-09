@@ -7,7 +7,6 @@ import {Container,Header, SpaceBetween} from '@cloudscape-design/components';
 import SyntaxHighlighter from 'react-syntax-highlighter';
 import { a11yDark } from 'react-syntax-highlighter/dist/esm/styles/hljs';
 // import { CopyBlock,a11yDark } from "react-code-blocks";
-
 import {useChatData,generateUniqueId} from './common-components';
 import { useTranslation } from "react-i18next";
 import botlogo from "../../resources/Res_Amazon-SageMaker_Model_48_Light.svg";
@@ -222,26 +221,33 @@ const ChatBox = ({ msgItems, loading }) => {
 
 const ConversationsPanel = ()=>{
     const {t} = useTranslation();
-    const {msgItems, setMsgItems,loading, setLoading,conversations, setConversations,alertopen, setAlertOpen} = useChatData();
-    const [isInit, setInit] = useState(false);
+    const {msgItems, setMsgItems,loading, setLoading,conversations, setConversations, setAlertOpen,hideRefDoc} = useChatData();
     const [streamMsg, setStreamMsg] = useState('');
-
-
     const authtoken = useAuthToken();
 
     const onMessageCallback = ({ data }) => {
       setLoading(false);
       //save conversations
       const resp = JSON.parse(data);
-      // console.log(resp);
-  
-  
+      // console.log(streamMsg);
+      // console.log(resp.text.content);
+      let content = resp.text.content;
+
+      // 如果是none stream输出，则全部替换
+      if(hideRefDoc){
+          const fullRefRegex = /```json\n#Reference([\w+#-]+)?\n([\s\S]*?)\n```/gm;
+          content = content.replace(fullRefRegex,'')
+      }
+
+      // 如果是stream输出，则忽略这个内容
+      const refRegex = /```json\n#Reference/gm;
+      if (hideRefDoc && refRegex.exec(content) ){
+          return
+      }
       if (resp.role) {
-  
-        setStreamMsg(prev => (prev+resp.text.content));
-  
+        setStreamMsg(prev => (prev+content));
         // if stream stop, save the whole message
-        if ( resp.text?.content ==='[DONE]') {
+        if ( content ==='[DONE]') {
           setConversations((prev) => [
             ...prev,
             {role: resp.role, content: streamMsg },
@@ -255,17 +261,17 @@ const ConversationsPanel = ()=>{
           }
         }
       }
-      if ( resp.text?.content !=='[DONE]') {
+      // if ( resp.text?.content !=='[DONE1]') {
         setMsgItems((prev) =>
            prev.filter(item => (item.id === resp.msgid)).length  // 如果msgid已经存在
             ? 
              (prev.map((it) => ( (it.id === resp.msgid)?  
               { id: it.id, who: BOTNAME, text: streamMsg }:
                 {id: it.id, who: it.who, text: it.text })) )
-            : [...prev, { id: resp.msgid, who: BOTNAME, text: resp.text.content }] //创建一个新的item
+            : [...prev, { id: resp.msgid, who: BOTNAME, text: content }] //创建一个新的item
           
         );
-      }
+      // }
       //  console.log(conversations);   
 
        
