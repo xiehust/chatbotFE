@@ -137,7 +137,7 @@ const AddDocModal =({visible,setVisible}) =>{
             <Box float="right">
               <SpaceBetween direction="horizontal" size="xs">
                 <Button variant="link" onClick={ ()=> setVisible(false)}>{t('close')}</Button>
-                <Button variant="primary" href = '#' onClick={ ()=> setVisible(false)}>{t('confirm')}</Button>
+                {/* <Button variant="primary" href = '#' onClick={ ()=> setVisible(false)}>{t('confirm')}</Button> */}
               </SpaceBetween>
             </Box>
           }
