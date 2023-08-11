@@ -188,7 +188,7 @@ const TextItem = (props) => {
         border: "2px solid",
         borderColor: '#0972d3',
         borderRadius: 2,
-        fontSize: "16px",
+        fontSize: "14px",
         fontWeight: "400",
         ...sx,
       }}
