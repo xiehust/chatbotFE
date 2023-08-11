@@ -157,7 +157,8 @@ i18n
             add_template:'Add a template',
             preview:'Preview',
             readme:'README',
-            hide_ref_doc:'Hide Ref Doc'
+            hide_ref_doc:'Hide Ref Doc',
+            upload_image:'Upload Image'
         }
       },
       zh:{
@@ -301,7 +302,8 @@ i18n
             add_template:'添加模板',
             preview:'预览',
             readme:'使用说明',
-            hide_ref_doc:'隐藏引用'
+            hide_ref_doc:'隐藏引用',
+            upload_image:'上传图片'
 
         }
       }

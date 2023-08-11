@@ -96,6 +96,7 @@ export default function DocsTable () {
   const [docitems,setDocsItems] = useState([]);
   const [refresh, setRefresh] = useState(false);
   const refreshAction =()=>{
+    setLoadingState(true);
     setRefresh(v => !v);
   };
   const userinfo = useAuthUserInfo();
@@ -104,8 +105,8 @@ export default function DocsTable () {
     params_local_storage_key+username,
     null
   );
-  const main_fun_arn = localStoredParams?.main_fun_arn;
-  const apigateway_endpoint = localStoredParams?.apigateway_endpoint;
+  const main_fun_arn = localStoredParams.main_fun_arn;
+  const apigateway_endpoint = localStoredParams.apigateway_endpoint;
   const queryParams = {
     main_fun_arn:main_fun_arn,
     apigateway_endpoint:apigateway_endpoint

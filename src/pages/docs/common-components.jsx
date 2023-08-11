@@ -1,6 +1,6 @@
 // Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
 // SPDX-License-Identifier: MIT-0
-import React,{useState} from "react";
+import React,{useState,} from "react";
 import {
   BreadcrumbGroup,
   SpaceBetween,
@@ -15,6 +15,7 @@ import {params_local_storage_key} from "../chatbot/common-components";
 import {deleteDoc} from "../commons/api-gateway";
 import {useAuthorizedHeader,useAuthUserInfo} from "../commons/use-auth";
 import {useSimpleNotifications} from '../commons/use-notifications';
+import AddDocModal from './add-doc';
 
 
 export const Breadcrumbs = () => {
@@ -155,7 +156,8 @@ export const FullPageHeader = ({
 }) => {
   const { t } = useTranslation();
   const isOnlyOneSelected = props.selectedItems.length === 1;
-  const [visible, setVisible] = useState(false)
+  const [visible, setVisible] = useState(false);
+  const [visibleAdd, setVisibleAdd] = useState(false)
   const deleteAction = ()=>{
     setVisible(true);
   };
@@ -164,6 +166,7 @@ export const FullPageHeader = ({
   return (
     <div>
       <DeleteConfirmModal visible={visible} setVisible={setVisible} selectItem={selectItem} refreshAction={props.refreshAction} />
+      <AddDocModal visible={visibleAdd} setVisible={setVisibleAdd} />
     <TableHeader
       variant="awsui-h1-sticky"
       title={resourceName}
@@ -182,8 +185,7 @@ export const FullPageHeader = ({
             {t('delete')}
           </Button>
           <Button
-            // onClick={props.createAction}
-            href={'/docs/create'}
+            onClick={()=>setVisibleAdd(true)}
             variant="primary"
           >{t('create')}</Button>
         </SpaceBetween>

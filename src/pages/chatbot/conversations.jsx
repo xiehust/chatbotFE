@@ -20,7 +20,10 @@ import {
     Stack,
     Avatar,
     List,
+    ImageListItem,
+    ImageList,
     ListItem,
+    ImageListItemBar
   } from "@mui/material";
   import {  grey } from "@mui/material/colors";
 
@@ -101,44 +104,74 @@ const formatHtmlLines = (text)=>{
   ));
 }
 
-const MsgItem = ({ who, text }) => {
-  let newlines=[];
-  if (who === BOTNAME){
-    const {code, before, after, languageType} = extractCodeFromString(text);
-    const {_code, _before,_languageType} = findCodeStarts(text);
-    _code || newlines.push(formatHtmlLines(before))
-    if (code){
-      newlines.push(formatHtmlLines(before))
-      code&&newlines.push(<CodeComponent key={generateUniqueId()}  language={languageType} code={code}/>)
-      after&&newlines.push(formatHtmlLines(after))
-    }else{
-      if (_code){
-          newlines.push(formatHtmlLines(_before))
-          _code&&newlines.push(<CodeComponent key={generateUniqueId()}  language={_languageType} code={_code}/>)
-      }else{
-        // newlines = formatHtmlLines(text);
-      }
-    }
-  }else{
-    newlines = formatHtmlLines(text);
-  }
-  // console.log(newlines);
+const MsgItem = ({ who, text,image }) => {
+  if (image){
+      const url = URL.createObjectURL(image)
+      return (
+        who !== BOTNAME && <ListItem sx={{ display: "flex", justifyContent: "flex-end" }}>
+        <Stack direction="row" spacing={2} sx={{ alignItems: "top" }}>
+        <ImageList 
+        sx={{ width: 400, 
+              height: 400,
+         }}
+         cols={1} rowHeight={'auto'}>
+          <ImageListItem key={image.name}>
+            <img
+              src={url}
+              alt={image.name}
+              loading="lazy"
+            />
+            <ImageListItemBar
+            title={image.name}
+            subtitle={<span>size: {(image.size/1024).toFixed(1)}KB</span>}
+            position="below"
+          />
+        </ImageListItem>
+      </ImageList>
+          <Avatar {...stringAvatar(who)} />
+        </Stack>
+      </ListItem>
+      )
 
-  return who !== BOTNAME ? (
-    <ListItem sx={{ display: "flex", justifyContent: "flex-end" }}>
-      <Stack direction="row" spacing={2} sx={{ alignItems: "top" }}>
-        <TextItem sx={{ bgcolor: '#f2fcf3',borderColor:'#037f0c' }}>{newlines}</TextItem>
-        <Avatar {...stringAvatar(who)} />
-      </Stack>
-    </ListItem>
-  ) : (
-    <ListItem>
-      <Stack direction="row" spacing={2} sx={{ alignItems: "top" }}>
-        <Avatar src={botlogo} alt={"AIBot"} />
-        <TextItem> {newlines}</TextItem>
-      </Stack>
-    </ListItem>
-  );
+  }else{
+    let newlines=[];
+    if (who === BOTNAME){
+      const {code, before, after, languageType} = extractCodeFromString(text);
+      const {_code, _before,_languageType} = findCodeStarts(text);
+      _code || newlines.push(formatHtmlLines(before))
+      if (code){
+        newlines.push(formatHtmlLines(before))
+        code&&newlines.push(<CodeComponent key={generateUniqueId()}  language={languageType} code={code}/>)
+        after&&newlines.push(formatHtmlLines(after))
+      }else{
+        if (_code){
+            newlines.push(formatHtmlLines(_before))
+            _code&&newlines.push(<CodeComponent key={generateUniqueId()}  language={_languageType} code={_code}/>)
+        }else{
+          // newlines = formatHtmlLines(text);
+        }
+      }
+    }else{
+      newlines = formatHtmlLines(text);
+    }
+    // console.log(newlines);
+
+    return who !== BOTNAME ? (
+      <ListItem sx={{ display: "flex", justifyContent: "flex-end" }}>
+        <Stack direction="row" spacing={2} sx={{ alignItems: "top" }}>
+          <TextItem sx={{ bgcolor: '#f2fcf3',borderColor:'#037f0c' }}>{newlines}</TextItem>
+          <Avatar {...stringAvatar(who)} />
+        </Stack>
+      </ListItem>
+    ) : (
+      <ListItem>
+        <Stack direction="row" spacing={2} sx={{ alignItems: "top" }}>
+          <Avatar src={botlogo} alt={"AIBot"} />
+          <TextItem> {newlines}</TextItem>
+        </Stack>
+      </ListItem>
+    );
+  }
 };
 
 const TextItem = (props) => {
@@ -167,7 +200,7 @@ const TextItem = (props) => {
 const ChatBox = ({ msgItems, loading }) => {
   const [loadingtext, setLoaderTxt] = useState(".");
   const intervalRef = useRef(0);
-
+  // console.log(msgItems);
   function handleStartTick() {
     let textContent = "";
     const intervalId = setInterval(() => {
@@ -187,9 +220,11 @@ const ChatBox = ({ msgItems, loading }) => {
   }
   useEffect(() => {
     if (loading) {
-      handleStartTick();
+      setLoaderTxt('Waiting...');
+      // handleStartTick();
     } else {
-      handleStopClick();
+      setLoaderTxt('');
+      // handleStopClick();
     }
   }, [loading]);
 
@@ -200,7 +235,7 @@ const ChatBox = ({ msgItems, loading }) => {
     }
   }, [msgItems.length]);
   const items = msgItems.map((msg) => (
-    <MsgItem key={generateUniqueId()} who={msg.who} text={msg.text} />
+    <MsgItem key={generateUniqueId()} who={msg.who} text={msg.text} image={msg.image}/>
   ));
 
   return (
@@ -231,23 +266,23 @@ const ConversationsPanel = ()=>{
       const resp = JSON.parse(data);
       // console.log(streamMsg);
       // console.log(resp.text.content);
-      let content = resp.text.content;
+      let chunck = resp.text.content;
 
       // 如果是none stream输出，则全部替换
       if(hideRefDoc){
           const fullRefRegex = /```json\n#Reference([\w+#-]+)?\n([\s\S]*?)\n```/gm;
-          content = content.replace(fullRefRegex,'')
+          chunck = chunck.replace(fullRefRegex,'')
       }
 
       // 如果是stream输出，则忽略这个内容
       const refRegex = /```json\n#Reference/gm;
-      if (hideRefDoc && refRegex.exec(content) ){
+      if (hideRefDoc && refRegex.exec(chunck) ){
           return
       }
       if (resp.role) {
-        setStreamMsg(prev => (prev+content));
+        setStreamMsg(prev => (prev+chunck));
         // if stream stop, save the whole message
-        if ( content ==='[DONE]') {
+        if ( chunck ==='[DONE]') {
           setConversations((prev) => [
             ...prev,
             {role: resp.role, content: streamMsg },
@@ -261,18 +296,26 @@ const ConversationsPanel = ()=>{
           }
         }
       }
-      // if ( resp.text?.content !=='[DONE1]') {
-        setMsgItems((prev) =>
-           prev.filter(item => (item.id === resp.msgid)).length  // 如果msgid已经存在
-            ? 
-             (prev.map((it) => ( (it.id === resp.msgid)?  
-              { id: it.id, who: BOTNAME, text: streamMsg }:
-                {id: it.id, who: it.who, text: it.text })) )
-            : [...prev, { id: resp.msgid, who: BOTNAME, text: content }] //创建一个新的item
+      const targetItem = msgItems.filter(item => (item.id === resp.msgid));
+      // console.log(targetItem);
+      // console.log(streamMsg);
+      if (! targetItem.length){//创建一个新的item
+        setMsgItems((prev)=>[...prev,{ id: resp.msgid, who: BOTNAME, text: chunck }]);
+      }else{
+        setMsgItems(prev =>[...prev.slice(0,-1),{ id: resp.msgid, who: BOTNAME,text: streamMsg}]);
+      }
+
+
+        // setMsgItems((prev) =>
+        //    prev.filter(item => (item.id === resp.msgid)).length  // 如果msgid已经存在
+        //     ? 
+        //      prev.map((it) => ( (it.id === resp.msgid)?  
+        //       { ...it, text: streamMsg }:
+        //         it)) 
+        //     : [...prev, { id: resp.msgid, who: BOTNAME, text: chunck }] //创建一个新的item
           
-        );
-      // }
-      //  console.log(conversations);   
+        // );
+
 
        
       };
