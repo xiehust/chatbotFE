@@ -93,7 +93,7 @@ def handler(event,lambda_context):
                 use_stream = body[0].get('use_stream')
                 if not use_stream:
                     answer = body[0]['choices'][0]['text']
-                    data = json.dumps({ 'msgid':msgid, 'role': "AI", 'text': {'content':answer} })
+                    data = json.dumps({ 'msgid':msgid, 'role': "AI", 'text': {'content':answer if answer else ' '} })
                     postMessage(wsclient,data,connectionId)
 
             except Exception as e:
@@ -115,7 +115,7 @@ def handler(event,lambda_context):
                 use_stream = body[0].get('use_stream')
                 if not use_stream:
                     answer = body[0]['choices'][0]['text']
-                    data = json.dumps({ 'msgid':msgid, 'role': "AI", 'text': {'content':answer} })
+                    data = json.dumps({ 'msgid':msgid, 'role': "AI", 'text': {'content': answer if answer else ' '} })
                     postMessage(wsclient,data,connectionId)
             else:
                 data = json.dumps({ 'msgid':msgid, 'role': "AI", 'text': {'content':'something wrong'} })

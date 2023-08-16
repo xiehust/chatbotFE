@@ -111,15 +111,19 @@ const MsgItem = ({ who, text,image }) => {
         who !== BOTNAME && <ListItem sx={{ display: "flex", justifyContent: "flex-end" }}>
         <Stack direction="row" spacing={2} sx={{ alignItems: "top" }}>
         <ImageList 
-        sx={{ width: 400, 
-              height: 400,
+        sx={{ width: 500, 
+              height: 350,
+              objectFit: 'contain'
          }}
-         cols={1} rowHeight={'auto'}>
+         cols={1} >
           <ImageListItem key={image.name}>
             <img
               src={url}
               alt={image.name}
               loading="lazy"
+              sx={{ 
+              objectFit: 'contain'
+         }}
             />
             <ImageListItemBar
             title={image.name}
