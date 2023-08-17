@@ -174,10 +174,16 @@ export class LambdaStack extends NestedStack {
       environment: {
         OPENAI_API_KEY: process.env.OPENAI_API_KEY,
         MAIN_FUN_ARN:process.env.MAIN_FUN_ARN,
-        embedding_endpoint:process.env.embedding_endpoint
+        all_in_one_api:process.env.all_in_one_api,
+        sd_endpoint_name:process.env.sd_endpoint_name
       },
       memorySize: 256,
     })
+
+    //read sd image data from s3 
+    const sgbucket = s3.Bucket.fromBucketAttributes(this,'sagemakerbucket',{bucketName:`sagemaker-${process.env.CDK_DEFAULT_REGION}-${process.env.CDK_DEFAULT_ACCOUNT}`});
+    sgbucket.grantRead(this.lambda_chat_py);
+
 
     this.lambda_connect_handle = createNodeJsLambdaFn(
       this,
@@ -232,8 +238,8 @@ export class LambdaStack extends NestedStack {
       }
     );
     // doc_index_table.grantReadWriteData(this.lambda_list_idx )
-    const bucket = s3.Bucket.fromBucketName(this, 'DocUploadBucket',process.env.UPLOAD_BUCKET);
-    bucket.grantReadWrite(this.lambda_handle_upload);
+    // const bucket = s3.Bucket.fromBucketName(this, 'DocUploadBucket',process.env.UPLOAD_BUCKET);
+    // bucket.grantReadWrite(this.lambda_handle_upload);
 
     const main_fn = lambda.Function.fromFunctionArn(this,'main func',process.env.MAIN_FUN_ARN);
     main_fn.grantInvoke(this.lambda_chat_py);

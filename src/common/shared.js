@@ -19,6 +19,8 @@ export const models = [
   value:'llama'},
   { label:'other-stream',
   value:'other-stream'},
+  { label:'stable-diffusion-XL',
+  value:'stable-diffusion'},
 ]
 export const embeddings = [
   { label:'paraphrase-mpnet-v2',

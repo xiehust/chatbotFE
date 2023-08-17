@@ -71,6 +71,18 @@ const CodeComponent= ({language,code}) => {
 };
 
 
+function extractImagTag(text){
+  const imageRegex = /<img>(.*?)<\/img>/g;
+  const matches = text.matchAll(imageRegex);
+  const newtext = text.replaceAll(imageRegex,'');
+  const imagePaths = [];
+  for (const match of matches) {
+    const imagePath = match[1];
+    imagePaths.push(imagePath);
+  }
+  return [imagePaths,newtext];
+}
+
 function findCodeStarts(inputString) {
   const codeRegex = /```([\w+#-]+)?\n+/gm;
   const matches = codeRegex.exec(inputString);
@@ -140,8 +152,34 @@ const MsgItem = ({ who, text,image }) => {
   }else{
     let newlines=[];
     if (who === BOTNAME){
-      const {code, before, after, languageType} = extractCodeFromString(text);
-      const {_code, _before,_languageType} = findCodeStarts(text);
+
+      //add images
+      const [imgPaths,newtext] = extractImagTag(text);
+      if (imgPaths.length){
+        newlines.push(
+          <ImageList 
+          sx={{ width: 500, 
+              height: 500,
+              objectFit: 'contain'
+          }}
+          cols={1} >
+          {imgPaths.map((url,idx)=>(<ImageListItem key={idx}>
+            <img
+              src={url}
+              loading="lazy"
+              alt={'generated img'}
+              sx={{ 
+              objectFit: 'contain'
+          }}
+            />
+        </ImageListItem>))}
+      </ImageList>
+        )
+      }
+
+
+      const {code, before, after, languageType} = extractCodeFromString(newtext);
+      const {_code, _before,_languageType} = findCodeStarts(newtext);
       _code || newlines.push(formatHtmlLines(before))
       if (code){
         newlines.push(formatHtmlLines(before))
@@ -152,9 +190,11 @@ const MsgItem = ({ who, text,image }) => {
             newlines.push(formatHtmlLines(_before))
             _code&&newlines.push(<CodeComponent key={generateUniqueId()}  language={_languageType} code={_code}/>)
         }else{
-          // newlines = formatHtmlLines(text);
+          // newlines = formatHtmlLines(newtext);
         }
       }
+
+
     }else{
       newlines = formatHtmlLines(text);
     }
@@ -269,7 +309,7 @@ const ConversationsPanel = ()=>{
       //save conversations
       const resp = JSON.parse(data);
       // console.log(streamMsg);
-      // console.log(resp.text.content);
+      console.log(resp);
       let chunck = resp.text.content;
 
       // 如果是none stream输出，则全部替换
