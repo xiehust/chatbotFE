@@ -5,6 +5,8 @@ OPENAI_API_KEY=
 START_CMD=/rs
 UPLOAD_BUCKET=
 UPLOAD_OBJ_PREFIX=ai-content/
-MAIN_FUN_ARN=arn:aws:lambda:us-east-2:946277762357:function:QAChatDeployStack-lambdamainbrain
+MAIN_FUN_ARN=arn:aws:lambda:us-east-2:{accountid}:function:QAChatDeployStack-lambdamainbrain
 embedding_endpoint=st-paraphrase-mpnet-base-v2-cuda-embedding-endpoint
+sd_endpoint_name=all-in-one-ai-stable-diffusion-webui-in-2023-08-15-10-56-32-597
+all_in_one_api=
   

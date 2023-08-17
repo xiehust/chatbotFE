@@ -1,5 +1,6 @@
 import json,os
 import boto3
+import re
 # import openai
 import requests
 from botocore.exceptions import WaiterError
@@ -16,7 +17,27 @@ def generate_s3_image_url(bucket_name, key, expiration=3600):
     )
     return url
     
-    
+sampler_map = {
+    'euler_a':'Euler a',
+    'euler':'Euler',
+    'lms':'LMS',
+    'heun':'Heun',
+    'dpm_2':'DPM2',
+    'dpm2_a':'DPM2 a',
+    'dpmpp_2s_a':'DPM++ 2S a',
+    'dpmpp_2m':'DPM++ 2M',
+    'dpmpp_sde':'DPM++ SDE',
+    'dpmpp_2m_sde':'DPM++ 2M SDE',
+    'dpm_fast':'DPM fast',
+    'dpm_adaptive':'DPM adaptive',
+    'lms_ka':'LMS Karras',
+    'dpm_2_ka':'DPM2 Karras',
+    'dpm_2_a_ka':'DPM2 a Karras',
+    'dpmpp_2s_a_ka':'DPM++ 2S a Karras',
+    'dpmpp_2m_ka':'DPM++ 2M Karras',
+    'dpmpp_sde_ka':'DPM++ SDE Karras',
+    'dpmpp_2m_sde_ka':'DPM++ 2M SDE Karras'
+}
 
 class AsyncInferenceError(Exception):
     """The base exception class for Async Inference exceptions."""
@@ -99,6 +120,24 @@ def postMessage(wsclient,data,connectionId):
     except Exception as e:
          print (f'post {json.dumps(data)} to_wsconnection error:{str(e)}')
 
+def parse_args(text):
+    args = {}
+    pattern = r'--(\w+)\s+([^\s]+)'
+    matches = re.findall(pattern, text)
+    cleaned = re.sub(pattern,'',text).rstrip()
+    for match in matches:
+        key = match[0]
+        value = match[1]
+        # Convert numeric values to integers
+        if value.isdigit():
+            value = int(value)
+        # Convert boolean values to proper boolean type
+        elif value.lower() in ['true', 'false']:
+            value = value.lower() == 'true'
+        args[key] = value
+    return args,cleaned
+
+
 def handler(event,lambda_context):
     body = json.loads(event['Records'][0]['Sns']['Message'])
     requestContext = body.get('requestContext')
@@ -126,33 +165,36 @@ def handler(event,lambda_context):
             data = json.dumps({ 'msgid':msgid, 'role': "AI", 'text': {'content':'sd_endpoint_name or sd_api not defined'} })
             postMessage(wsclient,data,connectionId)
             return {'statusCode': 200}
+        
+        args,prompt_clean = parse_args(prompt)
+
         try:
             payload = {
                 "task": "text-to-image",
-                "model": "sd_xl_base_1.0.safetensors",
+                "model": args.get('model',"sd_xl_base_1.0.safetensors"),
                 "txt2img_payload": {
-                    "enable_hr": False,
-                    "denoising_strength": 0,
+                    "enable_hr": args.get('enable_hr',False),
+                    "denoising_strength": args.get('enable_hr',0),
                     "hr_scale": 2,
                     "hr_upscaler": "",
                     "hr_second_pass_steps": 0,
                     "hr_resize_x": 0,
                     "hr_resize_y": 0,
-                    "prompt":prompt,
+                    "prompt":prompt_clean,
                     "styles": [""],
-                    "seed": -1,
+                    "seed": args.get('seed',-1),
                     "subseed": -1,
                     "subseed_strength": 0,
                     "seed_resize_from_h": -1,
                     "seed_resize_from_w": -1,
                     "sampler_name": "",
-                    "batch_size": 1,
+                    "batch_size": args.get('batch_size',1),
                     "n_iter": 1,
-                    "steps": 40,
-                    "cfg_scale": 7,
-                    "width": 1024,
-                    "height": 1024,
-                    "restore_faces": False,
+                    "steps": args.get('steps',30),
+                    "cfg_scale": args.get('cfg_scale',7),
+                    "width": args.get('width',1024),
+                    "height": args.get('height',1024),
+                    "restore_faces": args.get('restore_faces',False),
                     "tiling": False,
                     "do_not_save_samples": False,
                     "do_not_save_grid": False,
@@ -165,7 +207,7 @@ def handler(event,lambda_context):
                     "override_settings": {},
                     "override_settings_restore_afterwards": True,
                     "script_args": [],
-                    "sampler_index": "Euler a",
+                    "sampler_index": sampler_map.get(args.get('sampler',"euler_a"),"Euler a"),
                     "script_name": "",
                     "send_images": True,
                     "save_images": False,

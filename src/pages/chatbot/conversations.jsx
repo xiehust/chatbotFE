@@ -109,7 +109,7 @@ function extractCodeFromString(inputString) {
 
 const formatHtmlLines = (text)=>{
   return text.split("\n").map((it,idx) => (
-    <span key={idx}>
+    <span key={idx+1}>
       {it}
       <br />
     </span>
@@ -117,14 +117,15 @@ const formatHtmlLines = (text)=>{
 }
 
 const MsgItem = ({ who, text,image }) => {
+
   if (image){
       const url = URL.createObjectURL(image)
       return (
         who !== BOTNAME && <ListItem sx={{ display: "flex", justifyContent: "flex-end" }}>
         <Stack direction="row" spacing={2} sx={{ alignItems: "top" }}>
         <ImageList 
-        sx={{ width: 500, 
-              height: 350,
+        sx={{ width: 400, 
+              height: 'auto',
               objectFit: 'contain'
          }}
          cols={1} >
@@ -158,12 +159,12 @@ const MsgItem = ({ who, text,image }) => {
       if (imgPaths.length){
         newlines.push(
           <ImageList 
-          sx={{ width: 500, 
-              height: 500,
+          sx={{ width: 400, 
+              height: 'auto',
               objectFit: 'contain'
           }}
           cols={1} >
-          {imgPaths.map((url,idx)=>(<ImageListItem key={idx}>
+          {imgPaths.map((url,idx)=>(<ImageListItem key={idx+1}>
             <img
               src={url}
               loading="lazy"
@@ -243,6 +244,7 @@ const TextItem = (props) => {
 
 const ChatBox = ({ msgItems, loading }) => {
   const [loadingtext, setLoaderTxt] = useState(".");
+
   const intervalRef = useRef(0);
   // console.log(msgItems);
   function handleStartTick() {
@@ -300,16 +302,15 @@ const ChatBox = ({ msgItems, loading }) => {
 
 const ConversationsPanel = ()=>{
     const {t} = useTranslation();
-    const {msgItems, setMsgItems,loading, setLoading,conversations, setConversations, setAlertOpen,hideRefDoc} = useChatData();
+    const {msgItems, setMsgItems,loading, setLoading,conversations,setImg2txtUrl, setConversations, setAlertOpen,hideRefDoc} = useChatData();
     const [streamMsg, setStreamMsg] = useState('');
     const authtoken = useAuthToken();
-
     const onMessageCallback = ({ data }) => {
       setLoading(false);
       //save conversations
       const resp = JSON.parse(data);
       // console.log(streamMsg);
-      console.log(resp);
+      // console.log(resp);
       let chunck = resp.text.content;
 
       // 如果是none stream输出，则全部替换
@@ -331,6 +332,11 @@ const ConversationsPanel = ()=>{
             ...prev,
             {role: resp.role, content: streamMsg },
           ]);
+
+          //如果是SD模型返回的url，则保存起来
+          const [imgPaths,newtext] = extractImagTag(streamMsg);
+          imgPaths.map(url=>setImg2txtUrl(url));
+          
           setStreamMsg('');
           // console.log(streamMsg);
           if (conversations.length > MAX_CONVERSATIONS) {
@@ -348,17 +354,6 @@ const ConversationsPanel = ()=>{
       }else{
         setMsgItems(prev =>[...prev.slice(0,-1),{ id: resp.msgid, who: BOTNAME,text: streamMsg}]);
       }
-
-
-        // setMsgItems((prev) =>
-        //    prev.filter(item => (item.id === resp.msgid)).length  // 如果msgid已经存在
-        //     ? 
-        //      prev.map((it) => ( (it.id === resp.msgid)?  
-        //       { ...it, text: streamMsg }:
-        //         it)) 
-        //     : [...prev, { id: resp.msgid, who: BOTNAME, text: chunck }] //创建一个新的item
-          
-        // );
 
 
        
