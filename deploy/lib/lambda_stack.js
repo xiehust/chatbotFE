@@ -217,7 +217,8 @@ export class LambdaStack extends NestedStack {
       {
         ...commonProps,
         environment: {
-          DOC_INDEX_TABLE:'chatbot_doc_index'
+          DOC_INDEX_TABLE:'chatbot_doc_index',
+          MAIN_FUN_ARN:process.env.MAIN_FUN_ARN
         },
       }
     );
@@ -238,11 +239,12 @@ export class LambdaStack extends NestedStack {
       }
     );
     // doc_index_table.grantReadWriteData(this.lambda_list_idx )
-    // const bucket = s3.Bucket.fromBucketName(this, 'DocUploadBucket',process.env.UPLOAD_BUCKET);
-    // bucket.grantReadWrite(this.lambda_handle_upload);
+    const bucket = s3.Bucket.fromBucketName(this, 'DocUploadBucket',process.env.UPLOAD_BUCKET);
+    bucket.grantReadWrite(this.lambda_handle_upload);
 
     const main_fn = lambda.Function.fromFunctionArn(this,'main func',process.env.MAIN_FUN_ARN);
     main_fn.grantInvoke(this.lambda_chat_py);
+    main_fn.grantInvoke(this.lambda_list_idx);
 
     const api = new RestApi(this, "ChatbotFERestApi", {
       cloudWatchRole: true,

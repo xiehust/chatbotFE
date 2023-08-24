@@ -21,9 +21,10 @@ import { useTranslation } from "react-i18next";
 import { useAuthUserInfo, useAuthToken } from "../commons/use-auth";
 import { models, embeddings } from "../../common/shared";
 import { useLocalStorage } from "../../common/localStorage";
-import { listTemplate, uploadS3 } from "../commons/api-gateway";
+import { listTemplate, uploadS3,uploadFile } from "../commons/api-gateway";
 import { params_local_storage_key } from "./common-components";
 
+const default_bucket = process.env.REACT_APP_DEFAULT_UPLOAD_BUCKET;
 export const defaultModelParams = {
   temperature: 0.01,
   max_tokens: 2000,
@@ -138,11 +139,45 @@ const ExpandableSettingPanel = () => {
           setFile([]);
         });
     } else {
-      setLoading(false);
-      setImg2txtUrl(null); 
-      setUploadErr(`Missing parameters, please check the setting panel`);
-      setFile([]);
-    }
+      console.log(`missing buckets params, using default bucket:${default_bucket} to upload`);
+      setHelperMsg(`missing buckets params, using default bucket`);
+      //upload to default bucket
+      const formData = new FormData();
+        formData.append("image", file[0]);
+        console.log(file[0]);
+        const headers = {
+          'Authorization': token.token,
+          'Content-Type':file[0].type,
+          'Accept':file[0].type
+        };
+        uploadFile( username,formData, headers)
+          .then((response) => {
+            setLoading(false);
+            setImg2txtUrl(`${default_bucket}/images/${username}/${file[0].name}`); 
+            setMsgItems(
+              (prev) => [
+                ...prev,
+                {
+                  id: msgid,
+                  who: userinfo.username,
+                  text: file[0].name,
+                  image: file[0],
+                },
+              ] //创建一个新的item
+            );
+            setUploadComplete(true);
+            setFile([]);
+          })
+          .catch((error) => {
+            console.log(error);
+            setImg2txtUrl(null); 
+            setLoading(false);
+            setUploadErr(`Upload ${file[0].name} error`);
+            setFile([]);
+          });
+      }
+
+    
   };
 
   const handleLoadItems = async ({

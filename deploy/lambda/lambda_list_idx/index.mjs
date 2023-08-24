@@ -60,13 +60,16 @@ const deleteItem = async (filename,embedding_model)=>{
 
 
 export const handler = async(event) => {
-    console.log(event);
+    // console.log(event);
+
+    //获取所有文档
     if (event.httpMethod === 'GET' && event.resource === '/docs'){
         // const records = await scanTableData()
-        const lambdaClient = new LambdaClient();
         const queryParams = event.queryStringParameters;
-        const main_fun_arn = queryParams.main_fun_arn;
-        const apigateway_endpoint = queryParams.apigateway_endpoint;
+        const main_fun_arn = queryParams?.main_fun_arn === 'undefined' ? process.env.MAIN_FUN_ARN:queryParams.main_fun_arn;
+        const apigateway_endpoint = queryParams?.apigateway_endpoint === 'undefined'? '':queryParams.apigateway_endpoint;
+        const lambdaClient = new LambdaClient();
+       
         if (apigateway_endpoint.length > 0){
           const options ={
             method:'POST',
@@ -75,7 +78,7 @@ export const handler = async(event) => {
             try {
                 const response = await fetch(apigateway_endpoint,options);
                 const ret = await response.json();
-                console.log(ret);
+                console.log(JSON.stringify(ret));
                 return {
                   statusCode: 200,
                   headers:cors_headers,
@@ -92,13 +95,15 @@ export const handler = async(event) => {
         }
         else if (main_fun_arn&&main_fun_arn.length >0){
           const params = {FunctionName: main_fun_arn,
-                Payload:{method:'get',resource:'docs'}}
+                Payload:JSON.stringify({method:'get',resource:'docs'})}
           try {
               const response =await lambdaClient.send(new InvokeCommand(params));
+              const payload = JSON.parse(Buffer.from(response.Payload).toString());
+              console.log(JSON.stringify(payload));
             return {
               statusCode: 200,
               headers:cors_headers,
-              body:JSON.stringify(response)
+              body:JSON.stringify(payload)
             }
           }catch(err){  
             return {
@@ -112,8 +117,8 @@ export const handler = async(event) => {
     }else if (event.httpMethod === 'DELETE' && event.resource === '/docs'){
         const lambdaClient = new LambdaClient();
         const body = JSON.parse(event.body);
-        const main_fun_arn = body.main_fun_arn;
-        const apigateway_endpoint = body.apigateway_endpoint;
+        const main_fun_arn = body.main_fun_arn || process.env.MAIN_FUN_ARN;
+        const apigateway_endpoint = body.apigateway_endpoint|| '';
 
         if (apigateway_endpoint.length > 0){
           const options ={
@@ -137,7 +142,7 @@ export const handler = async(event) => {
         }
         else if (main_fun_arn&&main_fun_arn.length >0){
           const params = {FunctionName: main_fun_arn,
-                Payload:{...body,method:'delete',resource:'docs'}}
+                Payload: JSON.stringify({...body,method:'delete',resource:'docs'})}
 
           try {
               await lambdaClient.send(new InvokeCommand(params));
@@ -157,9 +162,10 @@ export const handler = async(event) => {
     else if (event.httpMethod === 'GET' && event.resource === '/template'){
       const lambdaClient = new LambdaClient();
       const queryParams = event.queryStringParameters;
-      const main_fun_arn = queryParams.main_fun_arn;
+      const main_fun_arn = queryParams?.main_fun_arn === 'undefined' ? process.env.MAIN_FUN_ARN:queryParams.main_fun_arn;
+      const apigateway_endpoint = queryParams?.apigateway_endpoint === 'undefined'? '':queryParams.apigateway_endpoint;
       const id = queryParams.id;
-      const apigateway_endpoint = queryParams.apigateway_endpoint;
+      // const apigateway_endpoint = queryParams.apigateway_endpoint;
       if (apigateway_endpoint.length > 0){
         const options ={
           method:'POST',
@@ -168,7 +174,7 @@ export const handler = async(event) => {
           try {
               const response = await fetch(apigateway_endpoint,options);
               const ret = await response.json();
-              console.log(ret);
+              console.log(JSON.stringify(ret));
               return {
                 statusCode: 200,
                 headers:cors_headers,
@@ -185,13 +191,15 @@ export const handler = async(event) => {
       }
       else if (main_fun_arn&&main_fun_arn.length >0){
         const params = {FunctionName: main_fun_arn,
-              Payload:{method:'get',resource:'template',id:id}}
+              Payload:JSON.stringify({method:'get',resource:'template',id:id})}
         try {
             const response =await lambdaClient.send(new InvokeCommand(params));
+            const payload = JSON.parse(Buffer.from(response.Payload).toString());
+              console.log(JSON.stringify(payload));
           return {
             statusCode: 200,
             headers:cors_headers,
-            body:JSON.stringify(response)
+            body:JSON.stringify(payload)
           }
         }catch(err){  
           return {
@@ -206,8 +214,8 @@ export const handler = async(event) => {
     const lambdaClient = new LambdaClient();
     const body = JSON.parse(event.body);
     console.log(event.body);
-    const main_fun_arn = body.main_fun_arn;
-    const apigateway_endpoint = body.apigateway_endpoint;
+    const main_fun_arn = body.main_fun_arn || process.env.MAIN_FUN_ARN;
+    const apigateway_endpoint = body.apigateway_endpoint|| '';
     if (apigateway_endpoint.length > 0){
       const options ={
         method:'POST',
@@ -216,7 +224,7 @@ export const handler = async(event) => {
         try {
             const response = await fetch(apigateway_endpoint,options);
             const ret = await response.json();
-            console.log(ret);
+            console.log(JSON.stringify(ret));
             return {
               statusCode: 200,
               headers:cors_headers,
@@ -233,13 +241,15 @@ export const handler = async(event) => {
     }
     else if (main_fun_arn&&main_fun_arn.length >0){
       const params = {FunctionName: main_fun_arn,
-            Payload:{method:'post',resource:'template',body:body}}
+            Payload:JSON.stringify({method:'post',resource:'template',body:body})}
       try {
           const response =await lambdaClient.send(new InvokeCommand(params));
+          const payload = JSON.parse(Buffer.from(response.Payload).toString());
+              console.log(JSON.stringify(payload));
         return {
           statusCode: 200,
           headers:cors_headers,
-          body:JSON.stringify(response)
+          body:JSON.stringify(payload)
         }
       }catch(err){  
         return {
@@ -254,8 +264,8 @@ else if (event.httpMethod === 'DELETE' && event.resource === '/template'){
   const lambdaClient = new LambdaClient();
   const body = JSON.parse(event.body);
   console.log(event.body);
-  const main_fun_arn = body.main_fun_arn;
-  const apigateway_endpoint = body.apigateway_endpoint;
+  const main_fun_arn = body.main_fun_arn || process.env.MAIN_FUN_ARN;
+  const apigateway_endpoint = body.apigateway_endpoint|| '';
   if (apigateway_endpoint.length > 0){
     const options ={
       method:'POST',
@@ -264,7 +274,7 @@ else if (event.httpMethod === 'DELETE' && event.resource === '/template'){
       try {
           const response = await fetch(apigateway_endpoint,options);
           const ret = await response.json();
-          console.log(ret);
+          console.log(JSON.stringify(ret));
           return {
             statusCode: 200,
             headers:cors_headers,
@@ -281,13 +291,15 @@ else if (event.httpMethod === 'DELETE' && event.resource === '/template'){
   }
   else if (main_fun_arn&&main_fun_arn.length >0){
     const params = {FunctionName: main_fun_arn,
-          Payload:{method:'delete',resource:'template',body:body}}
+          Payload:JSON.stringify({method:'delete',resource:'template',body:body})}
     try {
         const response =await lambdaClient.send(new InvokeCommand(params));
+        const payload = JSON.parse(Buffer.from(response.Payload).toString());
+            console.log(JSON.stringify(payload));
       return {
         statusCode: 200,
         headers:cors_headers,
-        body:JSON.stringify(response)
+        body:JSON.stringify(payload)
       }
     }catch(err){  
       return {

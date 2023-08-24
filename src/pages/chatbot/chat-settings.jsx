@@ -72,7 +72,7 @@ const SettingsPanel = ()=>{
 
     return (
         <SpaceBetween direction="vertical" size="l">
-<FormField label={t("embedding_endpoint")}>
+{/* <FormField label={t("embedding_endpoint")}>
           <Input
             onChange={({ detail }) => {
               setEmbEndpoint(detail.value);
@@ -87,7 +87,7 @@ const SettingsPanel = ()=>{
             }}
             value={embedding_endpoint}
           />
-        </FormField>
+        </FormField> */}
         <FormField label={t("apigateway_endpoint")}>
           <Input
             onChange={({ detail }) => {
@@ -104,7 +104,7 @@ const SettingsPanel = ()=>{
             value={apigateway_endpoint}
           />
         </FormField>
-        <FormField label={"Main Function ARN"}>
+        {/* <FormField label={"Main Function ARN"}>
           <Input
             onChange={({ detail }) => {
               setMainFunArn(detail.value);
@@ -119,7 +119,7 @@ const SettingsPanel = ()=>{
             }}
             value={main_fun_arn}
           />
-        </FormField>
+        </FormField> */}
         <FormField label={t("openai_api_key")}>
           <Input
             onChange={({ detail }) => {

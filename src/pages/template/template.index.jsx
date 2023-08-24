@@ -111,6 +111,7 @@ export default function TemplateTable () {
     apigateway_endpoint:apigateway_endpoint
   }
   useEffect(()=>{
+    setLoadingState(true);
     listTemplate(headers,queryParams)
     .then(data =>{
       // console.log(data);

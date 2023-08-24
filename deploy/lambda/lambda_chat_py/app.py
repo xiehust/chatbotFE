@@ -300,18 +300,23 @@ def handler(event,lambda_context):
                 Payload=json.dumps(payload)
             )
             payload_json = json.loads(response.get('Payload').read())
-            body = payload_json['body']
-            statusCode = payload_json['statusCode']
-            print(body)
-            if statusCode == 200:
-                use_stream = body[0].get('use_stream')
-                if not use_stream:
-                    answer = body[0]['choices'][0]['text']
-                    data = json.dumps({ 'msgid':msgid, 'role': "AI", 'text': {'content': answer if answer else ' '} })
-                    postMessage(wsclient,data,connectionId)
-            else:
-                data = json.dumps({ 'msgid':msgid, 'role': "AI", 'text': {'content':'something wrong'} })
+            print(payload_json)
+            error = payload_json.get('errorMessage')
+            if error:
+                data = json.dumps({ 'msgid':msgid, 'role': "AI", 'text': {'content':f'something wrong:{error}'} })
                 postMessage(wsclient,data,connectionId)
+            else:
+                body = payload_json['body']
+                statusCode = payload_json['statusCode']
+                if statusCode == 200:
+                    use_stream = body[0].get('use_stream')
+                    if not use_stream:
+                        answer = body[0]['choices'][0]['text']
+                        data = json.dumps({ 'msgid':msgid, 'role': "AI", 'text': {'content': answer if answer else ' '} })
+                        postMessage(wsclient,data,connectionId)
+                else:
+                    data = json.dumps({ 'msgid':msgid, 'role': "AI", 'text': {'content':'something wrong'} })
+                    postMessage(wsclient,data,connectionId)
         ##append end flag
         data = json.dumps({ 'msgid':msgid, 'role': "AI", 'text': {'content':'[DONE]'} })
         postMessage(wsclient,data,connectionId)

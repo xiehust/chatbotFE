@@ -77,11 +77,40 @@ export const remote_auth = async(username,password) =>{
                 .then(data => (data))
 }
 
-export const uploadFile = async(filename,formdata,headers) =>{
+export const uploadFile = async(username,formdata,headers) =>{
     try {
-        const resp = await axios.post(`${API_http}/upload`,formdata, {headers,responseType: 'blob'}, );
+        const resp = await axios.post(`${API_http}/upload?username=${username}`,formdata, {headers,responseType: 'blob'}, );
         // console.log(resp.data);
         return resp.data;
+    } catch (err) {
+        throw err;
+    }
+}
+
+export const uploadFile2 = async(username,file,headers) =>{
+    try {
+         const response = await axios.post(`${API_http}/upload?username=${username}`,
+                                    JSON.stringify({filename: file.name,filetype:file.type}),
+                                    {headers} );
+            const { url } = response.data;
+            const data = await file.arrayBuffer();
+            console.log(data);
+            try{
+                await axios.put(url, 
+                    data,
+                    {
+                    headers: {
+                        "Content-Type": file.type,
+                        // "Content-Length": file.size,
+                        'x-amz-acl': 'public-read',
+                    }
+                });
+            }
+            catch (error2){
+                console.error("API Upload failed.", JSON.stringify(error2));
+                throw new Error("API Upload failed.", { cause: JSON.stringify(error2) });
+            }
+          return url
     } catch (err) {
         throw err;
     }

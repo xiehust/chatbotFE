@@ -12,23 +12,24 @@ import {
 import { useTranslation } from "react-i18next";
 import { useLocalStorage } from "../../common/localStorage";
 import {params_local_storage_key} from "../chatbot/common-components";
-import { useAuthUserInfo } from "../commons/use-auth";
-import { uploadS3 } from "../commons/api-gateway";
+import { useAuthUserInfo ,useAuthToken} from "../commons/use-auth";
+import { uploadS3 ,uploadFile} from "../commons/api-gateway";
 import {useSimpleNotifications} from '../commons/use-notifications';
 
+const default_bucket = process.env.REACT_APP_DEFAULT_UPLOAD_BUCKET;
 
 
 const SettingsPanel = ()=>{
     const { t } = useTranslation();
     const userinfo = useAuthUserInfo();
     const { setNotificationItems } = useSimpleNotifications();
-
+    const token = useAuthToken();
     const username = userinfo?.username || 'default';
     const [localStoredParams] = useLocalStorage(
       params_local_storage_key+username,
       null
     );
-    const [helperMsg, setHelperMsg] = useState(".pdf,.txt,.faq,.md,.example,.examples");
+    const [helperMsg, setHelperMsg] = useState(".pdf,.txt,.faq,.md,.example,.examples,.wiki");
     const [uploadErrtxt, setUploadErr] = useState();
     const [files, setFiles] = useState([]);
     const [loading, setLoading] = useState(false);
@@ -73,9 +74,49 @@ const SettingsPanel = ()=>{
               setFiles([]);
             })
         }else{
-          setLoading(false);
-          setUploadErr(`Missing parameters, please check the setting panel`);
-          setFiles([]);
+          console.log(`missing buckets params, using default bucket:${default_bucket} to upload`);
+          setHelperMsg(`missing buckets params, using default bucket`);
+          //upload to default bucket
+
+          files.map( file => {
+            const headers = {
+              'Authorization': token.token,
+              'Content-Type':file.type
+            };
+            const formData = new FormData();
+            formData.append("file", file);
+
+            uploadFile( username,formData, headers)
+              .then((response) => {
+                setLoading(false);
+                setHelperMsg(prev => (prev+` Upload ${file.name} success`));
+                setFiles([]);
+                setNotificationItems((item) => [
+                  ...item,
+                  {
+                    header: t('upload_file'),
+                    type: "success",
+                    content: t('upload_file')+`:${default_bucket}/ai-content/${file.name}`,
+                    dismissible: true,
+                    dismissLabel: "Dismiss message",
+                    onDismiss: () =>
+                      setNotificationItems((items) =>
+                        items.filter((item) => item.id !== msgid)
+                      ),
+                    id: msgid,
+                  },
+                ]);
+
+              })
+              .catch((error) => {
+                console.log(error);
+                setLoading(false);
+                setUploadErr(`Upload ${file.name} error`);
+                setFiles([]);
+              });
+          })
+          
+
         }
       })
     }
@@ -94,7 +135,7 @@ const SettingsPanel = ()=>{
              }
              }
             value={files}
-            accept='.pdf,.txt,.faq,.md,.example,.examples'
+            accept='.pdf,.txt,.faq,.md,.example,.examples,.wiki'
             multiple
             constraintText = {helperMsg}
             showFileLastModified
