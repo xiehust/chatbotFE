@@ -26,13 +26,14 @@ import { params_local_storage_key } from "./common-components";
 
 const default_bucket = process.env.REACT_APP_DEFAULT_UPLOAD_BUCKET;
 export const defaultModelParams = {
-  temperature: 0.01,
+  temperature: 0.1,
   max_tokens: 2000,
   model_name: models[0].value,
   model_name_opt: models[0],
   use_qa: false,
-  embedding_model_name: embeddings[0].value,
-  embedding_model_name_opt: embeddings[0],
+  multi_rounds:false,
+  // embedding_model_name: embeddings[0].value,
+  // embedding_model_name_opt: embeddings[0],
   obj_prefix: "ai-content/",
   system_role: "AWSBot",
   system_role_prompt: "你是云服务AWS的智能客服机器人",
@@ -219,6 +220,10 @@ const ExpandableSettingPanel = () => {
         localStoredParams?.use_qa === undefined
           ? defaultModelParams.use_qa
           : localStoredParams?.use_qa,
+      multi_rounds:
+          localStoredParams?.multi_rounds === undefined
+            ? defaultModelParams.multi_rounds
+            : localStoredParams?.multi_rounds,
       hide_ref:
         localStoredParams?.hide_ref === undefined
           ? defaultModelParams.hide_ref
@@ -247,11 +252,12 @@ const ExpandableSettingPanel = () => {
         localStoredParams?.use_qa !== undefined
           ? localStoredParams?.use_qa
           : defaultModelParams.use_qa,
+      multi_rounds:
+          localStoredParams?.multi_rounds !== undefined
+            ? localStoredParams?.multi_rounds
+            : defaultModelParams.multi_rounds,
       model_name:
         localStoredParams?.model_name || defaultModelParams.model_name,
-      embedding_model_name:
-        localStoredParams?.embedding_model_name ||
-        defaultModelParams.embedding_model_name,
       system_role:
         localStoredParams?.system_role || defaultModelParams.system_role,
       system_role_prompt:
@@ -446,6 +452,12 @@ const PromptPanel = ({ sendMessage }) => {
       ? localStoredParams?.use_qa
       : defaultModelParams.use_qa
   );
+  const [multiRoundsChecked, setMultiRoundsChecked] = useState(
+    localStoredParams?.multi_rounds !== undefined
+      ? localStoredParams?.multi_rounds
+      : defaultModelParams.multi_rounds
+  );
+
   const { setHideRefDoc } = useChatData();
 
   const [hideRefchecked, setRefDocChecked] = useState(
@@ -517,7 +529,7 @@ const PromptPanel = ({ sendMessage }) => {
             </Button>
           </SpaceBetween>
           <SpaceBetween size="xs">
-            <FormField label={t("use_qa")}>
+            <FormField >
               <Toggle
                 onChange={({ detail }) => {
                   setChecked(detail.checked);
@@ -531,9 +543,25 @@ const PromptPanel = ({ sendMessage }) => {
                   });
                 }}
                 checked={checked}
-              />
+              >{t("use_qa")}</Toggle>
             </FormField>
-            <FormField label={t("hide_ref_doc")}>
+            <FormField >
+              <Toggle
+                onChange={({ detail }) => {
+                  setMultiRoundsChecked(detail.checked);
+                  setModelParams((prev) => ({
+                    ...prev,
+                    multi_rounds: detail.checked,
+                  }));
+                  setLocalStoredParams({
+                    ...localStoredParams,
+                    multi_rounds: detail.checked,
+                  });
+                }}
+                checked={multiRoundsChecked}
+              >{t("multi_rounds")}</Toggle>
+            </FormField>
+            <FormField >
               <Toggle
                 onChange={({ detail }) => {
                   setRefDocChecked(detail.checked);
@@ -544,7 +572,7 @@ const PromptPanel = ({ sendMessage }) => {
                   });
                 }}
                 checked={hideRefchecked}
-              />
+              >{t("hide_ref_doc")}</Toggle>
             </FormField>
           </SpaceBetween>
         </Grid>

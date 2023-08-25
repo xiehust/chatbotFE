@@ -158,7 +158,8 @@ i18n
             preview:'Preview',
             readme:'README',
             hide_ref_doc:'Hide Ref Doc',
-            upload_image:'Upload Image'
+            upload_image:'Upload Image',
+            multi_rounds:'Multi-rounds'
         }
       },
       zh:{
@@ -303,7 +304,8 @@ i18n
             preview:'预览',
             readme:'使用说明',
             hide_ref_doc:'隐藏引用',
-            upload_image:'上传图片'
+            upload_image:'上传图片',
+            multi_rounds:'多轮回话'
 
         }
       }
