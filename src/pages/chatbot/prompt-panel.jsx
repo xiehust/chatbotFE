@@ -72,11 +72,14 @@ const ExpandableSettingPanel = () => {
     localStoredParams?.temperature || defaultModelParams.temperature
   );
   const [systemRoleValue, setSystemRoleValue] = useState(
-    localStoredParams?.system_role || defaultModelParams.system_role
+    localStoredParams?.system_role === undefined
+    ? defaultModelParams.system_role
+    : localStoredParams.system_role
   );
   const [systemRolePromptValue, setSystemRolePromptValue] = useState(
-    localStoredParams?.system_role_prompt ||
-      defaultModelParams.system_role_prompt
+    localStoredParams?.system_role_prompt === undefined
+          ? defaultModelParams.system_role_prompt
+          : localStoredParams.system_role_prompt,
   );
   const { setMsgItems, setModelParams, setImg2txtUrl} = useChatData();
   const [alldocs, setAlldocs] = useState([]);
