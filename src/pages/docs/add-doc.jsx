@@ -29,7 +29,7 @@ const SettingsPanel = ()=>{
       params_local_storage_key+username,
       null
     );
-    const [helperMsg, setHelperMsg] = useState(".pdf,.txt,.faq,.md,.example,.examples,.wiki");
+    const [helperMsg, setHelperMsg] = useState(".pdf,.txt,.faq,.md,.example,.examples,.json,.wiki");
     const [uploadErrtxt, setUploadErr] = useState();
     const [files, setFiles] = useState([]);
     const [loading, setLoading] = useState(false);
@@ -135,7 +135,7 @@ const SettingsPanel = ()=>{
              }
              }
             value={files}
-            accept='.pdf,.txt,.faq,.md,.example,.examples,.wiki'
+            accept='.pdf,.txt,.faq,.md,.example,.examples,.json,.wiki'
             multiple
             constraintText = {helperMsg}
             showFileLastModified
