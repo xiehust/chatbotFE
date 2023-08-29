@@ -305,7 +305,7 @@ i18n
             readme:'使用说明',
             hide_ref_doc:'隐藏引用',
             upload_image:'上传图片',
-            multi_rounds:'多轮回话'
+            multi_rounds:'多轮会话'
 
         }
       }

@@ -141,7 +141,7 @@ def parse_args(text):
 def handler(event,lambda_context):
     body = json.loads(event['Records'][0]['Sns']['Message'])
     requestContext = body.get('requestContext')
-    ws_endpoint =  "https://" + requestContext['domainName'] + "/" + requestContext['stage'];
+    ws_endpoint =  "https://" + requestContext['domainName'] + "/" + requestContext['stage']
     connectionId = requestContext['connectionId']
     messages = body.get('payload')['messages']
     params = body.get('payload')['params']
