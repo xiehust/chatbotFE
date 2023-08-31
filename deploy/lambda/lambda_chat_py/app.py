@@ -141,7 +141,7 @@ def parse_args(text):
 def handler(event,lambda_context):
     body = json.loads(event['Records'][0]['Sns']['Message'])
     requestContext = body.get('requestContext')
-    ws_endpoint =  "https://" + requestContext['domainName'] + "/" + requestContext['stage']
+    ws_endpoint =  "https://" + requestContext['domainName'] + "/" + requestContext['stage'];
     connectionId = requestContext['connectionId']
     messages = body.get('payload')['messages']
     params = body.get('payload')['params']
@@ -261,19 +261,9 @@ def handler(event,lambda_context):
                 "ws_endpoint":ws_endpoint,
                 "msgid":msgid,
                 "chat_name":connectionId,
-                "prompt":messages[-1].get('content'),
-                "model":params.get('model_name'),
-                "use_qa":params.get('use_qa'),
-                "imgurl":params.get('imgurl'),
-                "template_id":params.get('template_id'),
-                "max_tokens":params.get('max_tokens'),
-                "temperature":params.get('temperature'),
-                "system_role":params.get('system_role'),
-                "system_role_prompt":params.get('system_role_prompt'),
-                "embedding_model":params.get('embedding_endpoint') 
-                                        if params.get('embedding_endpoint') 
-                                        else os.getenv('embedding_endpoint')
+                "prompt":messages[-1].get('content')
             }
+        payload = {**payload,**params}
         api = params.get('apigateway_endpoint') 
         if api:
             print(f"invoke api {api} for model:{params.get('model_name')}")
