@@ -19,6 +19,8 @@ export const models = [
   value:'llama'},
   { label:'other-stream',
   value:'other-stream'},
+  { label:'other',
+  value:'other'},
   { label:'stable-diffusion-XL',
   value:'stable-diffusion'},
 ]
