@@ -244,8 +244,8 @@ def handler(event,lambda_context):
             for image_uri in json.loads(body)["images"]:
                 image_bucket, image_key = get_bucket_and_key(image_uri)
                 img = generate_s3_image_url(image_bucket,image_key)
-                result += f'<img>{img}</img>'
-            data = json.dumps({ 'msgid':msgid, 'role': "AI", 'text': {'content':result} })
+                result += f'\n![imgname]({img})'
+                data = json.dumps({ 'msgid':msgid, 'role': "AI", 'text': {'content':result} })
             postMessage(wsclient,data,connectionId)
 
 
