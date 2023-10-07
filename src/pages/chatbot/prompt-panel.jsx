@@ -526,7 +526,7 @@ const PromptPanel = ({ sendMessage }) => {
             }}
             placeholder="Ctrl+Enter to send"
             autoFocus
-            rows={2}
+            rows={3}
           />
           <SpaceBetween size="xs" direction="horizontal">
             <Button
@@ -549,7 +549,7 @@ const PromptPanel = ({ sendMessage }) => {
             </Button>
           </SpaceBetween>
           </Grid>
-      <SpaceBetween size="xxl" direction="horizontal">
+      <SpaceBetween size="xl" direction="horizontal">
       <FormField >
               <Toggle
                 onChange={({ detail }) => {
