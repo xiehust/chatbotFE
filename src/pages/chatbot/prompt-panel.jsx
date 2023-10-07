@@ -40,6 +40,7 @@ export const defaultModelParams = {
   template_id: "default",
   template_opt: { label: "default", value: "default" },
   hide_ref: false,
+  use_stream:true
 };
 
 function generateId() {
@@ -239,6 +240,10 @@ const ExpandableSettingPanel = () => {
         localStoredParams?.obj_prefix === undefined
           ? defaultModelParams.obj_prefix
           : localStoredParams?.obj_prefix,
+      use_stream:
+          localStoredParams?.use_stream === undefined
+            ? defaultModelParams.use_stream
+            : localStoredParams?.use_stream,
     });
   }, []);
 
@@ -259,6 +264,10 @@ const ExpandableSettingPanel = () => {
           localStoredParams?.multi_rounds !== undefined
             ? localStoredParams?.multi_rounds
             : defaultModelParams.multi_rounds,
+      use_stream:
+          localStoredParams?.use_stream !== undefined
+            ? localStoredParams?.use_stream
+            : defaultModelParams.use_stream,
       model_name:
         localStoredParams?.model_name || defaultModelParams.model_name,
       system_role:
@@ -380,7 +389,7 @@ const ExpandableSettingPanel = () => {
               });
             }}
             options={alldocs.map(({ template_name, id, username }) => ({
-              label: `${id}/${template_name}/${username}`,
+              label: `${template_name}/${username}/${id}`,
               value: id,
             }))}
             selectedAriaLabel="Selected"
@@ -468,6 +477,13 @@ const PromptPanel = ({ sendMessage }) => {
       ? localStoredParams?.hide_ref
       : defaultModelParams.hide_ref
   );
+
+  const [useStreamChecked, setUseStreamChecked] = useState(
+    localStoredParams?.use_stream !== undefined
+      ? localStoredParams?.use_stream
+      : defaultModelParams.use_stream
+  );
+
   const onSubmit = (values,imgUrl=null) => {
     const prompt = values.trimEnd();
     if (prompt === "") {
@@ -498,7 +514,8 @@ const PromptPanel = ({ sendMessage }) => {
         stretch={true}
         // label={t('prompt_label')}
       >
-        <Grid gridDefinition={[{ colspan: 8 }, { colspan: 2 }, { colspan: 2 }]}>
+      <SpaceBetween size="m">
+      <Grid gridDefinition={[{ colspan: 9 }, { colspan: 3 }]}>
           <Textarea
             value={promptValue}
             onChange={(event) => setPromptValue(event.detail.value)}
@@ -509,9 +526,9 @@ const PromptPanel = ({ sendMessage }) => {
             }}
             placeholder="Ctrl+Enter to send"
             autoFocus
-            rows={3}
+            rows={2}
           />
-          <SpaceBetween size="xs">
+          <SpaceBetween size="xs" direction="horizontal">
             <Button
               variant="primary"
               onClick={(event) => onSubmit(promptValue)}
@@ -531,7 +548,24 @@ const PromptPanel = ({ sendMessage }) => {
               {t("clear")}
             </Button>
           </SpaceBetween>
-          <SpaceBetween size="xs">
+          </Grid>
+      <SpaceBetween size="xxl" direction="horizontal">
+      <FormField >
+              <Toggle
+                onChange={({ detail }) => {
+                  setUseStreamChecked(detail.checked);
+                  setModelParams((prev) => ({
+                    ...prev,
+                    use_stream: detail.checked,
+                  }));
+                  setLocalStoredParams({
+                    ...localStoredParams,
+                    use_stream: detail.checked,
+                  });
+                }}
+                checked={useStreamChecked}
+              >{t("use_stream")}</Toggle>
+            </FormField>
             <FormField >
               <Toggle
                 onChange={({ detail }) => {
@@ -577,8 +611,10 @@ const PromptPanel = ({ sendMessage }) => {
                 checked={hideRefchecked}
               >{t("hide_ref_doc")}</Toggle>
             </FormField>
+            
           </SpaceBetween>
-        </Grid>
+      </SpaceBetween>
+      
       </FormField>
     </Container>
   );
