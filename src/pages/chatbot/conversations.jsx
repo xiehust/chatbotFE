@@ -468,9 +468,9 @@ const ConversationsPanel = () => {
     //save conversations
     const resp = JSON.parse(data);
     // console.log(streamMsg);
-    // console.log(resp);
+    
     let chunck = resp.text.content;
-
+    // console.log(resp);
     // 如果是none stream输出，则全部替换
     if (hideRefDoc) {
       const fullRefRegex = /```json\n#Reference([\w+#-]+)?\n([\s\S]*?)\n```/gm;
