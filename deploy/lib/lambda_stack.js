@@ -133,7 +133,7 @@ export class LambdaStack extends NestedStack {
     user_table.grantReadWriteData(this.users_fn);
     
     const layer = new lambda.LayerVersion(this, 'ChatbotLayer', {
-      code: lambda.Code.fromAsset('layer'),
+      code: lambda.Code.fromAsset('layer/ChatbotFELayer.zip'),
       description: 'ChatbotFELayer Python helper utility',
       compatibleRuntimes: [lambda.Runtime.PYTHON_3_9],
       layerVersionName:'ChatbotFELayer',

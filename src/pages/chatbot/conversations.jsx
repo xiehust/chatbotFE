@@ -376,7 +376,7 @@ const ConversationsPanel = () => {
     setLoading(false);
     //save conversations
     const resp = JSON.parse(data);
-    console.log(resp);
+    // console.log(resp);
     
     let chunck = resp.text.content;
     // console.log(resp);
