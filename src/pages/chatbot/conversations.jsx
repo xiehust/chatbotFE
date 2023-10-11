@@ -3,17 +3,20 @@
 // Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
 // SPDX-License-Identifier: MIT-0
 import React, { useEffect, useState, useRef } from "react";
-import { Container, Header, SpaceBetween } from "@cloudscape-design/components";
+import { Container, Header, SpaceBetween,Button } from "@cloudscape-design/components";
 import SyntaxHighlighter from "react-syntax-highlighter";
 import { a11yDark } from "react-syntax-highlighter/dist/esm/styles/hljs";
 // import { CopyBlock,a11yDark } from "react-code-blocks";
 import { useChatData, generateUniqueId } from "./common-components";
 import { useTranslation } from "react-i18next";
 import botlogo from "../../resources/Res_Amazon-SageMaker_Model_48_Light.svg";
-import { useAuthToken } from "../commons/use-auth";
+import { useAuthToken,useAuthUserInfo} from "../commons/use-auth";
 import useWebSocket from "react-use-websocket";
-import { API_socket } from "../commons/api-gateway";
+import { API_socket,postFeedback } from "../commons/api-gateway";
 import PromptPanel from "./prompt-panel";
+import { useLocalStorage } from '../../common/localStorage';
+import {params_local_storage_key} from "../chatbot/common-components";
+
 import ReactMarkdown from "react-markdown";
 import gfm from "remark-gfm";
 
@@ -21,12 +24,12 @@ import {
   Box,
   Stack,
   Avatar,
-  Link,
   List,
   ImageListItem,
   ImageList,
   ListItem,
   ImageListItemBar,
+  Grid
 } from "@mui/material";
 import { grey } from "@mui/material/colors";
 
@@ -59,33 +62,6 @@ function stringAvatar(name) {
   };
 }
 
-const CodeComponent = ({ language, code }) => {
-  // const codeString = '(num) => num + 1';
-  return (
-    <SyntaxHighlighter
-      language={language}
-      showLineNumbers
-      wrapLongLines
-      style={a11yDark}
-    >
-      {code}
-    </SyntaxHighlighter>
-  );
-};
-
-function extractHrefs(text) {
-  // const regex = /\[\[([^\]]+)\((https?:\/\/(.*?))\)/g;
-  // const regex  = /\[.*\]\((https?:\/\/[^\)]+)\)/g;
-  const regex = /(\[.*\])\((.*?)\)/g;
-  const matches = text.matchAll(regex);
-  const newtext = text.replaceAll(regex, "");
-  const urls = [];
-  for (const match of matches) {
-    urls.push([match[1], match[2]]);
-  }
-  return [urls, newtext];
-}
-
 function extractImagTag(text) {
   const imageRegex = /<img>(.*?)<\/img>/g;
   const matches = text.matchAll(imageRegex);
@@ -110,45 +86,6 @@ function formatImg2MD(text) {
   }
   return [imagePaths, newtext];
 }
-
-
-function findCodeStarts(inputString) {
-  const codeRegex = /```([\w+#-]+)?\n+/gm;
-  const matches = codeRegex.exec(inputString);
-  if (!matches) {
-    return {
-      _code: null,
-      _before: inputString,
-      _after: null,
-      _languageType: null,
-    };
-  }
-  const [fullMatch, languageType] = matches;
-  const _before = matches.input?.substring(0, matches.index);
-  const _code = matches.input?.substring(matches.index + fullMatch.length);
-  return { _code, _before, _languageType: languageType || "js" };
-}
-
-function extractCodeFromString(inputString) {
-  const codeRegex = /```([\w+#-]+)?\n([\s\S]*?)\n```/gm;
-  const matches = codeRegex.exec(inputString);
-  if (!matches) {
-    return { code: null, before: inputString, after: null, languageType: null };
-  }
-  const [fullMatch, languageType, code] = matches;
-  const before = matches.input?.substring(0, matches.index);
-  const after = matches.input?.substring(matches.index + fullMatch.length);
-  return { code, before, after, languageType: languageType || "js" };
-}
-
-const formatHtmlLines = (text) => {
-  return text.split("\n").map((it, idx) => (
-    <span key={idx + 1}>
-      {it}
-      <br />
-    </span>
-  ));
-};
 
 const MarkdownToHtml = ({ text }) => {
   return <ReactMarkdown children={text} remarkPlugins={[gfm]}
@@ -186,7 +123,7 @@ const MarkdownToHtml = ({ text }) => {
   />;
 };
 
-const MsgItem = ({ who, text, image }) => {
+const MsgItem = ({ who, text, image,msgid,connectionId  }) => {
   if (image) {
     const url = URL.createObjectURL(image);
     return (
@@ -241,141 +178,110 @@ const MsgItem = ({ who, text, image }) => {
         </Stack>
       </ListItem>
     ) : (
+
       <ListItem>
         <Stack direction="row" spacing={2} sx={{ alignItems: "top" }}>
           <Avatar src={botlogo} alt={"AIBot"} />
-          <TextItem>
-          <MarkdownToHtml text ={newlines.join(' ')}/>
-          </TextItem>
+          <Grid container spacing={1}>
+            <Grid item xs={11}>
+              <TextItem>
+                <MarkdownToHtml text ={newlines.join(' ')}/>
+              </TextItem>
+            </Grid>
+            <Grid item xs={4}>
+                <ThumbButtons msgid={msgid} session_id={connectionId} />
+            </Grid>
+          </Grid>
         </Stack>
       </ListItem>
     );
   }
 };
 
-const MsgItem_bak = ({ who, text, image }) => {
-  if (image) {
-    const url = URL.createObjectURL(image);
-    return (
-      who !== BOTNAME && (
-        <ListItem sx={{ display: "flex", justifyContent: "flex-end" }}>
-          <Stack direction="row" spacing={2} sx={{ alignItems: "top" }}>
-            <ImageList
-              sx={{ width: 400, height: "auto", objectFit: "contain" }}
-              cols={1}
-            >
-              <ImageListItem key={image.name}>
-                <img
-                  src={url}
-                  alt={image.name}
-                  loading="lazy"
-                  sx={{
-                    objectFit: "contain",
-                  }}
-                />
-                <ImageListItemBar
-                  title={image.name}
-                  subtitle={
-                    <span>size: {(image.size / 1024).toFixed(1)}KB</span>
-                  }
-                  position="below"
-                />
-              </ImageListItem>
-            </ImageList>
-            <Avatar {...stringAvatar(who)} />
-          </Stack>
-        </ListItem>
-      )
-    );
-  } else {
-    let newlines = [];
-    if (who === BOTNAME) {
-      //add images
-      const [imgPaths, newtext] = extractImagTag(text);
-      if (imgPaths.length) {
-        newlines.push(
-          <ImageList
-            sx={{ width: 400, height: "auto", objectFit: "contain" }}
-            cols={1}
-          >
-            {imgPaths.map((url, idx) => (
-              <ImageListItem key={idx + 1}>
-                <img
-                  src={url}
-                  loading="lazy"
-                  alt={"generated img"}
-                  sx={{
-                    objectFit: "contain",
-                  }}
-                />
-              </ImageListItem>
-            ))}
-          </ImageList>
-        );
-      }
+const ThumbButtons = ({msgid,session_id}) =>{
+  const [downFilled, setDownFilled] = useState(false);
+  const [upFilled, setUpFilled] = useState(false);
+  const [downLoading, setDownLoading] = useState(false);
+  const [upLoading, setUpLoading] = useState(false);
+  const token = useAuthToken();
+  const userInfo = useAuthUserInfo();
+  const headers = {
+    Authorization: token.token,
+  };
+  const [localStoredParams] = useLocalStorage(
+    params_local_storage_key+userInfo.username,
+    null
+  );
+  const main_fun_arn = localStoredParams.main_fun_arn;
+  const apigateway_endpoint = localStoredParams.apigateway_endpoint;
 
-      //convert hrefs in markdown
-      const [urls, newtext2] = extractHrefs(newtext);
-      if (urls.length) {
-        newlines.push(urls.map((url) => <Link href={url[1]}>{url[0]}</Link>));
+  const handleClickDown = async()=>{
+      const body = {
+        msgid:msgid,
+        session_id:session_id,
+        main_fun_arn:main_fun_arn,
+        apigateway_endpoint:apigateway_endpoint,
+        username:userInfo.username,
+        action: downFilled?'cancel-thumbs-down':'thumbs-down'
       }
-      // console.log(newlines);
-
-      const { code, before, after, languageType } =
-        extractCodeFromString(newtext2);
-      const { _code, _before, _languageType } = findCodeStarts(newtext2);
-      _code || newlines.push(formatHtmlLines(before));
-      if (code) {
-        newlines.push(formatHtmlLines(before));
-        code &&
-          newlines.push(
-            <CodeComponent
-              key={generateUniqueId()}
-              language={languageType}
-              code={code}
-            />
-          );
-        after && newlines.push(formatHtmlLines(after));
-      } else {
-        if (_code) {
-          newlines.push(formatHtmlLines(_before));
-          _code &&
-            newlines.push(
-              <CodeComponent
-                key={generateUniqueId()}
-                language={_languageType}
-                code={_code}
-              />
-            );
-        } else {
-          // newlines = formatHtmlLines(newtext);
-        }
+      setDownLoading(true);
+      try {
+          const resp = await postFeedback(headers,body);
+          setDownFilled(prev=>!prev);
+          setUpFilled(false);
+          setDownLoading(false);
+      } catch (error) {
+        console.log(error);
+        setDownLoading(false);
       }
-    } else {
-      newlines = formatHtmlLines(text);
     }
-    console.log(newlines);
 
-    return who !== BOTNAME ? (
-      <ListItem sx={{ display: "flex", justifyContent: "flex-end" }}>
-        <Stack direction="row" spacing={2} sx={{ alignItems: "top" }}>
-          <TextItem sx={{ bgcolor: "#f2fcf3", borderColor: "#037f0c" }}>
-            {newlines}
-          </TextItem>
 
-          <Avatar {...stringAvatar(who)} />
-        </Stack>
-      </ListItem>
-    ) : (
-      <ListItem>
-        <Stack direction="row" spacing={2} sx={{ alignItems: "top" }}>
-          <Avatar src={botlogo} alt={"AIBot"} />
-          <TextItem>{newlines}</TextItem>
-        </Stack>
-      </ListItem>
-    );
+  const handleClickUp = async()=>{
+    const body = {
+      msgid:msgid,
+      session_id:session_id,
+      main_fun_arn:main_fun_arn,
+      apigateway_endpoint:apigateway_endpoint,
+      username:userInfo.username,
+      action: upFilled?'cancel-thumbs-up':'thumbs-up'
+    }
+    setUpLoading(true);
+    try {
+        const resp = await postFeedback(headers,body);
+        setUpFilled(prev=>!prev);
+        setDownFilled(false);
+        setUpLoading(false);
+    } catch (error) {
+      console.log(error);
+      setUpLoading(false);
+    }
   }
-};
+  return (
+    <SpaceBetween direction="horizontal" size="xs">
+      <Button
+        ariaLabel="thumbs-down"
+        iconAlign="right"
+        loading={downLoading}
+        iconName={downFilled?"thumbs-down-filled":"thumbs-down"}
+        variant={downFilled?'primary':'normal'}
+        target="_blank"
+        onClick = {handleClickDown}
+      >
+      </Button>
+      <Button
+        ariaLabel="thumbs-up"
+        iconAlign="right"
+        loading={upLoading}
+        iconName={upFilled?"thumbs-up-filled":"thumbs-up"}
+        variant={upFilled?'primary':'normal'}
+        target="_blank"
+        onClick = {handleClickUp}
+      >
+      </Button>
+    </SpaceBetween>
+  )
+}
 
 const TextItem = (props) => {
   const { sx, ...other } = props;
@@ -393,6 +299,7 @@ const TextItem = (props) => {
         borderRadius: 2,
         fontSize: "14px",
         // maxWidth:"max-content",
+        minWidth:'150px',
         width:"auto",
         fontWeight: "400",
         ...sx,
@@ -407,7 +314,7 @@ const ChatBox = ({ msgItems, loading }) => {
 
   useEffect(() => {
     if (loading) {
-      setLoaderTxt("Waiting...");
+      setLoaderTxt("Waiting.........");
       // handleStartTick();
     } else {
       setLoaderTxt("");
@@ -427,6 +334,8 @@ const ChatBox = ({ msgItems, loading }) => {
       who={msg.who}
       text={msg.text}
       image={msg.image}
+      msgid={msg.id}
+      connectionId={msg.connectionId}
     />
   ));
 
@@ -467,7 +376,7 @@ const ConversationsPanel = () => {
     setLoading(false);
     //save conversations
     const resp = JSON.parse(data);
-    // console.log(streamMsg);
+    console.log(resp);
     
     let chunck = resp.text.content;
     // console.log(resp);
@@ -488,7 +397,7 @@ const ConversationsPanel = () => {
       if (chunck === "[DONE]") {
         setConversations((prev) => [
           ...prev,
-          { role: resp.role, content: streamMsg },
+          { role: resp.role, content: streamMsg,connectionId:resp.connectionId },
         ]);
 
         //如果是SD模型返回的url，则保存起来
@@ -514,12 +423,12 @@ const ConversationsPanel = () => {
       //创建一个新的item
       setMsgItems((prev) => [
         ...prev,
-        { id: resp.msgid, who: BOTNAME, text: chunck },
+        { id: resp.msgid, who: BOTNAME, text: chunck,connectionId:resp.connectionId  },
       ]);
     } else {
       setMsgItems((prev) => [
         ...prev.slice(0, -1),
-        { id: resp.msgid, who: BOTNAME, text: streamMsg },
+        { id: resp.msgid, who: BOTNAME, text: streamMsg,connectionId:resp.connectionId  },
       ]);
     }
   };

@@ -141,7 +141,7 @@ def parse_args(text):
 def handler(event,lambda_context):
     body = json.loads(event['Records'][0]['Sns']['Message'])
     requestContext = body.get('requestContext')
-    ws_endpoint =  "https://" + requestContext['domainName'] + "/" + requestContext['stage'];
+    ws_endpoint =  "https://" + requestContext['domainName'] + "/" + requestContext['stage']
     connectionId = requestContext['connectionId']
     messages = body.get('payload')['messages']
     params = body.get('payload')['params']
@@ -162,7 +162,7 @@ def handler(event,lambda_context):
             return {'statusCode': 200}
         print(f"prompt:{prompt}")
         if sd_endpoint_name == '' or sd_api == '':
-            data = json.dumps({ 'msgid':msgid, 'role': "AI", 'text': {'content':'sd_endpoint_name or sd_api not defined'} })
+            data = json.dumps({ 'msgid':msgid, 'role': "AI", 'text': {'content':'sd_endpoint_name or sd_api not defined'},'connectionId':connectionId })
             postMessage(wsclient,data,connectionId)
             return {'statusCode': 200}
         
@@ -220,7 +220,8 @@ def handler(event,lambda_context):
                     max_attempts=100, delay=5  #  number of attempts  #  time in seconds to wait between attempts
             )
             start2 = time.time()
-            data = json.dumps({ 'msgid':msgid, 'role': "AI", 'text': {'content':f"API wall time taken: {round((start2 - start),3)}s, generating images, please wait..." }})
+            data = json.dumps({ 'msgid':msgid, 'role': "AI", 'text': {'content':f"API wall time taken: {round((start2 - start),3)}s, generating images, please wait..." },
+                            'connectionId':connectionId})
             postMessage(wsclient,data,connectionId)
             
             output_path = response.text
@@ -245,15 +246,15 @@ def handler(event,lambda_context):
                 image_bucket, image_key = get_bucket_and_key(image_uri)
                 img = generate_s3_image_url(image_bucket,image_key)
                 result += f'\n![imgname]({img})'
-                data = json.dumps({ 'msgid':msgid, 'role': "AI", 'text': {'content':result} })
+                data = json.dumps({ 'msgid':msgid, 'role': "AI", 'text': {'content':result},'connectionId':connectionId })
             postMessage(wsclient,data,connectionId)
 
 
         except Exception as e:
-            data = json.dumps({ 'msgid':msgid, 'role': "AI", 'text': {'content':f'something wrong with api, {str(e)}'} })
+            data = json.dumps({ 'msgid':msgid, 'role': "AI", 'text': {'content':f'something wrong with api, {str(e)}'},'connectionId':connectionId })
             postMessage(wsclient,data,connectionId)
         ##append end flag
-        data = json.dumps({ 'msgid':msgid, 'role': "AI", 'text': {'content':'[DONE]'} })
+        data = json.dumps({ 'msgid':msgid, 'role': "AI", 'text': {'content':'[DONE]'} ,'connectionId':connectionId})
         postMessage(wsclient,data,connectionId)
     else:
         payload = {
@@ -275,11 +276,11 @@ def handler(event,lambda_context):
                 use_stream = body[0].get('use_stream')
                 if not use_stream:
                     answer = body[0]['choices'][0]['text']
-                    data = json.dumps({ 'msgid':msgid, 'role': "AI", 'text': {'content':answer if answer else ' '} })
+                    data = json.dumps({ 'msgid':msgid, 'role': "AI", 'text': {'content':answer if answer else ' '},'connectionId':connectionId})
                     postMessage(wsclient,data,connectionId)
 
             except Exception as e:
-                data = json.dumps({ 'msgid':msgid, 'role': "AI", 'text': {'content':f'something wrong with api, {str(e)}'} })
+                data = json.dumps({ 'msgid':msgid, 'role': "AI", 'text': {'content':f'something wrong with api, {str(e)}'},'connectionId':connectionId })
                 postMessage(wsclient,data,connectionId)
 
         else:
@@ -293,7 +294,7 @@ def handler(event,lambda_context):
             print(payload_json)
             error = payload_json.get('errorMessage')
             if error:
-                data = json.dumps({ 'msgid':msgid, 'role': "AI", 'text': {'content':f'something wrong:{error}'} })
+                data = json.dumps({ 'msgid':msgid, 'role': "AI", 'text': {'content':f'something wrong:{error}'} ,'connectionId':connectionId})
                 postMessage(wsclient,data,connectionId)
             else:
                 body = payload_json['body']
@@ -302,13 +303,13 @@ def handler(event,lambda_context):
                     use_stream = body[0].get('use_stream')
                     if not use_stream:
                         answer = body[0]['choices'][0]['text']
-                        data = json.dumps({ 'msgid':msgid, 'role': "AI", 'text': {'content': answer if answer else ' '} })
+                        data = json.dumps({ 'msgid':msgid, 'role': "AI", 'text': {'content': answer if answer else ' '},'connectionId':connectionId })
                         postMessage(wsclient,data,connectionId)
                 else:
-                    data = json.dumps({ 'msgid':msgid, 'role': "AI", 'text': {'content':'something wrong'} })
+                    data = json.dumps({ 'msgid':msgid, 'role': "AI", 'text': {'content':'something wrong'} ,'connectionId':connectionId})
                     postMessage(wsclient,data,connectionId)
         ##append end flag
-        data = json.dumps({ 'msgid':msgid, 'role': "AI", 'text': {'content':'[DONE]'} })
+        data = json.dumps({ 'msgid':msgid, 'role': "AI", 'text': {'content':'[DONE]'} ,'connectionId':connectionId})
         postMessage(wsclient,data,connectionId)
 
     return {'statusCode': 200}

@@ -301,6 +301,10 @@ export class LambdaStack extends NestedStack {
     template.addMethod('POST',templateIntegration,{authorizer});
     template.addMethod('DELETE',templateIntegration,{authorizer});
 
+    const feedbackIntegration = new LambdaIntegration(this.lambda_list_idx );
+    const feedback = api.root.addResource('feedback');
+    feedback.addMethod('POST',feedbackIntegration,{authorizer});
+
 
     const loginIntegration = new LambdaIntegration(this.login_fn);
     const login = api.root.addResource("login");

@@ -27,6 +27,7 @@ export const remoteGetCall = async (headers,api,params,controller) =>{
 }
 
 export const uploadS3 = async (fileob,bucket,objprefix,region,ak,sk) =>{
+    // console.log(fileob.name,bucket,objprefix,region,ak,sk);
     const s3Client = new S3Client({ region: region,credentials:{accessKeyId:ak,secretAccessKey:sk}});
     const params = {
         Bucket:bucket,
@@ -154,6 +155,16 @@ export const addTemplate = async(headers,formdata) =>{
         throw err;
     }
 }
+
+export const postFeedback = async(headers,formdata) =>{
+    try {
+        const resp = await axios.post(`${API_http}/feedback`,JSON.stringify(formdata), {headers});
+        return resp.data;
+    } catch (err) {
+        throw err;
+    }
+}
+
 
 export const getTemplate = async(headers,queryParams) =>{
     const queryString = Object.keys(queryParams)
