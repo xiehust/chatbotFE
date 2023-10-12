@@ -4,7 +4,7 @@ import React, { useEffect, useRef, useState } from 'react';
 import { useCollection } from '@cloudscape-design/collection-hooks';
 import { COLUMN_DEFINITIONS, DEFAULT_PREFERENCES, Preferences,} from './table-config';
 import { Flashbar, Pagination, Table, TextFilter } from '@cloudscape-design/components';
-import { FullPageHeader ,Breadcrumbs,DeleteConfirmModal} from './common-components';
+import { FullPageHeader ,Breadcrumbs} from './common-components';
 import {
   CustomAppLayout,
   Navigation,

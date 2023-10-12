@@ -16,7 +16,7 @@ import { API_socket,postFeedback } from "../commons/api-gateway";
 import PromptPanel from "./prompt-panel";
 import { useLocalStorage } from '../../common/localStorage';
 import {params_local_storage_key} from "../chatbot/common-components";
-
+import AddFeedbackModal from "./addfeedback";
 import ReactMarkdown from "react-markdown";
 import gfm from "remark-gfm";
 
@@ -199,19 +199,32 @@ const MsgItem = ({ who, text, image,msgid,connectionId  }) => {
 };
 
 const ThumbButtons = ({msgid,session_id}) =>{
-  const [downFilled, setDownFilled] = useState(false);
-  const [upFilled, setUpFilled] = useState(false);
   const [downLoading, setDownLoading] = useState(false);
   const [upLoading, setUpLoading] = useState(false);
+  const {setFeedBackModalVisible} = useChatData();
   const token = useAuthToken();
+  const { t } = useTranslation();
   const userInfo = useAuthUserInfo();
   const headers = {
     Authorization: token.token,
   };
-  const [localStoredParams] = useLocalStorage(
+  const [localStoredParams,setLocalStoredParams] = useLocalStorage(
     params_local_storage_key+userInfo.username,
     null
   );
+  const [downFilled, setDownFilled] = useState(
+    localStoredParams?.feedback !== undefined && localStoredParams.feedback[msgid] &&localStoredParams.feedback[msgid].action === 'thumbs-down'? true:false
+  );
+  const [upFilled, setUpFilled] = useState(
+    localStoredParams?.feedback !== undefined && localStoredParams.feedback[msgid] &&localStoredParams.feedback[msgid].action === 'thumbs-up'? true:false
+  );
+  useEffect(()=>{
+
+
+  },[]);
+
+
+
   const main_fun_arn = localStoredParams.main_fun_arn;
   const apigateway_endpoint = localStoredParams.apigateway_endpoint;
 
@@ -230,6 +243,13 @@ const ThumbButtons = ({msgid,session_id}) =>{
           setDownFilled(prev=>!prev);
           setUpFilled(false);
           setDownLoading(false);
+          setLocalStoredParams({
+            ...localStoredParams,
+            feedback:{
+              ...localStoredParams.feedback,
+              [msgid]:body}
+          });
+
       } catch (error) {
         console.log(error);
         setDownLoading(false);
@@ -247,11 +267,18 @@ const ThumbButtons = ({msgid,session_id}) =>{
       action: upFilled?'cancel-thumbs-up':'thumbs-up'
     }
     setUpLoading(true);
+    // setFeedback(body);
     try {
         const resp = await postFeedback(headers,body);
         setUpFilled(prev=>!prev);
         setDownFilled(false);
         setUpLoading(false);
+        setLocalStoredParams({
+          ...localStoredParams,
+          feedback:{
+            ...localStoredParams.feedback,
+            [msgid]:body}
+        });
     } catch (error) {
       console.log(error);
       setUpLoading(false);
@@ -260,7 +287,6 @@ const ThumbButtons = ({msgid,session_id}) =>{
   return (
     <SpaceBetween direction="horizontal" size="xs">
       <Button
-        ariaLabel="thumbs-down"
         iconAlign="right"
         loading={downLoading}
         iconName={downFilled?"thumbs-down-filled":"thumbs-down"}
@@ -270,7 +296,6 @@ const ThumbButtons = ({msgid,session_id}) =>{
       >
       </Button>
       <Button
-        ariaLabel="thumbs-up"
         iconAlign="right"
         loading={upLoading}
         iconName={upFilled?"thumbs-up-filled":"thumbs-up"}
@@ -279,6 +304,15 @@ const ThumbButtons = ({msgid,session_id}) =>{
         onClick = {handleClickUp}
       >
       </Button>
+      <Button
+      iconAlign="right"
+      iconName="external"
+      target="_blank"
+      onClick={setFeedBackModalVisible}
+    >
+      {t('correct_answer')}
+    </Button>
+
     </SpaceBetween>
   )
 }
@@ -289,8 +323,9 @@ const TextItem = (props) => {
   return (
     <Box
       sx={{
-        p: 1.2,
-        // m: 1.2,
+        pr: 1,
+        pl: 1,
+        m: 1,
         whiteSpace: "normal",
         bgcolor: "#f2f8fd",
         color: grey[800],
@@ -299,7 +334,7 @@ const TextItem = (props) => {
         borderRadius: 2,
         fontSize: "14px",
         // maxWidth:"max-content",
-        minWidth:'150px',
+        minWidth:'400px',
         width:"auto",
         fontWeight: "400",
         ...sx,
@@ -314,7 +349,7 @@ const ChatBox = ({ msgItems, loading }) => {
 
   useEffect(() => {
     if (loading) {
-      setLoaderTxt("Waiting.........");
+      setLoaderTxt("Waiting......");
       // handleStartTick();
     } else {
       setLoaderTxt("");
@@ -340,6 +375,7 @@ const ChatBox = ({ msgItems, loading }) => {
   ));
 
   return (
+    <Box sx={{minWidth: 300, minHeight:400}} >
     <List
       sx={{
         position: "relative",
@@ -354,6 +390,7 @@ const ChatBox = ({ msgItems, loading }) => {
       )}
       <ListItem ref={scrollRef} />
     </List>
+    </Box>
   );
 };
 
@@ -369,6 +406,8 @@ const ConversationsPanel = () => {
     setConversations,
     setAlertOpen,
     hideRefDoc,
+    feedBackModalVisible,
+    setFeedBackModalVisible
   } = useChatData();
   const [streamMsg, setStreamMsg] = useState("");
   const authtoken = useAuthToken();
@@ -463,6 +502,7 @@ const ConversationsPanel = () => {
 
   return (
     <SpaceBetween size="l">
+    <AddFeedbackModal visible={feedBackModalVisible} setVisible={setFeedBackModalVisible} />
       <Container header={<Header variant="h2">{t("conversations")}</Header>}>
         <ChatBox msgItems={msgItems} loading={loading} />
       </Container>

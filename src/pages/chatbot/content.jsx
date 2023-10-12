@@ -26,6 +26,8 @@ const Content = () => {
   const [loading, setLoading] = useState(false);
   const [conversations, setConversations] = useState([]);
   const [img2txtUrl, setImg2txtUrl] = useState(null);
+  const [feedBackModalVisible,setFeedBackModalVisible] = useState(false);
+  const [feedback,setFeedback] = useState({});
   const { t } = useTranslation();
   const [alertopen, setAlertOpen] = useState(false);
   return (
@@ -44,7 +46,9 @@ const Content = () => {
         alertopen,
         setAlertOpen,
         img2txtUrl,
-        setImg2txtUrl
+        setImg2txtUrl,
+        feedBackModalVisible,
+        setFeedBackModalVisible
       }}
     >
       <ModelSettings />

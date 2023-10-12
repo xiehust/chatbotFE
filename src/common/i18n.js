@@ -160,7 +160,8 @@ i18n
             hide_ref_doc:'Hide Ref Doc',
             upload_image:'Upload Image',
             multi_rounds:'Multi-rounds',
-            use_stream:'Stream'
+            use_stream:'Stream',
+            correct_answer:'Correct'
         }
       },
       zh:{
@@ -307,7 +308,8 @@ i18n
             hide_ref_doc:'隐藏引用',
             upload_image:'上传图片',
             multi_rounds:'多轮会话',
-            use_stream:'Stream'
+            use_stream:'Stream',
+            correct_answer:'帮助纠正'
 
         }
       }
