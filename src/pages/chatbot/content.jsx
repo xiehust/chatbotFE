@@ -27,7 +27,8 @@ const Content = () => {
   const [conversations, setConversations] = useState([]);
   const [img2txtUrl, setImg2txtUrl] = useState(null);
   const [feedBackModalVisible,setFeedBackModalVisible] = useState(false);
-  const [feedback,setFeedback] = useState({});
+  const [modalData,setModalData] = useState({});
+  const [stopFlag,setStopFlag] = useState(false);
   const { t } = useTranslation();
   const [alertopen, setAlertOpen] = useState(false);
   return (
@@ -48,7 +49,11 @@ const Content = () => {
         img2txtUrl,
         setImg2txtUrl,
         feedBackModalVisible,
-        setFeedBackModalVisible
+        setFeedBackModalVisible,
+        modalData,
+        setModalData,
+        stopFlag,
+        setStopFlag
       }}
     >
       <ModelSettings />

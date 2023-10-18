@@ -161,7 +161,15 @@ i18n
             upload_image:'Upload Image',
             multi_rounds:'Multi-rounds',
             use_stream:'Stream',
-            correct_answer:'Correct'
+            correct_answer:'Correct Answer',
+            provide_your_answer:'Thanks for your answer',
+            feedback_management:'Feedback Management',
+            create_new_faq:'Create New FAQ',
+            question:'Question',
+            answer:'Answer',
+            inject:"Inject",
+            inject_new_faq:"Injected new FAQ to Knowledge base",
+            confirm_change:'Save changes'
         }
       },
       zh:{
@@ -309,7 +317,15 @@ i18n
             upload_image:'上传图片',
             multi_rounds:'多轮会话',
             use_stream:'Stream',
-            correct_answer:'帮助纠正'
+            correct_answer:'帮我纠正',
+            provide_your_answer:'感谢您的反馈',
+            feedback_management:'反馈管理',
+            create_new_faq:'创建新的FAQ',
+            question:'问题',
+            answer:'答案',
+            inject:"注入知识库",
+            inject_new_faq:"注入新的FAQ知识",
+            confirm_change:'保存修改'
 
         }
       }

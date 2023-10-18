@@ -165,6 +165,20 @@ export const postFeedback = async(headers,formdata) =>{
     }
 }
 
+export const listFeedback = async(headers,queryParams={}) =>{
+    // Build the query string parameters
+    const queryString = Object.keys(queryParams)
+    .map(key => `${encodeURIComponent(key)}=${encodeURIComponent(queryParams[key])}`)
+    .join('&');
+
+    try {
+        const resp = await axios.get(`${API_http}/feedback?${queryString}`, {headers});
+        return resp.data;
+    } catch (err) {
+        throw err;
+    }
+}
+
 
 export const getTemplate = async(headers,queryParams) =>{
     const queryString = Object.keys(queryParams)

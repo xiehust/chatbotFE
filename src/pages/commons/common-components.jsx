@@ -40,14 +40,15 @@ const navItems_admin = [
     text: i18n.t('chatspace'),
     items: [
       { type: 'link', text: i18n.t('chatbot'), href: '/chat' },
-      { type: 'link', text: i18n.t('docs'), href: '/docs' },
-      { type: 'link', text: i18n.t('prompt_template'), href: '/template' },
     ],
   }, 
   {
     type: 'section',
     text: i18n.t('admin'),
     items: [
+      { type: 'link', text: i18n.t('docs'), href: '/docs' },
+      { type: 'link', text: i18n.t('prompt_template'), href: '/template' },
+      { type: 'link', text: i18n.t('feedback_management'), href: '/feedback' },
       { type: 'link', text: i18n.t('user'), href: '/admin/user' },
     ],
   },
@@ -59,10 +60,17 @@ const navItems = [
     text: i18n.t('chatspace'),
     items: [
       { type: 'link', text: i18n.t('chatbot'), href: '/chat' },
-      { type: 'link', text: i18n.t('docs'), href: '/docs' },
-      { type: 'link', text: i18n.t('prompt_template'), href: '/template' },
     ],
   }, 
+  {
+    type: 'section',
+    text: i18n.t('admin'),
+    items: [
+      { type: 'link', text: i18n.t('docs'), href: '/docs' },
+      { type: 'link', text: i18n.t('prompt_template'), href: '/template' },
+      { type: 'link', text: i18n.t('feedback_management'), href: '/feedback' },
+    ],
+  },
 ];
 
 

@@ -35,8 +35,8 @@ export const defaultModelParams = {
   // embedding_model_name: embeddings[0].value,
   // embedding_model_name_opt: embeddings[0],
   obj_prefix: "ai-content/",
-  system_role: "AWSBot",
-  system_role_prompt: "你是云服务AWS的智能客服机器人",
+  system_role: "Assitant",
+  system_role_prompt: "",
   template_id: "default",
   template_opt: { label: "default", value: "default" },
   hide_ref: false,
@@ -199,6 +199,7 @@ const ExpandableSettingPanel = () => {
         id: it.id.S,
         username: it.username.S,
       }));
+      items.sort((a,b) => a.template_name > b.template_name ?1:-1);
       items.unshift({
         id: defaultModelParams.template_id,
         template_name: defaultModelParams.template_id,
@@ -278,6 +279,7 @@ const ExpandableSettingPanel = () => {
       template_id:
         localStoredParams?.template_id || defaultModelParams.template_id,
       username: userinfo.username,
+      feedback:null,
     });
   }, []);
   // console.log('modelParams:',modelParams);
@@ -389,7 +391,7 @@ const ExpandableSettingPanel = () => {
               });
             }}
             options={alldocs.map(({ template_name, id, username }) => ({
-              label: `${template_name}/${username}/${id}`,
+              label: `${template_name}[${id}]`,
               value: id,
             }))}
             selectedAriaLabel="Selected"
@@ -453,7 +455,9 @@ const PromptPanel = ({ sendMessage }) => {
     conversations,
     setConversations,
     img2txtUrl,
-    setImg2txtUrl
+    setImg2txtUrl,
+    stopFlag,
+    setStopFlag
   } = useChatData();
   const [localStoredParams, setLocalStoredParams] = useLocalStorage(
     params_local_storage_key + userinfo.username,
@@ -485,6 +489,7 @@ const PromptPanel = ({ sendMessage }) => {
   );
 
   const onSubmit = (values,imgUrl=null) => {
+    setStopFlag(true);
     const prompt = values.trimEnd();
     if (prompt === "") {
       return;
@@ -520,17 +525,18 @@ const PromptPanel = ({ sendMessage }) => {
             value={promptValue}
             onChange={(event) => setPromptValue(event.detail.value)}
             onKeyDown={(event) => {
-              if (event.detail.key === "Enter" && event.detail.ctrlKey) {
+              if (event.detail.key === "Enter" && !event.detail.ctrlKey) {
                 onSubmit(promptValue);
               }
             }}
-            placeholder="Ctrl+Enter to send"
+            placeholder="Enter to send"
             autoFocus
             rows={3}
           />
           <SpaceBetween size="xs" direction="horizontal">
             <Button
               variant="primary"
+              loading={stopFlag}
               onClick={(event) => onSubmit(promptValue)}
             >
               {t("send")}
@@ -603,6 +609,10 @@ const PromptPanel = ({ sendMessage }) => {
                 onChange={({ detail }) => {
                   setRefDocChecked(detail.checked);
                   setHideRefDoc(detail.checked);
+                  setModelParams((prev) => ({
+                    ...prev,
+                    hide_ref: detail.checked,
+                  }));
                   setLocalStoredParams({
                     ...localStoredParams,
                     hide_ref: detail.checked,

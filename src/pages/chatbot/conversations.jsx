@@ -182,7 +182,7 @@ const MsgItem = ({ who, text, image,msgid,connectionId  }) => {
       <ListItem>
         <Stack direction="row" spacing={2} sx={{ alignItems: "top" }}>
           <Avatar src={botlogo} alt={"AIBot"} />
-          <Grid container spacing={1}>
+          <Grid container spacing={0.5}>
             <Grid item xs={11}>
               <TextItem>
                 <MarkdownToHtml text ={newlines.join(' ')}/>
@@ -201,7 +201,7 @@ const MsgItem = ({ who, text, image,msgid,connectionId  }) => {
 const ThumbButtons = ({msgid,session_id}) =>{
   const [downLoading, setDownLoading] = useState(false);
   const [upLoading, setUpLoading] = useState(false);
-  const {setFeedBackModalVisible} = useChatData();
+  const {setFeedBackModalVisible,setModalData} = useChatData();
   const token = useAuthToken();
   const { t } = useTranslation();
   const userInfo = useAuthUserInfo();
@@ -238,6 +238,7 @@ const ThumbButtons = ({msgid,session_id}) =>{
         action: downFilled?'cancel-thumbs-down':'thumbs-down'
       }
       setDownLoading(true);
+      // setModalData(body);
       try {
           const resp = await postFeedback(headers,body);
           setDownFilled(prev=>!prev);
@@ -267,7 +268,7 @@ const ThumbButtons = ({msgid,session_id}) =>{
       action: upFilled?'cancel-thumbs-up':'thumbs-up'
     }
     setUpLoading(true);
-    // setFeedback(body);
+    // setModalData(body);
     try {
         const resp = await postFeedback(headers,body);
         setUpFilled(prev=>!prev);
@@ -308,7 +309,19 @@ const ThumbButtons = ({msgid,session_id}) =>{
       iconAlign="right"
       iconName="external"
       target="_blank"
-      onClick={setFeedBackModalVisible}
+      onClick={()=>{
+        const data = {
+          msgid:msgid,
+          session_id:session_id,
+          main_fun_arn:main_fun_arn,
+          apigateway_endpoint:apigateway_endpoint,
+          username:userInfo.username,
+          action: upFilled?'thumbs-up':(downFilled?'thumbs-down':'')
+        }
+        setFeedBackModalVisible(true);
+        setModalData(data);
+        }
+        }
     >
       {t('correct_answer')}
     </Button>
@@ -407,7 +420,8 @@ const ConversationsPanel = () => {
     setAlertOpen,
     hideRefDoc,
     feedBackModalVisible,
-    setFeedBackModalVisible
+    setFeedBackModalVisible,
+    setStopFlag,
   } = useChatData();
   const [streamMsg, setStreamMsg] = useState("");
   const authtoken = useAuthToken();
@@ -434,6 +448,7 @@ const ConversationsPanel = () => {
       setStreamMsg((prev) => prev + chunck);
       // if stream stop, save the whole message
       if (chunck === "[DONE]") {
+        setStopFlag(false);
         setConversations((prev) => [
           ...prev,
           { role: resp.role, content: streamMsg,connectionId:resp.connectionId },

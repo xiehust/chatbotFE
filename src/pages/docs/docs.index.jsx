@@ -30,8 +30,8 @@ function TableContent({
   buttonName,
   buttonHref,
  }) {
-  const [preferences, setPreferences] = useLocalStorage('Benchportal-Docs-Table-Preferences', DEFAULT_PREFERENCES);
-  const [columnDefinitions, saveWidths] = useColumnWidths('Benchportal-React-Table-Widths', COLUMN_DEFINITIONS);
+  const [preferences, setPreferences] = useLocalStorage('Chatbot-Docs-Table-Preferences', DEFAULT_PREFERENCES);
+  const [columnDefinitions, saveWidths] = useColumnWidths('Chatbot-React-Table-Widths', COLUMN_DEFINITIONS);
   const {t} = useTranslation();
 
   const { items, actions, filteredItemsCount, collectionProps, filterProps, paginationProps } = useCollection(

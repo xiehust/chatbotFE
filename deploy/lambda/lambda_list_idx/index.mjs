@@ -317,6 +317,61 @@ else if (event.httpMethod === 'POST' && event.resource === '/feedback'){
       }
     }
   }
+}//获取反馈
+else if (event.httpMethod === 'GET' && event.resource === '/feedback'){
+  const lambdaClient = new LambdaClient();
+  const queryParams = event.queryStringParameters;
+  console.log(queryParams);
+  const main_fun_arn = queryParams?.main_fun_arn === 'undefined' ? process.env.MAIN_FUN_ARN:queryParams.main_fun_arn;
+  const apigateway_endpoint = queryParams?.apigateway_endpoint === 'undefined'? '':queryParams.apigateway_endpoint;
+  const body = {
+    ...queryParams,
+    main_fun_arn:main_fun_arn,
+    apigateway_endpoint:apigateway_endpoint,
+  }
+  if (apigateway_endpoint.length > 0){
+    const options ={
+      method:'POST',
+      body:JSON.stringify({method:'get',resource:'feedback',body:body})
+    }
+      try {
+          const response = await fetch(apigateway_endpoint,options);
+          const ret = await response.json();
+          console.log(JSON.stringify(ret));
+          return {
+            statusCode: 200,
+            headers:cors_headers,
+            body:JSON.stringify(ret)
+          }
+      }catch(err){
+        return {
+          statusCode: 500,
+          headers:cors_headers,
+          body:JSON.stringify(err)
+        }
+      }
+      
+  }
+  else if (main_fun_arn&&main_fun_arn.length >0){
+    const params = {FunctionName: main_fun_arn,
+          Payload:JSON.stringify({method:'get',resource:'feedback',body:body})}
+    try {
+        const response =await lambdaClient.send(new InvokeCommand(params));
+        const payload = JSON.parse(Buffer.from(response.Payload).toString());
+            console.log(JSON.stringify(payload));
+      return {
+        statusCode: 200,
+        headers:cors_headers,
+        body:JSON.stringify(payload)
+      }
+    }catch(err){  
+      return {
+        statusCode: 500,
+        headers:cors_headers,
+        body:JSON.stringify(err)
+      }
+    }
+  }
 }
 
 }
