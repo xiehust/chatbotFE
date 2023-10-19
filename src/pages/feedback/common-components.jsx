@@ -76,7 +76,7 @@ export const FullPageHeader = ({
   const handleInject = async () =>{
     const body = {
       msgid:msgid,
-      session_id:msgid,
+      session_id:sid,
       username:username,
       s3_bucket:localStoredParams.s3_bucket,
       obj_prefix:localStoredParams.obj_prefix,
