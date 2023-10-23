@@ -133,7 +133,7 @@ export class LambdaStack extends NestedStack {
     user_table.grantReadWriteData(this.users_fn);
     
     const layer = new lambda.LayerVersion(this, 'ChatbotLayer', {
-      code: lambda.Code.fromAsset('layer'),
+      code: lambda.Code.fromAsset('layer/ChatbotFELayer.zip'),
       description: 'ChatbotFELayer Python helper utility',
       compatibleRuntimes: [lambda.Runtime.PYTHON_3_9],
       layerVersionName:'ChatbotFELayer',
@@ -174,10 +174,16 @@ export class LambdaStack extends NestedStack {
       environment: {
         OPENAI_API_KEY: process.env.OPENAI_API_KEY,
         MAIN_FUN_ARN:process.env.MAIN_FUN_ARN,
-        embedding_endpoint:process.env.embedding_endpoint
+        all_in_one_api:process.env.all_in_one_api,
+        sd_endpoint_name:process.env.sd_endpoint_name
       },
       memorySize: 256,
     })
+
+    //read sd image data from s3 
+    const sgbucket = s3.Bucket.fromBucketAttributes(this,'sagemakerbucket',{bucketName:`sagemaker-${process.env.CDK_DEFAULT_REGION}-${process.env.CDK_DEFAULT_ACCOUNT}`});
+    sgbucket.grantRead(this.lambda_chat_py);
+
 
     this.lambda_connect_handle = createNodeJsLambdaFn(
       this,
@@ -211,7 +217,8 @@ export class LambdaStack extends NestedStack {
       {
         ...commonProps,
         environment: {
-          DOC_INDEX_TABLE:'chatbot_doc_index'
+          DOC_INDEX_TABLE:'chatbot_doc_index',
+          MAIN_FUN_ARN:process.env.MAIN_FUN_ARN
         },
       }
     );
@@ -237,6 +244,7 @@ export class LambdaStack extends NestedStack {
 
     const main_fn = lambda.Function.fromFunctionArn(this,'main func',process.env.MAIN_FUN_ARN);
     main_fn.grantInvoke(this.lambda_chat_py);
+    main_fn.grantInvoke(this.lambda_list_idx);
 
     const api = new RestApi(this, "ChatbotFERestApi", {
       cloudWatchRole: true,
@@ -292,6 +300,14 @@ export class LambdaStack extends NestedStack {
     template.addMethod('GET',templateIntegration,{authorizer});
     template.addMethod('POST',templateIntegration,{authorizer});
     template.addMethod('DELETE',templateIntegration,{authorizer});
+
+    const feedbackIntegration = new LambdaIntegration(this.lambda_list_idx );
+    const feedback = api.root.addResource('feedback');
+    feedback.addMethod('POST',feedbackIntegration,{authorizer});
+    feedback.addMethod('DELETE',feedbackIntegration,{authorizer});
+    feedback.addMethod('GET',feedbackIntegration,{authorizer});
+
+
 
 
     const loginIntegration = new LambdaIntegration(this.login_fn);

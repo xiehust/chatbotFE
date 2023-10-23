@@ -24,6 +24,12 @@ import 'ace-builds/css/theme/tomorrow_night_bright.css';
 // const ace = await import('ace-builds');
 // ace.config.set('useStrictCSP', true);
 
+export const generateId = ()=>{
+  const timestamp = new Date().getTime(); // Get the current timestamp in milliseconds
+  const randomNumber = Math.random().toString(16).slice(2,8);
+  return `${timestamp}-${randomNumber}`
+}
+
 
 export const TemplateEditor = (props) =>{
   const [preferences, setPreferences] = useState(

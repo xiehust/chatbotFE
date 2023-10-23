@@ -1,25 +1,37 @@
-import React, { createContext, useContext, useEffect, useState } from "react";
+// Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
+// SPDX-License-Identifier: MIT-0
+import React, { useEffect, useRef, useState ,createContext,useContext} from "react";
+import { useParams } from "react-router-dom";
 import {
-  Form,
-  SpaceBetween,
-  Button,
-  FormField,
   Container,
   Header,
-  Input,
-  Textarea,
+  SpaceBetween,
+  Box,
+  RadioGroup,
+  ColumnLayout,
+  ContentLayout,
+  Spinner,
+  FormField,
   Link,
+  Textarea,
+  Input,
+  Form,
+  Button
 } from "@cloudscape-design/components";
-import { TemplateEditor,generateId } from "./common-components";
-import { useAuthorizedHeader,useAuthUserInfo } from "../commons/use-auth";
-import { useNavigate } from "react-router-dom";
-import { useSimpleNotifications } from "../commons/use-notifications";
+import { BreadcrumbsDynmic ,generateId,TemplateEditor} from "./common-components";
 import {  addTemplate } from "../commons/api-gateway";
-import { useTranslation } from 'react-i18next';
+import { CustomAppLayout, Navigation } from "../commons/common-components";
+import { useAuthorizedHeader, useAuthUserInfo } from "../commons/use-auth";
+import {getTemplate} from '../commons/api-gateway';
 import {params_local_storage_key} from "../chatbot/common-components";
 import { useLocalStorage } from '../../common/localStorage';
+import { useTranslation } from "react-i18next";
+import { useSimpleNotifications } from "../commons/use-notifications";
+import { useNavigate } from "react-router-dom";
 
-const addTemplateFormCtx = createContext();
+
+const detailTemplateFormCtx = createContext();
+
 
 function validateForm(props) {
   if (
@@ -30,10 +42,9 @@ function validateForm(props) {
   } else return true;
 }
 
-
-function BaseFormContent({ content, onCancelClick, errorText = null }) {
+function BaseFormContent({ content, errorText = null }) {
   const {t} = useTranslation();
-  const { formData ,setInvalid} = useContext(addTemplateFormCtx);
+  const { formData ,setInvalid} = useContext(detailTemplateFormCtx);
   const { setNotificationItems } = useSimpleNotifications();
   const headers = useAuthorizedHeader();
   const userInfo = useAuthUserInfo();
@@ -57,9 +68,8 @@ function BaseFormContent({ content, onCancelClick, errorText = null }) {
         }
         setSubLoading(true);
         console.log(JSON.stringify(formData));
-        const id = msgid;
         const body = { ...formData, 
-        id: id, 
+        id: formData.id, 
         main_fun_arn:main_fun_arn,
         apigateway_endpoint:apigateway_endpoint,
         username:userInfo.username };
@@ -70,9 +80,9 @@ function BaseFormContent({ content, onCancelClick, errorText = null }) {
             setNotificationItems((item) => [
               ...item,
               {
-                header: `Success to create template`,
+                header: `Success to save template`,
                 type: "success",
-                content: `Success to create`,
+                content: `Success to save`,
                 dismissible: true,
                 dismissLabel: "Dismiss message",
                 onDismiss: () =>
@@ -89,7 +99,7 @@ function BaseFormContent({ content, onCancelClick, errorText = null }) {
             setSubLoading(false);
             setNotificationItems(() => [
               {
-                header: "Failed to create template",
+                header: "Failed to save template",
                 type: "error",
                 dismissible: true,
                 dismissLabel: "Dismiss message",
@@ -103,10 +113,10 @@ function BaseFormContent({ content, onCancelClick, errorText = null }) {
       <Form
         header={
           <Header
-            variant="h1"
+          variant="h1"
           >
-            {t('add_template')}
-          </Header>
+          {`${formData.id}`}
+        </Header>
         }
         actions={
           <SpaceBetween direction="horizontal" size="xs">
@@ -116,7 +126,7 @@ function BaseFormContent({ content, onCancelClick, errorText = null }) {
             {t('cancel')}
             </Button>
             <Button loading={sumbitloading} variant="primary">
-              {t('confirm')}
+              {t('confirm_change')}
             </Button>
           </SpaceBetween>
         }
@@ -129,10 +139,11 @@ function BaseFormContent({ content, onCancelClick, errorText = null }) {
   );
 }
 
+
 function AddPanel({ readOnlyWithErrors = false }) {
 
   const {t} = useTranslation();
-  const { formData, setFormData,inValid,setInvalid } = useContext(addTemplateFormCtx);
+  const { formData, setFormData,inValid,setInvalid } = useContext(detailTemplateFormCtx);
 
   const userinfo = useAuthUserInfo();
   const username = userinfo?.username || 'default';
@@ -145,8 +156,6 @@ function AddPanel({ readOnlyWithErrors = false }) {
     return readOnlyWithErrors ? errorMessage : undefined;
   };
   useEffect(()=>{
-    setFormData((prev) => ({ ...prev, 
-      template:"{system_role_prompt} {role_bot}，请严格根据反括号中的资料提取相关信息，回答用户的各种问题\n```\n{chat_history}\n{context}\n```\n用户:{question}\n{role_bot}:"}));
   },
   []);
   // console.log(localStoredParams);
@@ -232,19 +241,76 @@ function AddPanel({ readOnlyWithErrors = false }) {
   );
 }
 
-export default function FormContent() {
+
+
+export default function TemplateDetail() {
+  const { templateId } = useParams();
+  const [details, setDetail] = useState(null);
+  const headers = useAuthorizedHeader();
+  const [toolsOpen, setToolsOpen] = useState(false);
+  const appLayout = useRef();
+  const userInfo = useAuthUserInfo();
+  const [localStoredParams] = useLocalStorage(
+    params_local_storage_key+userInfo.username,
+    null
+  );
+  const main_fun_arn = localStoredParams.main_fun_arn;
+  const apigateway_endpoint = localStoredParams.apigateway_endpoint;
   const [inValid,setInvalid] = useState(false);
   const [formData, setFormData] = useState({
   });
+  useEffect(() => {
+    getTemplate(headers,{
+      id:templateId,
+      main_fun_arn:main_fun_arn,
+      apigateway_endpoint:apigateway_endpoint,
+    })
+    .then(data =>{
+      setDetail(data.body);
+        const body = data.body;
+        console.log(body);
+        setFormData({
+          comment:body.comment.S,
+          template:body.template.S,
+          template_name:body.template_name.S,
+          username:body.username.S,
+          id:body.id.S
+        })
+    })
+    .catch(err =>{
+      setDetail({});
+        console.log(JSON.stringify(err))
+    }
+    )
+    return () => {
+      };
+  }, []);
+
   return (
-    <addTemplateFormCtx.Provider value={{ formData, setFormData,inValid,setInvalid }}>
-      <BaseFormContent
-        content={
+    <CustomAppLayout
+      ref={appLayout}
+      navigation={<Navigation activeHref="/template" />}
+      breadcrumbs={<BreadcrumbsDynmic id={templateId} />}
+      content={
+        details ? (
+          <detailTemplateFormCtx.Provider value={{ formData, setFormData,inValid,setInvalid }}>
+            <BaseFormContent 
+            content={
           <SpaceBetween size="l">
             <AddPanel />
           </SpaceBetween>
-        }
-      />
-    </addTemplateFormCtx.Provider>
+          }
+
+            />
+            </detailTemplateFormCtx.Provider>
+        ) : (
+          <Spinner size="large"/>
+        )
+      }
+      contentType="table"
+      stickyNotifications
+      // toolsOpen={toolsOpen}
+      onToolsChange={({ detail }) => setToolsOpen(detail.open)}
+    />
   );
 }

@@ -4,7 +4,7 @@ import React, { useEffect, useRef, useState } from 'react';
 import { useCollection } from '@cloudscape-design/collection-hooks';
 import { COLUMN_DEFINITIONS, DEFAULT_PREFERENCES, Preferences,} from './table-config';
 import { Flashbar, Pagination, Table, TextFilter } from '@cloudscape-design/components';
-import { FullPageHeader ,Breadcrumbs,DeleteConfirmModal} from './common-components';
+import { FullPageHeader ,Breadcrumbs} from './common-components';
 import {
   CustomAppLayout,
   Navigation,
@@ -30,8 +30,8 @@ function TableContent({
   buttonName,
   buttonHref,
  }) {
-  const [preferences, setPreferences] = useLocalStorage('Benchportal-Docs-Table-Preferences', DEFAULT_PREFERENCES);
-  const [columnDefinitions, saveWidths] = useColumnWidths('Benchportal-React-Table-Widths', COLUMN_DEFINITIONS);
+  const [preferences, setPreferences] = useLocalStorage('Chatbot-Docs-Table-Preferences', DEFAULT_PREFERENCES);
+  const [columnDefinitions, saveWidths] = useColumnWidths('Chatbot-React-Table-Widths', COLUMN_DEFINITIONS);
   const {t} = useTranslation();
 
   const { items, actions, filteredItemsCount, collectionProps, filterProps, paginationProps } = useCollection(

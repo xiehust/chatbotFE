@@ -2,31 +2,36 @@
 // SPDX-License-Identifier: MIT-0
 // Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
 // SPDX-License-Identifier: MIT-0
-import React, { useEffect, useState,useRef } from 'react';
-import {Container,Header, SpaceBetween} from '@cloudscape-design/components';
-import SyntaxHighlighter from 'react-syntax-highlighter';
-import { a11yDark } from 'react-syntax-highlighter/dist/esm/styles/hljs';
+import React, { useEffect, useState, useRef } from "react";
+import { Container, Header, SpaceBetween,Button } from "@cloudscape-design/components";
+import SyntaxHighlighter from "react-syntax-highlighter";
+import { a11yDark } from "react-syntax-highlighter/dist/esm/styles/hljs";
 // import { CopyBlock,a11yDark } from "react-code-blocks";
-import {useChatData,generateUniqueId} from './common-components';
+import { useChatData, generateUniqueId } from "./common-components";
 import { useTranslation } from "react-i18next";
 import botlogo from "../../resources/Res_Amazon-SageMaker_Model_48_Light.svg";
-import {useAuthToken} from '../commons/use-auth';
+import { useAuthToken,useAuthUserInfo} from "../commons/use-auth";
 import useWebSocket from "react-use-websocket";
-import { API_socket } from '../commons/api-gateway';
-import PromptPanel from './prompt-panel';
+import { API_socket,postFeedback } from "../commons/api-gateway";
+import PromptPanel from "./prompt-panel";
+import { useLocalStorage } from '../../common/localStorage';
+import {params_local_storage_key} from "../chatbot/common-components";
+import AddFeedbackModal from "./addfeedback";
+import ReactMarkdown from "react-markdown";
+import gfm from "remark-gfm";
 
 import {
-    Box,
-    Stack,
-    Avatar,
-    List,
-    ImageListItem,
-    ImageList,
-    ListItem,
-    ImageListItemBar
-  } from "@mui/material";
-  import {  grey } from "@mui/material/colors";
-
+  Box,
+  Stack,
+  Avatar,
+  List,
+  ImageListItem,
+  ImageList,
+  ListItem,
+  ImageListItemBar,
+  Grid
+} from "@mui/material";
+import { grey } from "@mui/material/colors";
 
 const BOTNAME = "AI";
 const MAX_CONVERSATIONS = 6;
@@ -57,126 +62,273 @@ function stringAvatar(name) {
   };
 }
 
-const CodeComponent= ({language,code}) => {
-  // const codeString = '(num) => num + 1';
-  return (
-    <SyntaxHighlighter
-     language={language} 
-     showLineNumbers
-     wrapLongLines
-    style={a11yDark}>
-      {code}
-    </SyntaxHighlighter>
-  );
+function extractImagTag(text) {
+  const imageRegex = /<img>(.*?)<\/img>/g;
+  const matches = text.matchAll(imageRegex);
+  const newtext = text.replaceAll(imageRegex, "");
+  let imagePaths = [];
+  for (const match of matches) {
+    const imagePath = match[1];
+    imagePaths.push(imagePath);
+  }
+  return [imagePaths, newtext];
+}
+
+function formatImg2MD(text) {
+  const imageRegex = /<img>(.*?)<\/img>/g;
+  const matches = text.matchAll(imageRegex);
+  let imagePaths = [];
+  let newtext = text;
+  for (const match of matches) {
+    const url = match[1];
+    newtext=newtext.replaceAll(`<img>${url}</img>`, `![${url}](${url}" target="_blank)`);
+    imagePaths.push(url);
+  }
+  return [imagePaths, newtext];
+}
+
+const MarkdownToHtml = ({ text }) => {
+  return <ReactMarkdown children={text} remarkPlugins={[gfm]}
+    components={{
+      code({node, inline, className, children, ...props}) {
+        const match = /language-(\w+)/.exec(className || '')
+        return !inline && match ? (
+          <SyntaxHighlighter
+            {...props}
+            children={String(children).replace(/\n$/, '')}
+            style={a11yDark}
+            wrapLongLines
+            language={match[1]}
+            PreTag="div"
+          />
+        ) : (
+          <code {...props} className={className}>
+            {children}
+          </code>
+        );
+      },
+      img: (image) => (
+            <img
+              src={image.src || ""}
+              alt={image.alt || ""}
+              width={500}
+              loading="lazy"
+                  sx={{
+                    objectFit: "contain",
+                  }}
+            />
+          ),
+      
+    }}
+  />;
 };
 
-
-function findCodeStarts(inputString) {
-  const codeRegex = /```([\w+#-]+)?\n+/gm;
-  const matches = codeRegex.exec(inputString);
-  if (!matches) {
-    return {_code:null, _before:inputString, _after:null, _languageType:null};
-  }
-  const [fullMatch, languageType] = matches;
-  const _before = matches.input?.substring(0, matches.index);
-  const _code = matches.input?.substring(matches.index + fullMatch.length);
-  return {_code, _before, _languageType:languageType||'javascript'}
-}
-
-function extractCodeFromString(inputString) {
-  const codeRegex = /```([\w+#-]+)?\n([\s\S]*?)\n```/gm;
-  const matches = codeRegex.exec(inputString);
-  if (!matches) {
-    return {code:null, before:inputString, after:null, languageType:null};
-  }
-  const [fullMatch, languageType, code] = matches;
-  const before = matches.input?.substring(0, matches.index);
-  const after = matches.input?.substring(matches.index + fullMatch.length);
-  return {code, before, after, languageType:languageType||'javascript'}
-}
-
-const formatHtmlLines = (text)=>{
-  return text.split("\n").map((it,idx) => (
-    <span key={idx}>
-      {it}
-      <br />
-    </span>
-  ));
-}
-
-const MsgItem = ({ who, text,image }) => {
-  if (image){
-      const url = URL.createObjectURL(image)
-      return (
-        who !== BOTNAME && <ListItem sx={{ display: "flex", justifyContent: "flex-end" }}>
-        <Stack direction="row" spacing={2} sx={{ alignItems: "top" }}>
-        <ImageList 
-        sx={{ width: 500, 
-              height: 350,
-              objectFit: 'contain'
-         }}
-         cols={1} >
-          <ImageListItem key={image.name}>
-            <img
-              src={url}
-              alt={image.name}
-              loading="lazy"
-              sx={{ 
-              objectFit: 'contain'
-         }}
-            />
-            <ImageListItemBar
-            title={image.name}
-            subtitle={<span>size: {(image.size/1024).toFixed(1)}KB</span>}
-            position="below"
-          />
-        </ImageListItem>
-      </ImageList>
-          <Avatar {...stringAvatar(who)} />
-        </Stack>
-      </ListItem>
+const MsgItem = ({ who, text, image,msgid,connectionId  }) => {
+  if (image) {
+    const url = URL.createObjectURL(image);
+    return (
+      who !== BOTNAME && (
+        <ListItem sx={{ display: "flex", justifyContent: "flex-end" }}>
+          <Stack direction="row" spacing={2} sx={{ alignItems: "top" }}>
+            <ImageList
+              sx={{ width: 500, height: "auto", objectFit: "contain" }}
+              cols={1}
+            >
+              <ImageListItem key={image.name}>
+                <img
+                  src={url}
+                  alt={image.name}
+                  loading="lazy"
+                  sx={{
+                    objectFit: "contain",
+                  }}
+                />
+                <ImageListItemBar
+                  title={image.name}
+                  subtitle={
+                    <span>size: {(image.size / 1024).toFixed(1)}KB</span>
+                  }
+                  position="below"
+                />
+              </ImageListItem>
+            </ImageList>
+            <Avatar {...stringAvatar(who)} />
+          </Stack>
+        </ListItem>
       )
-
-  }else{
-    let newlines=[];
-    if (who === BOTNAME){
-      const {code, before, after, languageType} = extractCodeFromString(text);
-      const {_code, _before,_languageType} = findCodeStarts(text);
-      _code || newlines.push(formatHtmlLines(before))
-      if (code){
-        newlines.push(formatHtmlLines(before))
-        code&&newlines.push(<CodeComponent key={generateUniqueId()}  language={languageType} code={code}/>)
-        after&&newlines.push(formatHtmlLines(after))
-      }else{
-        if (_code){
-            newlines.push(formatHtmlLines(_before))
-            _code&&newlines.push(<CodeComponent key={generateUniqueId()}  language={_languageType} code={_code}/>)
-        }else{
-          // newlines = formatHtmlLines(text);
-        }
-      }
-    }else{
-      newlines = formatHtmlLines(text);
+    );
+  } else {
+    let newlines = [];
+    if (who === BOTNAME) {
+      const [imgPaths, newtext] =  formatImg2MD(text);
+      newlines.push(newtext);
+    } else {
+      newlines = [text]
     }
-    // console.log(newlines);
+    // console.log(text);
 
     return who !== BOTNAME ? (
       <ListItem sx={{ display: "flex", justifyContent: "flex-end" }}>
         <Stack direction="row" spacing={2} sx={{ alignItems: "top" }}>
-          <TextItem sx={{ bgcolor: '#f2fcf3',borderColor:'#037f0c' }}>{newlines}</TextItem>
+          <TextItem sx={{ bgcolor: "#f2fcf3", borderColor: "#037f0c" }}>
+            <MarkdownToHtml text = {newlines.join(' ')}/>
+          </TextItem>
+
           <Avatar {...stringAvatar(who)} />
         </Stack>
       </ListItem>
     ) : (
+
       <ListItem>
         <Stack direction="row" spacing={2} sx={{ alignItems: "top" }}>
           <Avatar src={botlogo} alt={"AIBot"} />
-          <TextItem> {newlines}</TextItem>
+          <Grid container spacing={0.5}>
+            <Grid item xs={11}>
+              <TextItem>
+                <MarkdownToHtml text ={newlines.join(' ')}/>
+              </TextItem>
+            </Grid>
+            <Grid item xs={4}>
+                <ThumbButtons msgid={msgid} session_id={connectionId} />
+            </Grid>
+          </Grid>
         </Stack>
       </ListItem>
     );
   }
 };
+
+const ThumbButtons = ({msgid,session_id}) =>{
+  const [downLoading, setDownLoading] = useState(false);
+  const [upLoading, setUpLoading] = useState(false);
+  const {setFeedBackModalVisible,setModalData} = useChatData();
+  const token = useAuthToken();
+  const { t } = useTranslation();
+  const userInfo = useAuthUserInfo();
+  const headers = {
+    Authorization: token.token,
+  };
+  const [localStoredParams,setLocalStoredParams] = useLocalStorage(
+    params_local_storage_key+userInfo.username,
+    null
+  );
+  const [downFilled, setDownFilled] = useState(
+    localStoredParams?.feedback !== undefined && localStoredParams.feedback[msgid] &&localStoredParams.feedback[msgid].action === 'thumbs-down'? true:false
+  );
+  const [upFilled, setUpFilled] = useState(
+    localStoredParams?.feedback !== undefined && localStoredParams.feedback[msgid] &&localStoredParams.feedback[msgid].action === 'thumbs-up'? true:false
+  );
+  useEffect(()=>{
+
+
+  },[]);
+
+
+
+  const main_fun_arn = localStoredParams.main_fun_arn;
+  const apigateway_endpoint = localStoredParams.apigateway_endpoint;
+
+  const handleClickDown = async()=>{
+      const body = {
+        msgid:msgid,
+        session_id:session_id,
+        main_fun_arn:main_fun_arn,
+        apigateway_endpoint:apigateway_endpoint,
+        username:userInfo.username,
+        action: downFilled?'cancel-thumbs-down':'thumbs-down'
+      }
+      setDownLoading(true);
+      // setModalData(body);
+      try {
+          const resp = await postFeedback(headers,body);
+          setDownFilled(prev=>!prev);
+          setUpFilled(false);
+          setDownLoading(false);
+          setLocalStoredParams({
+            ...localStoredParams,
+            feedback:{
+              ...localStoredParams.feedback,
+              [msgid]:body}
+          });
+
+      } catch (error) {
+        console.log(error);
+        setDownLoading(false);
+      }
+    }
+
+
+  const handleClickUp = async()=>{
+    const body = {
+      msgid:msgid,
+      session_id:session_id,
+      main_fun_arn:main_fun_arn,
+      apigateway_endpoint:apigateway_endpoint,
+      username:userInfo.username,
+      action: upFilled?'cancel-thumbs-up':'thumbs-up'
+    }
+    setUpLoading(true);
+    // setModalData(body);
+    try {
+        const resp = await postFeedback(headers,body);
+        setUpFilled(prev=>!prev);
+        setDownFilled(false);
+        setUpLoading(false);
+        setLocalStoredParams({
+          ...localStoredParams,
+          feedback:{
+            ...localStoredParams.feedback,
+            [msgid]:body}
+        });
+    } catch (error) {
+      console.log(error);
+      setUpLoading(false);
+    }
+  }
+  return (
+    <SpaceBetween direction="horizontal" size="xs">
+      <Button
+        iconAlign="right"
+        loading={downLoading}
+        iconName={downFilled?"thumbs-down-filled":"thumbs-down"}
+        variant={downFilled?'primary':'normal'}
+        target="_blank"
+        onClick = {handleClickDown}
+      >
+      </Button>
+      <Button
+        iconAlign="right"
+        loading={upLoading}
+        iconName={upFilled?"thumbs-up-filled":"thumbs-up"}
+        variant={upFilled?'primary':'normal'}
+        target="_blank"
+        onClick = {handleClickUp}
+      >
+      </Button>
+      <Button
+      iconAlign="right"
+      iconName="external"
+      target="_blank"
+      onClick={()=>{
+        const data = {
+          msgid:msgid,
+          session_id:session_id,
+          main_fun_arn:main_fun_arn,
+          apigateway_endpoint:apigateway_endpoint,
+          username:userInfo.username,
+          action: upFilled?'thumbs-up':(downFilled?'thumbs-down':'')
+        }
+        setFeedBackModalVisible(true);
+        setModalData(data);
+        }
+        }
+    >
+      {t('correct_answer')}
+    </Button>
+
+    </SpaceBetween>
+  )
+}
 
 const TextItem = (props) => {
   const { sx, ...other } = props;
@@ -184,15 +336,19 @@ const TextItem = (props) => {
   return (
     <Box
       sx={{
-        p: 1.2,
-        // m: 1.2,
+        pr: 1,
+        pl: 1,
+        m: 1,
         whiteSpace: "normal",
-        bgcolor: '#f2f8fd',
+        bgcolor: "#f2f8fd",
         color: grey[800],
         border: "2px solid",
-        borderColor: '#0972d3',
+        borderColor: "#0972d3",
         borderRadius: 2,
         fontSize: "14px",
+        // maxWidth:"max-content",
+        minWidth:'400px',
+        width:"auto",
         fontWeight: "400",
         ...sx,
       }}
@@ -203,31 +359,13 @@ const TextItem = (props) => {
 
 const ChatBox = ({ msgItems, loading }) => {
   const [loadingtext, setLoaderTxt] = useState(".");
-  const intervalRef = useRef(0);
-  // console.log(msgItems);
-  function handleStartTick() {
-    let textContent = "";
-    const intervalId = setInterval(() => {
-      setLoaderTxt((v) => v + ".");
-      textContent += ".";
-      if (textContent.length > 5) {
-        setLoaderTxt(".");
-        textContent = "";
-      }
-    }, 500);
-    intervalRef.current = intervalId;
-  }
 
-  function handleStopClick() {
-    const intervalId = intervalRef.current;
-    if (intervalId) clearInterval(intervalId);
-  }
   useEffect(() => {
     if (loading) {
-      setLoaderTxt('Waiting...');
+      setLoaderTxt("Waiting......");
       // handleStartTick();
     } else {
-      setLoaderTxt('');
+      setLoaderTxt("");
       // handleStopClick();
     }
   }, [loading]);
@@ -239,10 +377,18 @@ const ChatBox = ({ msgItems, loading }) => {
     }
   }, [msgItems.length]);
   const items = msgItems.map((msg) => (
-    <MsgItem key={generateUniqueId()} who={msg.who} text={msg.text} image={msg.image}/>
+    <MsgItem
+      key={generateUniqueId()}
+      who={msg.who}
+      text={msg.text}
+      image={msg.image}
+      msgid={msg.id}
+      connectionId={msg.connectionId}
+    />
   ));
 
   return (
+    <Box sx={{minWidth: 300, minHeight:400}} >
     <List
       sx={{
         position: "relative",
@@ -250,131 +396,135 @@ const ChatBox = ({ msgItems, loading }) => {
       }}
     >
       {items}
-      {loading ? <MsgItem key={generateUniqueId()} who={BOTNAME} text={loadingtext} /> : <div />}
+      {loading ? (
+        <MsgItem key={generateUniqueId()} who={BOTNAME} text={loadingtext} />
+      ) : (
+        <div />
+      )}
       <ListItem ref={scrollRef} />
     </List>
+    </Box>
   );
 };
 
-
-
-const ConversationsPanel = ()=>{
-    const {t} = useTranslation();
-    const {msgItems, setMsgItems,loading, setLoading,conversations, setConversations, setAlertOpen,hideRefDoc} = useChatData();
-    const [streamMsg, setStreamMsg] = useState('');
-    const authtoken = useAuthToken();
-
-    const onMessageCallback = ({ data }) => {
-      setLoading(false);
-      //save conversations
-      const resp = JSON.parse(data);
-      // console.log(streamMsg);
-      // console.log(resp.text.content);
-      let chunck = resp.text.content;
-
-      // 如果是none stream输出，则全部替换
-      if(hideRefDoc){
-          const fullRefRegex = /```json\n#Reference([\w+#-]+)?\n([\s\S]*?)\n```/gm;
-          chunck = chunck.replace(fullRefRegex,'')
-      }
-
-      // 如果是stream输出，则忽略这个内容
-      const refRegex = /```json\n#Reference/gm;
-      if (hideRefDoc && refRegex.exec(chunck) ){
-          return
-      }
-      if (resp.role) {
-        setStreamMsg(prev => (prev+chunck));
-        // if stream stop, save the whole message
-        if ( chunck ==='[DONE]') {
-          setConversations((prev) => [
-            ...prev,
-            {role: resp.role, content: streamMsg },
-          ]);
-          setStreamMsg('');
-          // console.log(streamMsg);
-          if (conversations.length > MAX_CONVERSATIONS) {
-            setConversations((prev) =>
-              prev.slice(0,1).concat(prev.slice(conversations.length - MAX_CONVERSATIONS)) //prev.slice(0,1)是默认的第一条AI预设角色
-            );
-          }
-        }
-      }
-      const targetItem = msgItems.filter(item => (item.id === resp.msgid));
-      // console.log(targetItem);
-      // console.log(streamMsg);
-      if (! targetItem.length){//创建一个新的item
-        setMsgItems((prev)=>[...prev,{ id: resp.msgid, who: BOTNAME, text: chunck }]);
-      }else{
-        setMsgItems(prev =>[...prev.slice(0,-1),{ id: resp.msgid, who: BOTNAME,text: streamMsg}]);
-      }
-
-
-        // setMsgItems((prev) =>
-        //    prev.filter(item => (item.id === resp.msgid)).length  // 如果msgid已经存在
-        //     ? 
-        //      prev.map((it) => ( (it.id === resp.msgid)?  
-        //       { ...it, text: streamMsg }:
-        //         it)) 
-        //     : [...prev, { id: resp.msgid, who: BOTNAME, text: chunck }] //创建一个新的item
-          
-        // );
-
-
-       
-      };
+const ConversationsPanel = () => {
+  const { t } = useTranslation();
+  const {
+    msgItems,
+    setMsgItems,
+    loading,
+    setLoading,
+    conversations,
+    setImg2txtUrl,
+    setConversations,
+    setAlertOpen,
+    hideRefDoc,
+    feedBackModalVisible,
+    setFeedBackModalVisible,
+    setStopFlag,
+  } = useChatData();
+  const [streamMsg, setStreamMsg] = useState("");
+  const authtoken = useAuthToken();
+  const onMessageCallback = ({ data }) => {
+    setLoading(false);
+    //save conversations
+    const resp = JSON.parse(data);
+    // console.log(resp);
     
-      // setup websocket
-      const { sendMessage, sendJsonMessage, getWebSocket, readyState } =
-        useWebSocket(API_socket, {
-          queryParams: authtoken,
-          onOpen: () =>
-            {
-            setAlertOpen(false);
-            setLoading(false);
-          },
-          onMessage: onMessageCallback,
-          retryOnError: true,
-          onClose: () => {
-            setLoading(false);
-            setAlertOpen(true);
-            console.log('connection close');
-          },
-          onError: () => {
-            setLoading(false);
-            setAlertOpen(true);
-            console.log('connection error');
-          },
-          shouldReconnect: (closeEvent) => {
-            return true;
-          },
-          reconnectAttempts: 100,
-          reconnectInterval: (attemptNumber) =>
-            Math.min(Math.pow(2, attemptNumber) * 1000, 15000),
-        });
+    let chunck = resp.text.content;
+    // console.log(resp);
+    // 如果是none stream输出，则全部替换
+    if (hideRefDoc) {
+      const fullRefRegex = /```json\n#Reference([\w+#-]+)?\n([\s\S]*?)\n```/gm;
+      chunck = chunck.replace(fullRefRegex, "");
+    }
 
+    // 如果是stream输出，则忽略这个内容
+    const refRegex = /```json\n#Reference/gm;
+    if (hideRefDoc && refRegex.exec(chunck)) {
+      return;
+    }
+    if (resp.role) {
+      setStreamMsg((prev) => prev + chunck);
+      // if stream stop, save the whole message
+      if (chunck === "[DONE]") {
+        setStopFlag(false);
+        setConversations((prev) => [
+          ...prev,
+          { role: resp.role, content: streamMsg,connectionId:resp.connectionId },
+        ]);
 
-    return (
-        <SpaceBetween size='l'>
-        <Container 
-         header={
-          <Header
-            variant="h2"
-          >
-            {t("conversations")}
-          </Header>
+        //如果是SD模型返回的url，则保存起来
+        const [imgPaths, newtext] = extractImagTag(streamMsg);
+        imgPaths.map((url) => setImg2txtUrl(url));
+
+        setStreamMsg("");
+        // console.log(streamMsg);
+        if (conversations.length > MAX_CONVERSATIONS) {
+          setConversations(
+            (prev) =>
+              prev
+                .slice(0, 1)
+                .concat(prev.slice(conversations.length - MAX_CONVERSATIONS)) //prev.slice(0,1)是默认的第一条AI预设角色
+          );
         }
-        >
-           <ChatBox msgItems={msgItems} loading={loading}/>
-        
-        </Container>
+      }
+    }
+    const targetItem = msgItems.filter((item) => item.id === resp.msgid);
+    // console.log(targetItem);
+    // console.log(streamMsg);
+    if (!targetItem.length) {
+      //创建一个新的item
+      setMsgItems((prev) => [
+        ...prev,
+        { id: resp.msgid, who: BOTNAME, text: chunck,connectionId:resp.connectionId  },
+      ]);
+    } else {
+      setMsgItems((prev) => [
+        ...prev.slice(0, -1),
+        { id: resp.msgid, who: BOTNAME, text: streamMsg,connectionId:resp.connectionId  },
+      ]);
+    }
+  };
 
-        <PromptPanel sendMessage={sendJsonMessage}/>
+  // setup websocket
+  const { sendMessage, sendJsonMessage, getWebSocket, readyState } =
+    useWebSocket(API_socket, {
+      queryParams: authtoken,
+      onOpen: () => {
+        setAlertOpen(false);
+        setLoading(false);
+      },
+      onMessage: onMessageCallback,
+      retryOnError: true,
+      onClose: () => {
+        setLoading(false);
+        setAlertOpen(true);
+        console.log("connection close");
+      },
+      onError: () => {
+        setLoading(false);
+        setAlertOpen(true);
+        console.log("connection error");
+      },
+      shouldReconnect: (closeEvent) => {
+        return true;
+      },
+      reconnectAttempts: 100,
+      reconnectInterval: (attemptNumber) =>
+        Math.min(Math.pow(2, attemptNumber) * 1000, 15000),
+    });
 
-        </SpaceBetween>
-    );
+  return (
+    <SpaceBetween size="l">
+    <AddFeedbackModal visible={feedBackModalVisible} setVisible={setFeedBackModalVisible} />
+      <Container header={<Header variant="h2">{t("conversations")}</Header>}>
+        <ChatBox msgItems={msgItems} loading={loading} />
+      </Container>
 
-
-} 
+      <PromptPanel sendMessage={sendJsonMessage} />
+    </SpaceBetween>
+  );
+};
 
 export default ConversationsPanel;

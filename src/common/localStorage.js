@@ -33,7 +33,7 @@ export const useLocalStorage = (key, defaultValue) => {
         eraseCookie(localStoreKey);
     }
     if (key === localStoreKey){
-      setCookie(localStoreKey,'token saved',1);
+      setCookie(localStoreKey,'token saved',30);
     }
     save(key, newValue);
   }

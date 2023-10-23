@@ -215,7 +215,7 @@ function AddUserPanel({ readOnlyWithErrors = false }) {
         >
           <Input
             placeholder="Enter a password"
-            type={t("password")}
+            // type="password"
             ariaRequired={true}
             value={formData.password}
             onChange={(event) =>
@@ -231,7 +231,7 @@ function AddUserPanel({ readOnlyWithErrors = false }) {
         >
           <Input
             placeholder="Confirm password"
-            type="password"
+            // type="password"   
             ariaRequired={true}
             value={formData.repassword}
             onChange={(event) =>

@@ -21,23 +21,26 @@ import { useTranslation } from "react-i18next";
 import { useAuthUserInfo, useAuthToken } from "../commons/use-auth";
 import { models, embeddings } from "../../common/shared";
 import { useLocalStorage } from "../../common/localStorage";
-import { listTemplate, uploadS3 } from "../commons/api-gateway";
+import { listTemplate, uploadS3,uploadFile } from "../commons/api-gateway";
 import { params_local_storage_key } from "./common-components";
 
+const default_bucket = process.env.REACT_APP_DEFAULT_UPLOAD_BUCKET;
 export const defaultModelParams = {
-  temperature: 0.01,
+  temperature: 0.1,
   max_tokens: 2000,
   model_name: models[0].value,
   model_name_opt: models[0],
   use_qa: false,
-  embedding_model_name: embeddings[0].value,
-  embedding_model_name_opt: embeddings[0],
+  multi_rounds:false,
+  // embedding_model_name: embeddings[0].value,
+  // embedding_model_name_opt: embeddings[0],
   obj_prefix: "ai-content/",
-  system_role: "AWSBot",
-  system_role_prompt: "你是云服务AWS的智能客服机器人",
+  system_role: "Assitant",
+  system_role_prompt: "",
   template_id: "default",
   template_opt: { label: "default", value: "default" },
   hide_ref: false,
+  use_stream:true
 };
 
 function generateId() {
@@ -70,11 +73,14 @@ const ExpandableSettingPanel = () => {
     localStoredParams?.temperature || defaultModelParams.temperature
   );
   const [systemRoleValue, setSystemRoleValue] = useState(
-    localStoredParams?.system_role || defaultModelParams.system_role
+    localStoredParams?.system_role === undefined
+    ? defaultModelParams.system_role
+    : localStoredParams.system_role
   );
   const [systemRolePromptValue, setSystemRolePromptValue] = useState(
-    localStoredParams?.system_role_prompt ||
-      defaultModelParams.system_role_prompt
+    localStoredParams?.system_role_prompt === undefined
+          ? defaultModelParams.system_role_prompt
+          : localStoredParams.system_role_prompt,
   );
   const { setMsgItems, setModelParams, setImg2txtUrl} = useChatData();
   const [alldocs, setAlldocs] = useState([]);
@@ -138,11 +144,45 @@ const ExpandableSettingPanel = () => {
           setFile([]);
         });
     } else {
-      setLoading(false);
-      setImg2txtUrl(null); 
-      setUploadErr(`Missing parameters, please check the setting panel`);
-      setFile([]);
-    }
+      console.log(`missing buckets params, using default bucket:${default_bucket} to upload`);
+      setHelperMsg(`missing buckets params, using default bucket`);
+      //upload to default bucket
+      const formData = new FormData();
+        formData.append("image", file[0]);
+        console.log(file[0]);
+        const headers = {
+          'Authorization': token.token,
+          'Content-Type':file[0].type,
+          'Accept':file[0].type
+        };
+        uploadFile( username,formData, headers)
+          .then((response) => {
+            setLoading(false);
+            setImg2txtUrl(`${default_bucket}/images/${username}/${file[0].name}`); 
+            setMsgItems(
+              (prev) => [
+                ...prev,
+                {
+                  id: msgid,
+                  who: userinfo.username,
+                  text: file[0].name,
+                  image: file[0],
+                },
+              ] //创建一个新的item
+            );
+            setUploadComplete(true);
+            setFile([]);
+          })
+          .catch((error) => {
+            console.log(error);
+            setImg2txtUrl(null); 
+            setLoading(false);
+            setUploadErr(`Upload ${file[0].name} error`);
+            setFile([]);
+          });
+      }
+
+    
   };
 
   const handleLoadItems = async ({
@@ -159,6 +199,7 @@ const ExpandableSettingPanel = () => {
         id: it.id.S,
         username: it.username.S,
       }));
+      items.sort((a,b) => a.template_name > b.template_name ?1:-1);
       items.unshift({
         id: defaultModelParams.template_id,
         template_name: defaultModelParams.template_id,
@@ -184,6 +225,10 @@ const ExpandableSettingPanel = () => {
         localStoredParams?.use_qa === undefined
           ? defaultModelParams.use_qa
           : localStoredParams?.use_qa,
+      multi_rounds:
+          localStoredParams?.multi_rounds === undefined
+            ? defaultModelParams.multi_rounds
+            : localStoredParams?.multi_rounds,
       hide_ref:
         localStoredParams?.hide_ref === undefined
           ? defaultModelParams.hide_ref
@@ -193,9 +238,13 @@ const ExpandableSettingPanel = () => {
           ? defaultModelParams.system_role_prompt
           : localStoredParams.system_role_prompt,
       obj_prefix:
-        localStoredParams?.obj_prefix === undefined
+        (localStoredParams?.obj_prefix === undefined || localStoredParams?.obj_prefix === '')
           ? defaultModelParams.obj_prefix
           : localStoredParams?.obj_prefix,
+      use_stream:
+          localStoredParams?.use_stream === undefined
+            ? defaultModelParams.use_stream
+            : localStoredParams?.use_stream,
     });
   }, []);
 
@@ -212,11 +261,16 @@ const ExpandableSettingPanel = () => {
         localStoredParams?.use_qa !== undefined
           ? localStoredParams?.use_qa
           : defaultModelParams.use_qa,
+      multi_rounds:
+          localStoredParams?.multi_rounds !== undefined
+            ? localStoredParams?.multi_rounds
+            : defaultModelParams.multi_rounds,
+      use_stream:
+          localStoredParams?.use_stream !== undefined
+            ? localStoredParams?.use_stream
+            : defaultModelParams.use_stream,
       model_name:
         localStoredParams?.model_name || defaultModelParams.model_name,
-      embedding_model_name:
-        localStoredParams?.embedding_model_name ||
-        defaultModelParams.embedding_model_name,
       system_role:
         localStoredParams?.system_role || defaultModelParams.system_role,
       system_role_prompt:
@@ -225,6 +279,7 @@ const ExpandableSettingPanel = () => {
       template_id:
         localStoredParams?.template_id || defaultModelParams.template_id,
       username: userinfo.username,
+      feedback:null,
     });
   }, []);
   // console.log('modelParams:',modelParams);
@@ -336,7 +391,7 @@ const ExpandableSettingPanel = () => {
               });
             }}
             options={alldocs.map(({ template_name, id, username }) => ({
-              label: `${id}/${template_name}/${username}`,
+              label: `${template_name}[${id}]`,
               value: id,
             }))}
             selectedAriaLabel="Selected"
@@ -400,7 +455,9 @@ const PromptPanel = ({ sendMessage }) => {
     conversations,
     setConversations,
     img2txtUrl,
-    setImg2txtUrl
+    setImg2txtUrl,
+    stopFlag,
+    setStopFlag
   } = useChatData();
   const [localStoredParams, setLocalStoredParams] = useLocalStorage(
     params_local_storage_key + userinfo.username,
@@ -411,6 +468,12 @@ const PromptPanel = ({ sendMessage }) => {
       ? localStoredParams?.use_qa
       : defaultModelParams.use_qa
   );
+  const [multiRoundsChecked, setMultiRoundsChecked] = useState(
+    localStoredParams?.multi_rounds !== undefined
+      ? localStoredParams?.multi_rounds
+      : defaultModelParams.multi_rounds
+  );
+
   const { setHideRefDoc } = useChatData();
 
   const [hideRefchecked, setRefDocChecked] = useState(
@@ -418,7 +481,15 @@ const PromptPanel = ({ sendMessage }) => {
       ? localStoredParams?.hide_ref
       : defaultModelParams.hide_ref
   );
+
+  const [useStreamChecked, setUseStreamChecked] = useState(
+    localStoredParams?.use_stream !== undefined
+      ? localStoredParams?.use_stream
+      : defaultModelParams.use_stream
+  );
+
   const onSubmit = (values,imgUrl=null) => {
+    setStopFlag(true);
     const prompt = values.trimEnd();
     if (prompt === "") {
       return;
@@ -448,22 +519,24 @@ const PromptPanel = ({ sendMessage }) => {
         stretch={true}
         // label={t('prompt_label')}
       >
-        <Grid gridDefinition={[{ colspan: 8 }, { colspan: 2 }, { colspan: 2 }]}>
+      <SpaceBetween size="m">
+      <Grid gridDefinition={[{ colspan: 9 }, { colspan: 3 }]}>
           <Textarea
             value={promptValue}
             onChange={(event) => setPromptValue(event.detail.value)}
             onKeyDown={(event) => {
-              if (event.detail.key === "Enter" && event.detail.ctrlKey) {
+              if (event.detail.key === "Enter" && !event.detail.ctrlKey) {
                 onSubmit(promptValue);
               }
             }}
-            placeholder="Ctrl+Enter to send"
+            placeholder="Enter to send"
             autoFocus
             rows={3}
           />
-          <SpaceBetween size="xs">
+          <SpaceBetween size="xs" direction="horizontal">
             <Button
               variant="primary"
+              loading={stopFlag}
               onClick={(event) => onSubmit(promptValue)}
             >
               {t("send")}
@@ -481,8 +554,25 @@ const PromptPanel = ({ sendMessage }) => {
               {t("clear")}
             </Button>
           </SpaceBetween>
-          <SpaceBetween size="xs">
-            <FormField label={t("use_qa")}>
+          </Grid>
+      <SpaceBetween size="xl" direction="horizontal">
+      <FormField >
+              <Toggle
+                onChange={({ detail }) => {
+                  setUseStreamChecked(detail.checked);
+                  setModelParams((prev) => ({
+                    ...prev,
+                    use_stream: detail.checked,
+                  }));
+                  setLocalStoredParams({
+                    ...localStoredParams,
+                    use_stream: detail.checked,
+                  });
+                }}
+                checked={useStreamChecked}
+              >{t("use_stream")}</Toggle>
+            </FormField>
+            <FormField >
               <Toggle
                 onChange={({ detail }) => {
                   setChecked(detail.checked);
@@ -496,23 +586,45 @@ const PromptPanel = ({ sendMessage }) => {
                   });
                 }}
                 checked={checked}
-              />
+              >{t("use_qa")}</Toggle>
             </FormField>
-            <FormField label={t("hide_ref_doc")}>
+            <FormField >
+              <Toggle
+                onChange={({ detail }) => {
+                  setMultiRoundsChecked(detail.checked);
+                  setModelParams((prev) => ({
+                    ...prev,
+                    multi_rounds: detail.checked,
+                  }));
+                  setLocalStoredParams({
+                    ...localStoredParams,
+                    multi_rounds: detail.checked,
+                  });
+                }}
+                checked={multiRoundsChecked}
+              >{t("multi_rounds")}</Toggle>
+            </FormField>
+            <FormField >
               <Toggle
                 onChange={({ detail }) => {
                   setRefDocChecked(detail.checked);
                   setHideRefDoc(detail.checked);
+                  setModelParams((prev) => ({
+                    ...prev,
+                    hide_ref: detail.checked,
+                  }));
                   setLocalStoredParams({
                     ...localStoredParams,
                     hide_ref: detail.checked,
                   });
                 }}
                 checked={hideRefchecked}
-              />
+              >{t("hide_ref_doc")}</Toggle>
             </FormField>
+            
           </SpaceBetween>
-        </Grid>
+      </SpaceBetween>
+      
       </FormField>
     </Container>
   );

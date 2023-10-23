@@ -27,6 +27,7 @@ export const remoteGetCall = async (headers,api,params,controller) =>{
 }
 
 export const uploadS3 = async (fileob,bucket,objprefix,region,ak,sk) =>{
+    // console.log(fileob.name,bucket,objprefix,region,ak,sk);
     const s3Client = new S3Client({ region: region,credentials:{accessKeyId:ak,secretAccessKey:sk}});
     const params = {
         Bucket:bucket,
@@ -77,11 +78,40 @@ export const remote_auth = async(username,password) =>{
                 .then(data => (data))
 }
 
-export const uploadFile = async(filename,formdata,headers) =>{
+export const uploadFile = async(username,formdata,headers) =>{
     try {
-        const resp = await axios.post(`${API_http}/upload`,formdata, {headers,responseType: 'blob'}, );
+        const resp = await axios.post(`${API_http}/upload?username=${username}`,formdata, {headers,responseType: 'blob'}, );
         // console.log(resp.data);
         return resp.data;
+    } catch (err) {
+        throw err;
+    }
+}
+
+export const uploadFile2 = async(username,file,headers) =>{
+    try {
+         const response = await axios.post(`${API_http}/upload?username=${username}`,
+                                    JSON.stringify({filename: file.name,filetype:file.type}),
+                                    {headers} );
+            const { url } = response.data;
+            const data = await file.arrayBuffer();
+            console.log(data);
+            try{
+                await axios.put(url, 
+                    data,
+                    {
+                    headers: {
+                        "Content-Type": file.type,
+                        // "Content-Length": file.size,
+                        'x-amz-acl': 'public-read',
+                    }
+                });
+            }
+            catch (error2){
+                console.error("API Upload failed.", JSON.stringify(error2));
+                throw new Error("API Upload failed.", { cause: JSON.stringify(error2) });
+            }
+          return url
     } catch (err) {
         throw err;
     }
@@ -125,6 +155,49 @@ export const addTemplate = async(headers,formdata) =>{
         throw err;
     }
 }
+
+export const postFeedback = async(headers,formdata) =>{
+    try {
+        const resp = await axios.post(`${API_http}/feedback`,JSON.stringify(formdata), {headers});
+        console.log(resp);
+        if (resp.data.statusCode >=300){
+            throw `error ${resp.data.statusCode}`;
+        }else{
+            return resp.data;
+        }
+        
+    } catch (err) {
+        throw err;
+    }
+}
+
+export const deleteFeedback = async(headers,formdata) =>{
+    try {
+        const resp = await axios.delete(`${API_http}/feedback`,{headers,data:JSON.stringify(formdata)});
+        if (resp.data.statusCode >=300){
+            throw `error ${resp.data.statusCode}`;
+        }else{
+            return resp.data;
+        }
+    } catch (err) {
+        throw err;
+    }
+}
+
+export const listFeedback = async(headers,queryParams={}) =>{
+    // Build the query string parameters
+    const queryString = Object.keys(queryParams)
+    .map(key => `${encodeURIComponent(key)}=${encodeURIComponent(queryParams[key])}`)
+    .join('&');
+
+    try {
+        const resp = await axios.get(`${API_http}/feedback?${queryString}`, {headers});
+        return resp.data;
+    } catch (err) {
+        throw err;
+    }
+}
+
 
 export const getTemplate = async(headers,queryParams) =>{
     const queryString = Object.keys(queryParams)

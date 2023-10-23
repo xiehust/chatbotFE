@@ -2,14 +2,13 @@ const { S3Client, PutObjectCommand } = require("@aws-sdk/client-s3");
 const busboy = require("busboy");
 
 const bucket = process.env.UPLOAD_BUCKET;
-const prefix = process.env.UPLOAD_OBJ_PREFIX;
 const headers = {
   "Access-Control-Allow-Headers": "Content-Type",
   "Access-Control-Allow-Origin": "*",
   "Access-Control-Allow-Methods": "OPTIONS,GET,PUT,POST,DELETE",
 };
 
-function extractFile(event) {
+async function  extractFile(event) {
   return new Promise((resolve, reject) => {
     // Create a new Busboy instance to parse the request
     const bb = busboy({ headers: event.headers });
@@ -21,9 +20,10 @@ function extractFile(event) {
 
     // Listen for the "file" event, which is emitted for each file in the request
     bb.on("file", (fieldname, file, info) => {
-      const { filename, encoding, mimetype } = info;
+      const { filename, encoding, mimeType } = info;
+      
       // Store the file data and type in variables
-      fileType = mimetype;
+      fileType = mimeType;
       fileName = filename;
       fileData = [];
 
@@ -57,7 +57,8 @@ function extractFile(event) {
 exports.handler = async (event) => {
   // Extract the file from the request
   const file = await extractFile(event);
-
+  const username = event.queryStringParameters.username;
+  const prefix = (file.type === 'image/jpeg' || file.type === 'image/png')?`images/${username}/`:process.env.UPLOAD_OBJ_PREFIX;
   // Upload the file to S3
   const s3Client = new S3Client();
   const s3Params = {

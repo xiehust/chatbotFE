@@ -158,7 +158,21 @@ i18n
             preview:'Preview',
             readme:'README',
             hide_ref_doc:'Hide Ref Doc',
-            upload_image:'Upload Image'
+            upload_image:'Upload Image',
+            multi_rounds:'Multi-rounds',
+            use_stream:'Stream',
+            correct_answer:'Correct Answer',
+            provide_your_answer:'Thanks for your answer',
+            feedback_management:'Feedback Management',
+            create_new_faq:'Create New FAQ',
+            question:'Question',
+            answer:'Answer',
+            inject:"Inject",
+            inject_new_faq:"Injected new FAQ to Knowledge base",
+            confirm_change:'Save changes',
+            update_new_faq:'Update FAQ',
+            download_template:'Download Template',
+            delete_feedback:'Delete feedback'
         }
       },
       zh:{
@@ -303,7 +317,21 @@ i18n
             preview:'预览',
             readme:'使用说明',
             hide_ref_doc:'隐藏引用',
-            upload_image:'上传图片'
+            upload_image:'上传图片',
+            multi_rounds:'多轮会话',
+            use_stream:'Stream',
+            correct_answer:'帮我纠正',
+            provide_your_answer:'感谢您的反馈',
+            feedback_management:'反馈管理',
+            create_new_faq:'创建新的FAQ',
+            question:'问题',
+            answer:'答案',
+            inject:"注入知识库",
+            inject_new_faq:"注入新的FAQ知识",
+            confirm_change:'保存修改',
+            update_new_faq:'更新FAQ',
+            download_template:'下载模板',
+            delete_feedback:'删除反馈'
 
         }
       }
