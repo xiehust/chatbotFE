@@ -35,14 +35,13 @@ export function TableContent({
   const [currentPageIndex, setCurrentPageIndex] = useState(1);
   const [filteringText, setFilteringText] = useState('');
   const [delayedFilteringText, setDelayedFilteringText] = useState('');
-  const [sortingColumn, setSortingColumn] = useState(COLUMN_DEFINITIONS[0]);
+  const [sortingColumn, setSortingColumn] = useState(COLUMN_DEFINITIONS);
   const [descendingSorting, setDescendingSorting] = useState(false);
   const [filteringQuery, setFilteringQuery] = useState(DEFAULT_FILTERING_QUERY);
   const headers = useAuthorizedHeader();
   const [columnDefinitions, saveWidths] = useColumnWidths('Chatbot-React-Table-Widths', COLUMN_DEFINITIONS);
   const pageSize = preferences.pageSize;
   const [qAModalVisible,setQAModalVisible] = useState(false);
-
   const onClearFilter = () => {
     setFilteringText('');
     setDelayedFilteringText('');

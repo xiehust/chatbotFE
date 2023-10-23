@@ -169,7 +169,10 @@ i18n
             answer:'Answer',
             inject:"Inject",
             inject_new_faq:"Injected new FAQ to Knowledge base",
-            confirm_change:'Save changes'
+            confirm_change:'Save changes',
+            update_new_faq:'Update FAQ',
+            download_template:'Download Template',
+            delete_feedback:'Delete feedback'
         }
       },
       zh:{
@@ -325,7 +328,10 @@ i18n
             answer:'答案',
             inject:"注入知识库",
             inject_new_faq:"注入新的FAQ知识",
-            confirm_change:'保存修改'
+            confirm_change:'保存修改',
+            update_new_faq:'更新FAQ',
+            download_template:'下载模板',
+            delete_feedback:'删除反馈'
 
         }
       }

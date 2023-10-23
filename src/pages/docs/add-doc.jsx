@@ -29,7 +29,7 @@ const SettingsPanel = ()=>{
       params_local_storage_key+username,
       null
     );
-    const [helperMsg, setHelperMsg] = useState(".pdf,.txt,.faq,.md,.example,.examples,.json,.wiki");
+    const [helperMsg, setHelperMsg] = useState(".pdf,.txt,.csv,.faq,.md,.example,.examples,.json,.wiki");
     const [uploadErrtxt, setUploadErr] = useState();
     const [files, setFiles] = useState([]);
     const [loading, setLoading] = useState(false);
@@ -124,8 +124,31 @@ const SettingsPanel = ()=>{
       
       }, []);
 
+    const handleDownload = () => {
+        // Send a request to the server to download the file
+        fetch('./faq_template.csv')
+          .then((response) => response.blob())
+          .then((blob) => {
+            const url = window.URL.createObjectURL(new Blob([blob]));
+            const link = document.createElement('a');
+            link.href = url;
+            link.setAttribute('download', `template-${new Date().getTime()}.csv`); 
+            document.body.appendChild(link);
+            link.click();
+            link.remove();
+          })
+          .catch((error) => {
+            console.error('Error downloading the file:', error);
+          });
+      };
+
     return (
         <SpaceBetween direction="vertical" size="l">
+          <Button variant="link" 
+            iconName="external"
+            onClick={handleDownload}
+          target="_blank"
+          >{t('download_template')}</Button>
           <FileUpload
             onChange={({ detail }) =>{
               setHelperMsg('');
@@ -135,7 +158,7 @@ const SettingsPanel = ()=>{
              }
              }
             value={files}
-            accept='.pdf,.txt,.faq,.md,.example,.examples,.json,.wiki'
+            accept='.pdf,.txt,.csv,.faq,.md,.example,.examples,.json,.wiki'
             multiple
             constraintText = {helperMsg}
             showFileLastModified

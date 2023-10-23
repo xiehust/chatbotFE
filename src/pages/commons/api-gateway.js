@@ -159,7 +159,26 @@ export const addTemplate = async(headers,formdata) =>{
 export const postFeedback = async(headers,formdata) =>{
     try {
         const resp = await axios.post(`${API_http}/feedback`,JSON.stringify(formdata), {headers});
-        return resp.data;
+        console.log(resp);
+        if (resp.data.statusCode >=300){
+            throw `error ${resp.data.statusCode}`;
+        }else{
+            return resp.data;
+        }
+        
+    } catch (err) {
+        throw err;
+    }
+}
+
+export const deleteFeedback = async(headers,formdata) =>{
+    try {
+        const resp = await axios.delete(`${API_http}/feedback`,{headers,data:JSON.stringify(formdata)});
+        if (resp.data.statusCode >=300){
+            throw `error ${resp.data.statusCode}`;
+        }else{
+            return resp.data;
+        }
     } catch (err) {
         throw err;
     }

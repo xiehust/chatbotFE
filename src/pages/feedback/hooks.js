@@ -59,7 +59,7 @@ export function useDistributions(params = {}) {
 
     listFeedback(headers,payload).then(data =>{
       setLoading(false);
-      console.log(data.body);
+      // console.log(data.body);
       const itemdata = data.body.items.map(it => {
         const contentArray = JSON.parse(it.content);
         const lastContent = contentArray[contentArray.length -1];

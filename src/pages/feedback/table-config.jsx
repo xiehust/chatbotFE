@@ -3,6 +3,7 @@
 import React from 'react';
 import { CollectionPreferences, StatusIndicator, Link } from '@cloudscape-design/components';
 import { addColumnSortLabels } from '../../common/labels';
+import {EditCell} from './common-components';
 
 export const COLUMN_DEFINITIONS = addColumnSortLabels( [
   {
@@ -32,7 +33,7 @@ export const COLUMN_DEFINITIONS = addColumnSortLabels( [
   {
     id: "feedback",
     header: "New Answer",
-    cell: item => item.feedback || "-",
+    cell: item => (<EditCell keyname ={"feedback"} value={item.feedback || "-"} msgid={item.msgid } sid={item.sid} action={item.action} />),
     minWidth: 180,
   },
   {
@@ -41,7 +42,7 @@ export const COLUMN_DEFINITIONS = addColumnSortLabels( [
     cell: item => (<StatusIndicator type={
       item.action === 'injected'? 'success' : (item.action === 'thumbs-up'?'info':(item.action === 'thumbs-down'?'error':'pending'))
       }
-    >{item.action || "-" }
+    >{item.action || "N/A" }
     </StatusIndicator> ),
 
     minWidth: 80,
@@ -57,7 +58,7 @@ export const COLUMN_DEFINITIONS = addColumnSortLabels( [
     header: "Timestamp",
     cell: item => item.timestamp || "-",
     minWidth: 80,
-    sortingField: "timestamp",
+    // sortingField: "timestamp",
   },
 ])
 
@@ -88,7 +89,6 @@ const VISIBLE_CONTENT_OPTIONS = [
 ];
 
 export const PAGE_SIZE_OPTIONS = [
-  { value: 2, label: '2' },
   { value: 5, label: '5' },
   { value: 10, label: '10' },
   { value: 30, label: '30' },
@@ -140,9 +140,9 @@ export const FILTERING_PROPERTIES = [
   //   operators: ['='],
   // },
   {
-    propertyLabel: 'Feedback',
+    propertyLabel: 'Status',
     key: 'action',
-    groupValuesLabel: 'Feedback values',
+    groupValuesLabel: 'Status values',
     operators: ['='],
   },
 ].sort((a, b) => a.propertyLabel.localeCompare(b.propertyLabel));

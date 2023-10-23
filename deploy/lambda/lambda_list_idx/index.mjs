@@ -373,5 +373,55 @@ else if (event.httpMethod === 'GET' && event.resource === '/feedback'){
     }
   }
 }
-
+//删除反馈
+else if (event.httpMethod === 'DELETE' && event.resource === '/feedback'){
+  const lambdaClient = new LambdaClient();
+  const body = JSON.parse(event.body);
+  console.log(event.body);
+  const main_fun_arn = body.main_fun_arn || process.env.MAIN_FUN_ARN;
+  const apigateway_endpoint = body.apigateway_endpoint|| '';
+  if (apigateway_endpoint.length > 0){
+    const options ={
+      method:'POST',
+      body:JSON.stringify({method:'delete',resource:'feedback',body:body})
+    }
+      try {
+          const response = await fetch(apigateway_endpoint,options);
+          const ret = await response.json();
+          console.log(JSON.stringify(ret));
+          return {
+            statusCode: 200,
+            headers:cors_headers,
+            body:JSON.stringify(ret)
+          }
+      }catch(err){
+        return {
+          statusCode: 500,
+          headers:cors_headers,
+          body:JSON.stringify(err)
+        }
+      }
+      
+  }
+  else if (main_fun_arn&&main_fun_arn.length >0){
+    const params = {FunctionName: main_fun_arn,
+          Payload:JSON.stringify({method:'delete',resource:'feedback',body:body})}
+    try {
+        const response =await lambdaClient.send(new InvokeCommand(params));
+        const payload = JSON.parse(Buffer.from(response.Payload).toString());
+            console.log(JSON.stringify(payload));
+      return {
+        statusCode: 200,
+        headers:cors_headers,
+        body:JSON.stringify(payload)
+      }
+    }catch(err){  
+      return {
+        statusCode: 500,
+        headers:cors_headers,
+        body:JSON.stringify(err)
+      }
+    }
+  }
+}
 }

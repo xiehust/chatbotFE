@@ -238,7 +238,7 @@ const ExpandableSettingPanel = () => {
           ? defaultModelParams.system_role_prompt
           : localStoredParams.system_role_prompt,
       obj_prefix:
-        localStoredParams?.obj_prefix === undefined
+        (localStoredParams?.obj_prefix === undefined || localStoredParams?.obj_prefix === '')
           ? defaultModelParams.obj_prefix
           : localStoredParams?.obj_prefix,
       use_stream:
