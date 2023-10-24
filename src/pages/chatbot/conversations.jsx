@@ -188,7 +188,7 @@ const MsgItem = ({ who, text, image,msgid,connectionId  }) => {
                 <MarkdownToHtml text ={newlines.join(' ')}/>
               </TextItem>
             </Grid>
-            <Grid item xs={4}>
+            <Grid item xs={11}>
                 <ThumbButtons msgid={msgid} session_id={connectionId} />
             </Grid>
           </Grid>
@@ -325,7 +325,6 @@ const ThumbButtons = ({msgid,session_id}) =>{
     >
       {t('correct_answer')}
     </Button>
-
     </SpaceBetween>
   )
 }
@@ -347,7 +346,7 @@ const TextItem = (props) => {
         borderRadius: 2,
         fontSize: "14px",
         // maxWidth:"max-content",
-        minWidth:'400px',
+        minWidth:'40px',
         width:"auto",
         fontWeight: "400",
         ...sx,
@@ -359,7 +358,6 @@ const TextItem = (props) => {
 
 const ChatBox = ({ msgItems, loading }) => {
   const [loadingtext, setLoaderTxt] = useState(".");
-
   useEffect(() => {
     if (loading) {
       setLoaderTxt("Waiting......");
@@ -422,30 +420,40 @@ const ConversationsPanel = () => {
     feedBackModalVisible,
     setFeedBackModalVisible,
     setStopFlag,
+    modelParams,
+    setNewChatLoading
   } = useChatData();
   const [streamMsg, setStreamMsg] = useState("");
   const authtoken = useAuthToken();
+  const userinfo = useAuthUserInfo();
+  const [localStoredMsgItems, setLocalStoredMsgItems] = useLocalStorage(
+    params_local_storage_key + '-msgitems-'+userinfo.username,
+    []
+  );
   const onMessageCallback = ({ data }) => {
     setLoading(false);
+    setNewChatLoading(false);
     //save conversations
     const resp = JSON.parse(data);
-    // console.log(resp);
-    
+  
     let chunck = resp.text.content;
+    if(chunck.startsWith('历史对话已清空')){
+      return;
+    }
     // console.log(resp);
     // 如果是none stream输出，则全部替换
-    if (hideRefDoc) {
+    if (hideRefDoc||!modelParams?.use_qa) {
       const fullRefRegex = /```json\n#Reference([\w+#-]+)?\n([\s\S]*?)\n```/gm;
       chunck = chunck.replace(fullRefRegex, "");
     }
 
     // 如果是stream输出，则忽略这个内容
     const refRegex = /```json\n#Reference/gm;
-    if (hideRefDoc && refRegex.exec(chunck)) {
+    if ((hideRefDoc ||!modelParams?.use_qa) && refRegex.exec(chunck) ) {
       return;
     }
     if (resp.role) {
-      setStreamMsg((prev) => prev + chunck);
+      setStreamMsg((prev) => chunck !== '[DONE]'?(prev + chunck):prev);
       // if stream stop, save the whole message
       if (chunck === "[DONE]") {
         setStopFlag(false);
@@ -453,7 +461,11 @@ const ConversationsPanel = () => {
           ...prev,
           { role: resp.role, content: streamMsg,connectionId:resp.connectionId },
         ]);
-
+        
+        setLocalStoredMsgItems([
+          ...msgItems.slice(0, -1),
+          { id: resp.msgid, who: BOTNAME, text: streamMsg,connectionId:resp.connectionId },
+        ]);
         //如果是SD模型返回的url，则保存起来
         const [imgPaths, newtext] = extractImagTag(streamMsg);
         imgPaths.map((url) => setImg2txtUrl(url));
@@ -475,10 +487,12 @@ const ConversationsPanel = () => {
     // console.log(streamMsg);
     if (!targetItem.length) {
       //创建一个新的item
-      setMsgItems((prev) => [
-        ...prev,
-        { id: resp.msgid, who: BOTNAME, text: chunck,connectionId:resp.connectionId  },
-      ]);
+      if (chunck !== '[DONE]'){
+        setMsgItems((prev) => [
+          ...prev,
+          { id: resp.msgid, who: BOTNAME, text: chunck,connectionId:resp.connectionId  },
+        ]);
+      }
     } else {
       setMsgItems((prev) => [
         ...prev.slice(0, -1),

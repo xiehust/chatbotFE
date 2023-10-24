@@ -29,7 +29,7 @@ export const useLocalStorage = (key, defaultValue) => {
 
   function handleValueChange(newValue) {
     setValue(newValue);
-    if (newValue === null){
+    if (key === localStoreKey && newValue === null){
         eraseCookie(localStoreKey);
     }
     if (key === localStoreKey){

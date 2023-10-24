@@ -161,7 +161,7 @@ i18n
             upload_image:'Upload Image',
             multi_rounds:'Multi-rounds',
             use_stream:'Stream',
-            correct_answer:'Correct Answer',
+            correct_answer:'Correct',
             provide_your_answer:'Thanks for your answer',
             feedback_management:'Feedback Management',
             create_new_faq:'Create New FAQ',
@@ -172,7 +172,9 @@ i18n
             confirm_change:'Save changes',
             update_new_faq:'Update FAQ',
             download_template:'Download Template',
-            delete_feedback:'Delete feedback'
+            delete_feedback:'Delete feedback',
+            new_chat:'New chat',
+            info_field:'Info'
         }
       },
       zh:{
@@ -320,7 +322,7 @@ i18n
             upload_image:'上传图片',
             multi_rounds:'多轮会话',
             use_stream:'Stream',
-            correct_answer:'帮我纠正',
+            correct_answer:'纠正',
             provide_your_answer:'感谢您的反馈',
             feedback_management:'反馈管理',
             create_new_faq:'创建新的FAQ',
@@ -331,7 +333,9 @@ i18n
             confirm_change:'保存修改',
             update_new_faq:'更新FAQ',
             download_template:'下载模板',
-            delete_feedback:'删除反馈'
+            delete_feedback:'删除反馈',
+            new_chat:'新对话',
+            info_field:'信息'
 
         }
       }
