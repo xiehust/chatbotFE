@@ -24,7 +24,7 @@ import { useAuthUserInfo } from "../commons/use-auth";
 import { defaultModelParams } from "./prompt-panel";
 
 const Content = () => {
-  const [msgItems, setMsgItems] = useState([]);
+  
   const [hideRefDoc, setHideRefDoc] = useState(false);
   const [modelParams, setModelParams] = useState({});
   const [loading, setLoading] = useState(false);
@@ -33,6 +33,8 @@ const Content = () => {
   const [feedBackModalVisible,setFeedBackModalVisible] = useState(false);
   const [modalData,setModalData] = useState({});
   const [stopFlag,setStopFlag] = useState(false);
+  const [newChatLoading, setNewChatLoading] = useState(false);
+
   const { t } = useTranslation();
   const [alertopen, setAlertOpen] = useState(false);
   const userinfo = useAuthUserInfo();
@@ -41,6 +43,11 @@ const Content = () => {
     params_local_storage_key+username,
     null
   );
+  const [localStoredMsgItems, setLocalStoredMsgItems] = useLocalStorage(
+    params_local_storage_key + '-msgitems-'+userinfo.username,
+    []
+  );
+  const [msgItems, setMsgItems] = useState(localStoredMsgItems);
   useEffect(()=>{
     setModelParams(prev =>({
       ...prev,
@@ -52,9 +59,9 @@ const Content = () => {
       sk:localStoredParams?.sk||'',
       obj_prefix:localStoredParams?.obj_prefix||defaultModelParams.obj_prefix,
     }))
-
-
   },[]);
+
+
   return (
     <ChatDataCtx.Provider
       value={{
@@ -77,7 +84,9 @@ const Content = () => {
         modalData,
         setModalData,
         stopFlag,
-        setStopFlag
+        setStopFlag,
+        newChatLoading, 
+        setNewChatLoading
       }}
     >
       <ModelSettings />

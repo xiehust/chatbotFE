@@ -449,6 +449,7 @@ const PromptPanel = ({ sendMessage }) => {
   const [promptValue, setPromptValue] = useState("");
   const {
     modelParams,
+    msgItems,
     setMsgItems,
     setLoading,
     setModelParams,
@@ -457,12 +458,21 @@ const PromptPanel = ({ sendMessage }) => {
     img2txtUrl,
     setImg2txtUrl,
     stopFlag,
-    setStopFlag
+    setStopFlag,
+    setHideRefDoc,
+    newChatLoading, 
+    setNewChatLoading
   } = useChatData();
   const [localStoredParams, setLocalStoredParams] = useLocalStorage(
     params_local_storage_key + userinfo.username,
     null
   );
+
+  const [localStoredMsgItems, setLocalStoredMsgItems] = useLocalStorage(
+    params_local_storage_key + '-msgitems-'+userinfo.username,
+    []
+  );
+
   const [checked, setChecked] = useState(
     localStoredParams?.use_qa !== undefined
       ? localStoredParams?.use_qa
@@ -473,8 +483,6 @@ const PromptPanel = ({ sendMessage }) => {
       ? localStoredParams?.multi_rounds
       : defaultModelParams.multi_rounds
   );
-
-  const { setHideRefDoc } = useChatData();
 
   const [hideRefchecked, setRefDocChecked] = useState(
     localStoredParams?.hide_ref !== undefined
@@ -500,6 +508,13 @@ const PromptPanel = ({ sendMessage }) => {
       { id: respid, who: userinfo.username, text: prompt },
     ]);
 
+    //save the messages to localstorage
+    // console.log(msgItems);
+    setLocalStoredMsgItems([
+      ...msgItems,
+      { id: respid, who: userinfo.username, text: prompt },
+    ])
+
     setConversations((prev) => [...prev, { role: "user", content: prompt }]);
     const messages = [...conversations, { role: "user", content: prompt }];
     setLoading(true);
@@ -509,7 +524,6 @@ const PromptPanel = ({ sendMessage }) => {
       payload: { msgid: respid, messages: messages, params: params },
     });
     console.log("modelParams:", params);
-
     setPromptValue("");
   };
 
@@ -536,22 +550,25 @@ const PromptPanel = ({ sendMessage }) => {
           <SpaceBetween size="xs" direction="horizontal">
             <Button
               variant="primary"
-              loading={stopFlag}
+              loading={stopFlag&&!newChatLoading}
+              disabled={newChatLoading}
               onClick={(event) => onSubmit(promptValue)}
             >
               {t("send")}
             </Button>
             <Button
-              variant="secondary"
-              onClick={(event) => {
+              loading={newChatLoading}
+              onClick={() => {
+                setNewChatLoading(true);
                 onSubmit("/rs");
                 setImg2txtUrl(null);
                 setConversations([]);
                 setMsgItems([]);
+                setLocalStoredMsgItems([]);
                 setLoading(false);
               }}
             >
-              {t("clear")}
+              {t("new_chat")}
             </Button>
           </SpaceBetween>
           </Grid>
