@@ -9,13 +9,13 @@ import {
     Button,
     Modal,
   } from "@cloudscape-design/components";
-import { useChatData } from "./common-components";
-import { useSettingCtx } from "../commons/common-components";
+// import { useChatData } from "./common-components";
+import { useSettingCtx } from "./common-components";
 import { useTranslation } from "react-i18next";
 import { useLocalStorage } from "../../common/localStorage";
-import {params_local_storage_key} from "./common-components";
-import { defaultModelParams } from "./prompt-panel";
-import { useAuthUserInfo } from "../commons/use-auth";
+import {params_local_storage_key} from "../chatbot/common-components";
+import { defaultModelParams } from "../chatbot/prompt-panel";
+import { useAuthUserInfo } from "./use-auth";
 
 
 const SettingsPanel = ()=>{
@@ -26,10 +26,7 @@ const SettingsPanel = ()=>{
       params_local_storage_key+username,
       null
     );
-    const {modelParams, setModelParams } = useChatData();
-    const [embedding_endpoint, setEmbEndpoint] = useState(
-        localStoredParams?.embedding_endpoint || ''
-      );
+    // const {modelParams, setModelParams } = useChatData();
       const [apigateway_endpoint, setApiGwEndpoint] = useState(
         localStoredParams?.apigateway_endpoint || ''
       );
@@ -51,51 +48,30 @@ const SettingsPanel = ()=>{
       const [obj_prefix, setObjPrefix] = useState(
         localStoredParams?.obj_prefix || defaultModelParams.obj_prefix
       );
-      const [main_fun_arn, setMainFunArn] = useState(
-        localStoredParams?.main_fun_arn || ''
-      );
     useEffect(() => {
-        setModelParams( prev => ({ 
-          ...prev,
-          ...localStoredParams,
-          embedding_endpoint:localStoredParams?.embedding_endpoint||'',
-          apigateway_endpoint:localStoredParams?.apigateway_endpoint||'',
-          OPENAI_API_KEY:localStoredParams?.OPENAI_API_KEY||'',
-          s3_region:localStoredParams?.s3_region||'',
-          s3_bucket:localStoredParams?.s3_bucket||'',
-          ak:localStoredParams?.ak||'',
-          sk:localStoredParams?.sk||'',
-          obj_prefix:localStoredParams?.obj_prefix||defaultModelParams.obj_prefix,
-          main_fun_arn:localStoredParams?.main_fun_arn || '',
-          }));
+        // setModelParams( prev => ({ 
+        //   ...prev,
+        //   ...localStoredParams,
+        //   apigateway_endpoint:localStoredParams?.apigateway_endpoint||'',
+        //   OPENAI_API_KEY:localStoredParams?.OPENAI_API_KEY||'',
+        //   s3_region:localStoredParams?.s3_region||'',
+        //   s3_bucket:localStoredParams?.s3_bucket||'',
+        //   ak:localStoredParams?.ak||'',
+        //   sk:localStoredParams?.sk||'',
+        //   obj_prefix:localStoredParams?.obj_prefix||defaultModelParams.obj_prefix,
+        //   }));
       }, []);
 
     return (
         <SpaceBetween direction="vertical" size="l">
-{/* <FormField label={t("embedding_endpoint")}>
-          <Input
-            onChange={({ detail }) => {
-              setEmbEndpoint(detail.value);
-              setModelParams((prev) => ({
-                ...prev,
-                embedding_endpoint: detail.value,
-              }));
-              setLocalStoredParams({
-                ...localStoredParams,
-                embedding_endpoint: detail.value,
-              });
-            }}
-            value={embedding_endpoint}
-          />
-        </FormField> */}
         <FormField label={t("apigateway_endpoint")}>
           <Input
             onChange={({ detail }) => {
               setApiGwEndpoint(detail.value);
-              setModelParams((prev) => ({
-                ...prev,
-                apigateway_endpoint: detail.value,
-              }));
+              // setModelParams((prev) => ({
+              //   ...prev,
+              //   apigateway_endpoint: detail.value,
+              // }));
               setLocalStoredParams({
                 ...localStoredParams,
                 apigateway_endpoint: detail.value,
@@ -104,30 +80,14 @@ const SettingsPanel = ()=>{
             value={apigateway_endpoint}
           />
         </FormField>
-        {/* <FormField label={"Main Function ARN"}>
-          <Input
-            onChange={({ detail }) => {
-              setMainFunArn(detail.value);
-              setModelParams((prev) => ({
-                ...prev,
-                main_fun_arn: detail.value,
-              }));
-              setLocalStoredParams({
-                ...localStoredParams,
-                main_fun_arn: detail.value,
-              });
-            }}
-            value={main_fun_arn}
-          />
-        </FormField> */}
         <FormField label={t("openai_api_key")}>
           <Input
             onChange={({ detail }) => {
               setOpenAIApiKey(detail.value);
-              setModelParams((prev) => ({
-                ...prev,
-                OPENAI_API_KEY: detail.value,
-              }));
+              // setModelParams((prev) => ({
+              //   ...prev,
+              //   OPENAI_API_KEY: detail.value,
+              // }));
               setLocalStoredParams({
                 ...localStoredParams,
                 OPENAI_API_KEY: detail.value,
@@ -140,10 +100,10 @@ const SettingsPanel = ()=>{
           <Input
             onChange={({ detail }) => {
               setAWSAk(detail.value);
-              setModelParams((prev) => ({
-                ...prev,
-                ak: detail.value,
-              }));
+              // setModelParams((prev) => ({
+              //   ...prev,
+              //   ak: detail.value,
+              // }));
               setLocalStoredParams({
                 ...localStoredParams,
                 ak: detail.value,
@@ -156,10 +116,10 @@ const SettingsPanel = ()=>{
           <Input
             onChange={({ detail }) => {
               setAWSSk(detail.value);
-              setModelParams((prev) => ({
-                ...prev,
-                sk: detail.value,
-              }));
+              // setModelParams((prev) => ({
+              //   ...prev,
+              //   sk: detail.value,
+              // }));
               setLocalStoredParams({
                 ...localStoredParams,
                 sk: detail.value,
@@ -172,10 +132,10 @@ const SettingsPanel = ()=>{
           <Input
             onChange={({ detail }) => {
               setS3Region(detail.value);
-              setModelParams((prev) => ({
-                ...prev,
-                s3_region: detail.value,
-              }));
+              // setModelParams((prev) => ({
+              //   ...prev,
+              //   s3_region: detail.value,
+              // }));
               setLocalStoredParams({
                 ...localStoredParams,
                 s3_region: detail.value,
@@ -188,10 +148,10 @@ const SettingsPanel = ()=>{
           <Input
             onChange={({ detail }) => {
               setS3Bucket(detail.value);
-              setModelParams((prev) => ({
-                ...prev,
-                s3_bucket: detail.value,
-              }));
+              // setModelParams((prev) => ({
+              //   ...prev,
+              //   s3_bucket: detail.value,
+              // }));
               setLocalStoredParams({
                 ...localStoredParams,
                 s3_bucket: detail.value,
@@ -204,10 +164,10 @@ const SettingsPanel = ()=>{
           <Input
             onChange={({ detail }) => {
               setObjPrefix(detail.value);
-              setModelParams((prev) => ({
-                ...prev,
-                obj_prefix: detail.value,
-              }));
+              // setModelParams((prev) => ({
+              //   ...prev,
+              //   obj_prefix: detail.value,
+              // }));
               setLocalStoredParams({
                 ...localStoredParams,
                 obj_prefix: detail.value,
@@ -231,7 +191,7 @@ const ModelSettings =() =>{
             <Box float="right">
               <SpaceBetween direction="horizontal" size="xs">
                 <Button variant="link" onClick={ ()=> setModelSettingVisible(false)}>{t('close')}</Button>
-                <Button variant="primary" href = '/chat' onClick={ ()=> setModelSettingVisible(false)}>{t('confirm')}</Button>
+                <Button variant="primary"  onClick={ ()=> setModelSettingVisible(false)}>{t('confirm')}</Button>
               </SpaceBetween>
             </Box>
           }

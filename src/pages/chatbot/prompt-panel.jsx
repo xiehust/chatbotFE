@@ -35,7 +35,7 @@ export const defaultModelParams = {
   // embedding_model_name: embeddings[0].value,
   // embedding_model_name_opt: embeddings[0],
   obj_prefix: "ai-content/",
-  system_role: "Assitant",
+  system_role: "",
   system_role_prompt: "",
   template_id: "default",
   template_opt: { label: "default", value: "default" },
@@ -218,7 +218,7 @@ const ExpandableSettingPanel = () => {
     setLocalStoredParams({
       ...localStoredParams,
       system_role:
-        localStoredParams?.system_role === undefined
+        localStoredParams?.system_role === undefined  || localStoredParams?.system_role === ''
           ? defaultModelParams.system_role
           : localStoredParams.system_role,
       use_qa:
@@ -234,7 +234,7 @@ const ExpandableSettingPanel = () => {
           ? defaultModelParams.hide_ref
           : localStoredParams?.hide_ref,
       system_role_prompt:
-        localStoredParams?.system_role_prompt === undefined
+        localStoredParams?.system_role_prompt === undefined || localStoredParams?.system_role_prompt === ''
           ? defaultModelParams.system_role_prompt
           : localStoredParams.system_role_prompt,
       obj_prefix:
