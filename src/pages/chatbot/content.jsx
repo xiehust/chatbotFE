@@ -17,7 +17,11 @@ import {
 } from "@cloudscape-design/components";
 import ConversationsPanel from "./conversations";
 import { useTranslation } from "react-i18next";
-import ModelSettings from "./chat-settings";
+import ModelSettings from "../commons/chat-settings";
+import { useLocalStorage } from "../../common/localStorage";
+import {params_local_storage_key} from "./common-components";
+import { useAuthUserInfo } from "../commons/use-auth";
+import { defaultModelParams } from "./prompt-panel";
 
 const Content = () => {
   const [msgItems, setMsgItems] = useState([]);
@@ -31,6 +35,26 @@ const Content = () => {
   const [stopFlag,setStopFlag] = useState(false);
   const { t } = useTranslation();
   const [alertopen, setAlertOpen] = useState(false);
+  const userinfo = useAuthUserInfo();
+  const username = userinfo?.username || 'default';
+  const [localStoredParams, setLocalStoredParams] = useLocalStorage(
+    params_local_storage_key+username,
+    null
+  );
+  useEffect(()=>{
+    setModelParams(prev =>({
+      ...prev,
+      apigateway_endpoint:localStoredParams?.apigateway_endpoint||'',
+      OPENAI_API_KEY:localStoredParams?.OPENAI_API_KEY||'',
+      s3_region:localStoredParams?.s3_region||'',
+      s3_bucket:localStoredParams?.s3_bucket||'',
+      ak:localStoredParams?.ak||'',
+      sk:localStoredParams?.sk||'',
+      obj_prefix:localStoredParams?.obj_prefix||defaultModelParams.obj_prefix,
+    }))
+
+
+  },[]);
   return (
     <ChatDataCtx.Provider
       value={{

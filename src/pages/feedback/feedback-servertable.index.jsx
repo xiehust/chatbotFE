@@ -21,6 +21,7 @@ import { FILTERING_PROPERTIES,} from './table-config';
 import { useTranslation } from 'react-i18next';
 import CreateQAModal from './addfeedback';
 import {PROPERTY_FILTERING_I18N_CONSTANTS} from '../../common/i18nStrings';
+import ModelSettings from "../commons/chat-settings";
 
 
 const DEFAULT_FILTERING_QUERY = { tokens: [], operation: 'and' };
@@ -82,6 +83,7 @@ export function TableContent({
   }
   return (
     <SpaceBetween size="l">
+    <ModelSettings/>
     <CreateQAModal visible={qAModalVisible} setVisible={setQAModalVisible} />
     <Table
       onSelectionChange={({ detail }) =>

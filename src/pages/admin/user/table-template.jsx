@@ -17,6 +17,7 @@ import { getFilterCounterText } from '../../../common/tableCounterStrings';
 import { useColumnWidths } from '../../commons/use-column-widths';
 import { useLocalStorage } from '../../../common/localStorage';
 import {useSimpleNotifications} from '../../commons/use-notifications';
+import ModelSettings from "../../commons/chat-settings";
 
 export function TableContent({ 
   distributions,
@@ -43,6 +44,8 @@ export function TableContent({
     event.preventDefault();
   }
   return (
+    <div>
+      <ModelSettings/>
     <Table
       {...collectionProps}
       columnDefinitions={columnDefinitions}
@@ -78,6 +81,7 @@ export function TableContent({
       pagination={<Pagination {...paginationProps} ariaLabels={paginationLabels} />}
       preferences={<Preferences preferences={preferences} setPreferences={setPreferences} />}
     />
+    </div>
   );
 }
 

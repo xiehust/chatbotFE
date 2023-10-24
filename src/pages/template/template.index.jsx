@@ -21,6 +21,9 @@ import {useAuthUserInfo, useAuthorizedHeader} from "../commons/use-auth";
 import {listTemplate} from '../commons/api-gateway';
 import { useTranslation } from 'react-i18next';
 import {params_local_storage_key} from "../chatbot/common-components";
+import ModelSettings from "../commons/chat-settings";
+
+
 
 function TableContent({ 
   resourceName,
@@ -48,6 +51,8 @@ function TableContent({
   );
 
   return (
+    <div>
+        <ModelSettings/>
     <Table
      {...collectionProps}
       columnDefinitions={columnDefinitions}
@@ -83,6 +88,7 @@ function TableContent({
       pagination={<Pagination {...paginationProps} ariaLabels={paginationLabels} />}
       preferences={<Preferences preferences={preferences} setPreferences={setPreferences} />}
     />
+</div>
   );
 }
 

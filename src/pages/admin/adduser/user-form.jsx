@@ -20,6 +20,7 @@ import { useNavigate } from "react-router-dom";
 import { useSimpleNotifications } from "../../commons/use-notifications";
 import { API_users, remotePostCall } from "../../commons/api-gateway";
 import { useTranslation } from 'react-i18next';
+import ModelSettings from "../../commons/chat-settings";
 
 
 const addUserFormCtx = createContext();
@@ -258,8 +259,10 @@ export default function FormContent() {
     // groupids: [],
   });
   const navigate = useNavigate();
+  
   return (
     <addUserFormCtx.Provider value={{ formData, setFormData }}>
+    <ModelSettings/>
       <BaseFormContent
         content={
           <SpaceBetween size="l">

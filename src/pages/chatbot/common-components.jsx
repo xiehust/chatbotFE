@@ -4,7 +4,6 @@ import React, {createContext, useContext} from 'react';
 import { BreadcrumbGroup, HelpPanel, Icon, Box,Link } from '@cloudscape-design/components';
 import { ExternalLinkItem } from '../commons/common-components';
 // import langString from "../../common/language_string";
-import { useTranslation, Trans } from 'react-i18next';
 import i18n from '../../common/i18n';
 
 export const ChatDataCtx = createContext();
