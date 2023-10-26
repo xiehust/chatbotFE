@@ -78,15 +78,29 @@ const SettingsPanel = ()=>{
           setHelperMsg(`missing buckets params, using default bucket`);
           //upload to default bucket
 
-          files.map( file => {
+         
+
+          // files.map( file => {
             const headers = {
               'Authorization': token.token,
               'Content-Type':file.type
             };
-            const formData = new FormData();
-            formData.append("file", file);
+            // console.log(file);
+            const read = new FileReader();
+            read.readAsBinaryString(file);
+            read.onloadend = function(){
+              // console.log(read.result);
 
-            uploadFile( username,formData, headers)
+              const bits = read.result;
+              const body = {
+                 filename: file.name,
+                 mimeType: file.type,
+                 fileSizeBytes: file.size,
+                 lastModified: file.lastModified,
+                 buf: bits
+              };
+
+              uploadFile( username,body, headers)
               .then((response) => {
                 setLoading(false);
                 setHelperMsg(prev => (prev+` Upload ${file.name} success`));
@@ -114,7 +128,9 @@ const SettingsPanel = ()=>{
                 setUploadErr(`Upload ${file.name} error`);
                 setFiles([]);
               });
-          })
+          }
+
+          // })
           
 
         }
@@ -159,7 +175,7 @@ const SettingsPanel = ()=>{
              }
             value={files}
             accept='.pdf,.txt,.csv,.faq,.md,.example,.examples,.json,.wiki'
-            multiple
+            multiple 
             constraintText = {helperMsg}
             showFileLastModified
             showFileSize

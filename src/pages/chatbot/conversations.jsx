@@ -125,7 +125,15 @@ const MarkdownToHtml = ({ text }) => {
 
 const MsgItem = ({ who, text, image,msgid,connectionId  }) => {
   if (image) {
-    const url = URL.createObjectURL(image);
+    console.log('image:',image);
+    let url;
+    try{
+      url = URL.createObjectURL(image);
+    }
+    catch(err){
+      url = null;
+      return (<div/>);
+    }
     return (
       who !== BOTNAME && (
         <ListItem sx={{ display: "flex", justifyContent: "flex-end" }}>
@@ -440,7 +448,8 @@ const ConversationsPanel = () => {
     if(chunck.startsWith('历史对话已清空')){
       return;
     }
-    // console.log(resp);
+    // console.log(chunck);
+    // console.log(hideRefDoc);
     // 如果是none stream输出，则全部替换
     if (hideRefDoc||!modelParams?.use_qa) {
       const fullRefRegex = /```json\n#Reference([\w+#-]+)?\n([\s\S]*?)\n```/gm;
