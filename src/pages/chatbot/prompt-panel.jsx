@@ -82,12 +82,19 @@ const ExpandableSettingPanel = () => {
           ? defaultModelParams.system_role_prompt
           : localStoredParams.system_role_prompt,
   );
-  const { setMsgItems, setModelParams, setImg2txtUrl} = useChatData();
+  const { setMsgItems, msgItems,setModelParams, setImg2txtUrl} = useChatData();
   const [alldocs, setAlldocs] = useState([]);
 
   const [selectTemplate, setSelectTemplate] = useState(
     localStoredParams?.template_opt || defaultModelParams.template_opt
   );
+  
+  const [localStoredMsgItems, setLocalStoredMsgItems] = useLocalStorage(
+    params_local_storage_key + '-msgitems-'+userinfo.username,
+    []
+  );
+
+
   const [loadStatus, setLoadStatus] = useState("loading");
   const [uploadErrtxt, setUploadErr] = useState();
   const [uploadComplete, setUploadComplete] = useState(false);
@@ -133,6 +140,14 @@ const ExpandableSettingPanel = () => {
               },
             ] //创建一个新的item
           );
+          // console.log(msgItems);
+          setLocalStoredMsgItems([
+            ...msgItems,
+            { id: msgid,
+                who: userinfo.username, 
+                text: file[0].name,
+              image: file[0] },
+          ]);
           setUploadComplete(true);
           setFile([]);
         })
@@ -147,15 +162,27 @@ const ExpandableSettingPanel = () => {
       console.log(`missing buckets params, using default bucket:${default_bucket} to upload`);
       setHelperMsg(`missing buckets params, using default bucket`);
       //upload to default bucket
-      const formData = new FormData();
-        formData.append("image", file[0]);
-        console.log(file[0]);
+      // const formData = new FormData();
+      //   formData.append("image", file[0]);
+        // console.log(file[0]);
         const headers = {
           'Authorization': token.token,
           'Content-Type':file[0].type,
           'Accept':file[0].type
         };
-        uploadFile( username,formData, headers)
+        const read = new FileReader();
+        read.readAsBinaryString(file[0]);
+        read.onloadend = function(){
+          const bits = read.result;
+          const body = {
+             filename: file[0].name,
+             mimeType: file[0].type,
+             fileSizeBytes: file[0].size,
+             lastModified: file[0].lastModified,
+             buf: bits
+          };
+
+          uploadFile( username,body, headers)
           .then((response) => {
             setLoading(false);
             setImg2txtUrl(`${default_bucket}/images/${username}/${file[0].name}`); 
@@ -170,6 +197,14 @@ const ExpandableSettingPanel = () => {
                 },
               ] //创建一个新的item
             );
+            console.log(msgItems);
+            setLocalStoredMsgItems([
+              ...msgItems,
+              { id: msgid,
+                 who: userinfo.username, 
+                  text: file[0].name,
+                image: file[0]},
+            ]);
             setUploadComplete(true);
             setFile([]);
           })
@@ -180,6 +215,8 @@ const ExpandableSettingPanel = () => {
             setUploadErr(`Upload ${file[0].name} error`);
             setFile([]);
           });
+        }
+
       }
 
     

@@ -54,36 +54,55 @@ async function  extractFile(event) {
   });
 }
 
+/*global Blob */
+function binaryStringToBlob(binaryString, mimeType) {
+  const bytes = new Uint8Array(binaryString.length);
+  for (let i = 0; i < binaryString.length; i++) {
+    bytes[i] = binaryString.charCodeAt(i);
+  }
+  return new Blob([bytes], { type: mimeType});
+}
+
+
+
 exports.handler = async (event) => {
-  // Extract the file from the request
-  const file = await extractFile(event);
+  // console.log(event);
+  // const contentType = event.headers['content-type'];
+  const body = JSON.parse(event.body)
+  const filename = body['filename'];
+  const mimeType = body['mimeType'];
+  const bufString = body['buf'];
+  console.log(`filename:${filename}`)
+
+  const blobFile = binaryStringToBlob(bufString,mimeType)
+  const buffer = await blobFile.arrayBuffer();
+ 
+
+/*global ReadableStream */
   const username = event.queryStringParameters.username;
-  const prefix = (file.type === 'image/jpeg' || file.type === 'image/png')?`images/${username}/`:process.env.UPLOAD_OBJ_PREFIX;
-  // Upload the file to S3
+  const prefix = mimeType === "image/jpeg" || mimeType === "image/png" ? `images/${username}/` : process.env.UPLOAD_OBJ_PREFIX;
   const s3Client = new S3Client();
   const s3Params = {
     Bucket: bucket,
-    Key: prefix + file.name,
-    Body: file.data,
-    ContentType: file.type,
+    Key: prefix + filename,
+    Body: buffer,
+    ContentType: mimeType
   };
-  console.log(`File to upload:${bucket}/${prefix + file.name},ContentType:${file.type}`);
-
+  console.log(`File to upload:${bucket}/${prefix + filename},ContentType:${mimeType}`);
   const s3Command = new PutObjectCommand(s3Params);
   try {
     await s3Client.send(s3Command);
   } catch (error) {
-    console.log("File uploaded failed",JSON.stringify(error));
+    console.log("File uploaded failed", JSON.stringify(error));
     return {
       statusCode: 500,
       headers,
-      body: "File uploaded failed",
+      body: "File uploaded failed"
     };
   }
-  // Return a success response
   return {
     statusCode: 200,
     headers,
-    body: "File uploaded successfully",
+    body: "File uploaded successfully"
   };
 };

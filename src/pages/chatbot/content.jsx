@@ -22,6 +22,7 @@ import { useLocalStorage } from "../../common/localStorage";
 import {params_local_storage_key} from "./common-components";
 import { useAuthUserInfo } from "../commons/use-auth";
 import { defaultModelParams } from "./prompt-panel";
+import {useSettingCtx} from "../commons/common-components";
 
 const Content = () => {
   
@@ -48,6 +49,10 @@ const Content = () => {
     []
   );
   const [msgItems, setMsgItems] = useState(localStoredMsgItems);
+
+  const { modelSettingVisible } = useSettingCtx();
+
+
   useEffect(()=>{
     setModelParams(prev =>({
       ...prev,
@@ -59,7 +64,7 @@ const Content = () => {
       sk:localStoredParams?.sk||'',
       obj_prefix:localStoredParams?.obj_prefix||defaultModelParams.obj_prefix,
     }))
-  },[]);
+  },[modelSettingVisible]);
 
 
   return (
