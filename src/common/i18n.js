@@ -174,7 +174,8 @@ i18n
             download_template:'Download Template',
             delete_feedback:'Delete feedback',
             new_chat:'New chat',
-            info_field:'Info'
+            info_field:'Info',
+            use_trace:'Trace'
         }
       },
       zh:{
@@ -335,7 +336,8 @@ i18n
             download_template:'下载模板',
             delete_feedback:'删除反馈',
             new_chat:'新对话',
-            info_field:'信息'
+            info_field:'信息',
+            use_trace:'跟踪日志'
 
         }
       }

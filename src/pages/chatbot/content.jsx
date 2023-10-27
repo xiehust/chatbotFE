@@ -27,6 +27,7 @@ import {useSettingCtx} from "../commons/common-components";
 const Content = () => {
   
   const [hideRefDoc, setHideRefDoc] = useState(false);
+
   const [modelParams, setModelParams] = useState({});
   const [loading, setLoading] = useState(false);
   const [conversations, setConversations] = useState([]);
@@ -49,7 +50,10 @@ const Content = () => {
     []
   );
   const [msgItems, setMsgItems] = useState(localStoredMsgItems);
-
+  const [useTrace, setUseTrace] = useState( 
+    localStoredParams?.use_trace !== undefined
+    ? localStoredParams?.use_trace
+    : defaultModelParams.use_trace);
   const { modelSettingVisible } = useSettingCtx();
 
 
@@ -91,7 +95,9 @@ const Content = () => {
         stopFlag,
         setStopFlag,
         newChatLoading, 
-        setNewChatLoading
+        setNewChatLoading,
+        useTrace,
+        setUseTrace
       }}
     >
       <ModelSettings />
