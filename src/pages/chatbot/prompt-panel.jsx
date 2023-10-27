@@ -40,7 +40,8 @@ export const defaultModelParams = {
   template_id: "default",
   template_opt: { label: "default", value: "default" },
   hide_ref: false,
-  use_stream:true
+  use_stream:true,
+  use_trace:false,
 };
 
 function generateId() {
@@ -282,6 +283,7 @@ const ExpandableSettingPanel = () => {
           localStoredParams?.use_stream === undefined
             ? defaultModelParams.use_stream
             : localStoredParams?.use_stream,
+      
     });
   }, []);
 
@@ -306,6 +308,10 @@ const ExpandableSettingPanel = () => {
           localStoredParams?.use_stream !== undefined
             ? localStoredParams?.use_stream
             : defaultModelParams.use_stream,
+      use_trace:
+          localStoredParams?.use_trace !== undefined
+            ? localStoredParams?.use_trace
+            : defaultModelParams.use_trace,
       model_name:
         localStoredParams?.model_name || defaultModelParams.model_name,
       system_role:
@@ -498,7 +504,9 @@ const PromptPanel = ({ sendMessage }) => {
     setStopFlag,
     setHideRefDoc,
     newChatLoading, 
-    setNewChatLoading
+    setNewChatLoading,
+    useTrace,
+    setUseTrace
   } = useChatData();
   const [localStoredParams, setLocalStoredParams] = useLocalStorage(
     params_local_storage_key + userinfo.username,
@@ -658,6 +666,7 @@ const PromptPanel = ({ sendMessage }) => {
                 checked={multiRoundsChecked}
               >{t("multi_rounds")}</Toggle>
             </FormField>
+
             <FormField >
               <Toggle
                 onChange={({ detail }) => {
@@ -675,7 +684,22 @@ const PromptPanel = ({ sendMessage }) => {
                 checked={hideRefchecked}
               >{t("hide_ref_doc")}</Toggle>
             </FormField>
-            
+            <FormField >
+              <Toggle
+                onChange={({ detail }) => {
+                  setUseTrace(detail.checked);
+                  setModelParams((prev) => ({
+                    ...prev,
+                    use_trace: detail.checked,
+                  }));
+                  setLocalStoredParams({
+                    ...localStoredParams,
+                    use_trace: detail.checked,
+                  });
+                }}
+                checked={useTrace}
+              >{t("use_trace")}</Toggle>
+            </FormField>
           </SpaceBetween>
       </SpaceBetween>
       
