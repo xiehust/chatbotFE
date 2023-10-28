@@ -79,8 +79,9 @@ exports.handler = async (event) => {
  
 
 /*global ReadableStream */
-  const username = event.queryStringParameters.username;
-  const prefix = mimeType === "image/jpeg" || mimeType === "image/png" ? `images/${username}/` : process.env.UPLOAD_OBJ_PREFIX;
+  const username = event.queryStringParameters.username??'anonymous';
+
+  const prefix = mimeType === "image/jpeg" || mimeType === "image/png" ? `images/${username}/` : process.env.UPLOAD_OBJ_PREFIX+username+'/';
   const s3Client = new S3Client();
   const s3Params = {
     Bucket: bucket,
