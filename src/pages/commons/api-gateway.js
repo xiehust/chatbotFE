@@ -55,17 +55,22 @@ export const remotePostCall = async (headers,api,payload) =>{
 }
 
 export const remote_auth = async(username,password) =>{
+    try {
+        const resp = await axios.post(`${API_http}/signin`,JSON.stringify({username:username,password:password}));
+        console.log(resp.data);
+        return resp.data;
+    } catch (err) {
+        throw err;
+    }
+}
+
+export const remote_auth_ = async(username,password) =>{
     const options = {
         method:"POST",
         headers:{
             "Access-Control-Request-Headers": 'Content-Type, Authorization',
             "Authorization":`${username}:${password}`}
     };
-    // const dummy = {"isAuthorized":true,
-    //                 "token":"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJwYXlsb2FkIjoicml2ZXIiLCJpYXQiOjE2ODY2NDE3NjcsImV4cCI6MTY4NjcyODE2N30.UCpf0g4ioQta5SHatij08r4jgJmSVQUM-Ia2fUcJplM",
-    //                 "username":"user001",
-    //                 "groupname":"admin"}
-    // return dummy
     return fetch(API_http + '/'+API_login, options)
             .then(resp=>{
                 if (!resp.ok){
