@@ -1,5 +1,6 @@
 import json,re
 import boto3
+import os
 
 cors_headers = {
   "Access-Control-Allow-Headers" : "Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token,X-Amz-User-Agent",
@@ -8,11 +9,11 @@ cors_headers = {
 }
 
 # Configure AWS Cognito
-userpool_id = 'us-west-2_DacBygbuZ'
-client_id = '17vppcohjko4ols0najvhd0i2f'
-region = 'us-west-2'
+userpool_id = os.environ.get('IDENTITY_POOL_ID','us-west-2_DacBygbuZ')
+client_id = os.environ.get('COG_CLIENT_ID','17vppcohjko4ols0najvhd0i2f')
 
-client = boto3.client('cognito-idp', region_name=region)
+
+client = boto3.client('cognito-idp')
 
 def sign_up(email, username, password):
     try:
@@ -53,7 +54,15 @@ def sign_in(username, password):
                 'PASSWORD': password
             }
         )
-        return response['AuthenticationResult']['AccessToken']
+        print(response)
+        AuthenticationResult = response.get('AuthenticationResult')
+        if 'AuthenticationResult' in response:
+            return {'AccessToken':response['AuthenticationResult']['AccessToken']}
+        elif 'ChallengeName' in response and 'Session' in response:
+            return {'ChallengeName':response['ChallengeName'],'Session':response['Session']}
+        else:
+            raise Exception(f'initiate_auth fa') 
+        
     except client.exceptions.NotAuthorizedException:
         raise Exception('Invalid username, email, or password.')
 
@@ -159,14 +168,17 @@ def lambda_handler(event, context):
             # Step 1: Sign in
             username = get_username_from_email(username_or_email)
             print('username',username)
-            access_token = sign_in(username, password)
+            ret_dict = sign_in(username, password)
+            access_token = ret_dict.get('AccessToken', None)
+            next_challenge = ret_dict.get('ChallengeName',None)
             group = get_user_groups(username)
             return {
                 'statusCode': 200,
                 'headers': cors_headers,
                 'body': json.dumps({
-                        "isAuthorized":True,
+                        "isAuthorized":True if access_token else False,
                         "token": access_token,
+                        'next_challenge':next_challenge,
                         "username":username,
                         "groupname":group
                 })

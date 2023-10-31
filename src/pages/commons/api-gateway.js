@@ -64,6 +64,27 @@ export const remote_auth = async(username,password) =>{
     }
 }
 
+export const remote_signup = async(username,email,password) =>{
+    try {
+        const resp = await axios.post(`${API_http}/signup`,JSON.stringify({username:username,password:password,email:email}));
+        console.log(resp.data);
+        return resp.data;
+    } catch (err) {
+        throw err;
+    }
+}
+
+export const remote_confirm_signup = async(username,confirmation_code) =>{
+    try {
+        const resp = await axios.post(`${API_http}/confirm_signup`,JSON.stringify({username:username,confirmation_code:confirmation_code}));
+        console.log(resp.data);
+        return resp.data;
+    } catch (err) {
+        throw err;
+    }
+}
+
+
 export const remote_auth_ = async(username,password) =>{
     const options = {
         method:"POST",
