@@ -386,19 +386,28 @@ const SignIn = ({setSession,setSignType,username,setUsername,password,setPasswor
               variant="contained"
               sx={{ mt: 3, mb: 2}}
             >
-              Sign In
+              {"Sign In"}
             </LoadingButton>
+            <Button
+             fullWidth
+              variant="contained"
+              sx={{ mt: 0.5, mb: 0.5}}
+              color = "secondary"
+              onClick={()=>setSignType('signup')}
+              >
+              {"Sign Up"}
+            </Button>
             <Grid container>
               <Grid item xs>
                 <Link href="#" variant="body2">
                   Forgot password?
                 </Link>
               </Grid>
-              <Grid item>
+              {/* <Grid item>
                 <Link href="#" variant="body2" onClick={()=>setSignType('signup')}>
                   {"Don't have an account? Sign Up"}
                 </Link>
-              </Grid>
+              </Grid> */}
             </Grid>
             </FormControl>
           </Box>
