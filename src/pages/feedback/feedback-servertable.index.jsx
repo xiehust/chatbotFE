@@ -83,7 +83,7 @@ export function TableContent({
   }
   return (
     <SpaceBetween size="l">
-    <ModelSettings/>
+    <ModelSettings href={'/feedback'}/>
     <CreateQAModal visible={qAModalVisible} setVisible={setQAModalVisible} />
     <Table
       onSelectionChange={({ detail }) =>

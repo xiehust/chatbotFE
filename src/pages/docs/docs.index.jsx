@@ -50,7 +50,7 @@ function TableContent({
 
   return (
     <div>
-    <ModelSettings />
+    <ModelSettings href={'/docs'}/>
     <Table
      {...collectionProps}
       columnDefinitions={columnDefinitions}
