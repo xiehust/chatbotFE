@@ -288,14 +288,21 @@ const SignIn = ({setSession,setSignType,username,setUsername,password,setPasswor
     },[navigate,isAuthenticated]);
 
   useEffect(()=>{
-    if (local_stored_crediential) {
-        setChecked(local_stored_crediential.checked);
-        if (local_stored_crediential.checked) {
-          setUsername(local_stored_crediential.username);
-          setPassword(local_stored_crediential.password);
-        }
+    setChecked(local_stored_crediential?.checked);
+    if (local_stored_crediential.checked) {
+      setUsername(local_stored_crediential.username);
+      setPassword(local_stored_crediential.password);
     }
-  },[checked,local_stored_crediential]);
+  },[]);
+  // useEffect(()=>{
+  //   if (local_stored_crediential) {
+  //       setChecked(local_stored_crediential.checked);
+  //       if (local_stored_crediential.checked) {
+  //         setUsername(local_stored_crediential.username);
+  //         setPassword(local_stored_crediential.password);
+  //       }
+  //   }
+  // },[checked,local_stored_crediential]);
   const handleSubmit = (event) => {
     event.preventDefault();
     setLoading(true);
