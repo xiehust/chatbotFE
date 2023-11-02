@@ -26,7 +26,7 @@ export const Breadcrumbs = () => {
       href: "/",
     },
     {
-      text: t("docs"),
+      text: t("examples_management"),
     },
   ];
   return (
@@ -48,12 +48,12 @@ export const BreadcrumbsDynmic = ({ id }) => {
           href: "/home",
         },
         {
-          text: t("docs"),
-          href: "/docs",
+          text: t("examples_management"),
+          href: "/examples",
         },
         {
           text: id,
-          href: "#",
+          href: "/examples/" + id,
         },
       ]}
       expandAriaLabel="Show path"

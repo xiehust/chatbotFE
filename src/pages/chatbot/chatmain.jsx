@@ -17,7 +17,7 @@ const ChatBot = () => {
     <CustomAppLayout
       ref={appLayout}
       navigation={<Navigation activeHref="/chat" />}
-      notifications={<Flashbar items={notificationitems} />}
+      notifications={<Flashbar items={notificationitems} stackItems/>}
       breadcrumbs={<Breadcrumbs />}
       content={
 <Content/>

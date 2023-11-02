@@ -46,7 +46,9 @@ const EditPanel = ({ setVisible }) => {
   const apigateway_endpoint = localStoredParams.apigateway_endpoint;
   const [loading, setLoading] = useState(false);
   const msgid = generateId();
-  useEffect(() => {}, []);
+  useEffect(() => {
+    // console.log('EditPanel');
+  }, []);
   // console.log(JSON.stringify(modalData));
   return (
     <form
@@ -123,13 +125,11 @@ const EditPanel = ({ setVisible }) => {
           </SpaceBetween>
         }
       >
-        <SpaceBetween direction="vertical" size="l" key={msgid}>
+        <SpaceBetween direction="vertical" size="l" >
           <FormField label={t("question")}>
             <Input
               placeholder="Your question"
-              spellcheck
               autoFocus
-              ariaRequired={true}
               value={questionValue}
               onChange={({ detail }) => {
                 setQuestionValue(detail.value);
@@ -139,9 +139,7 @@ const EditPanel = ({ setVisible }) => {
           <FormField label={t("answer")}>
             <Textarea
               placeholder="Your answer"
-              spellcheck
               rows={6}
-              ariaRequired={true}
               value={answerValue}
               onChange={({ detail }) => {
                 setAnswerValue(detail.value);
@@ -156,6 +154,9 @@ const EditPanel = ({ setVisible }) => {
 
 const CreateQAModal = ({ visible, setVisible }) => {
   const { t } = useTranslation();
+  useEffect(() => {
+    // console.log('CreateQAModal');
+  }, []);
   return (
     <Modal
       onDismiss={() => setVisible(false)}

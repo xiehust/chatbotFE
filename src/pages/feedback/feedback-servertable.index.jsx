@@ -72,7 +72,7 @@ export function TableContent({
   const { items, loading, totalCount, pagesCount, currentPageIndex: serverPageIndex,refreshAction } = useDistributions(params);
   useEffect(() => {
     setSelectedItems(oldSelected => intersection(items, oldSelected));
-  }, [items]);
+  }, [items.length]);
 
   const handlePropertyFilteringChange = ({ detail }) => { setFilteringQuery(detail)};
 
@@ -168,7 +168,7 @@ export default function FeedbackTable () {
     <CustomAppLayout
       ref={appLayout}
       navigation={<Navigation activeHref={'/feedback'} />}
-      notifications={<Flashbar items={notificationitems} />}
+      notifications={<Flashbar items={notificationitems} stackItems/>}
       breadcrumbs={<Breadcrumbs />}
       content={<TableContent 
                 resourceName={t('feedback_management')}

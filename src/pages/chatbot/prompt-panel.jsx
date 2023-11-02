@@ -14,12 +14,14 @@ import {
   ExpandableSection,
   Select,
   ColumnLayout,
+  Autosuggest,
+  Checkbox,
 } from "@cloudscape-design/components";
 
 import { useChatData, generateUniqueId } from "./common-components";
 import { useTranslation } from "react-i18next";
 import { useAuthUserInfo, useAuthToken } from "../commons/use-auth";
-import { models, embeddings } from "../../common/shared";
+import { models } from "../../common/shared";
 import { useLocalStorage } from "../../common/localStorage";
 import { listTemplate, uploadS3,uploadFile } from "../commons/api-gateway";
 import { params_local_storage_key } from "./common-components";
@@ -541,6 +543,7 @@ const PromptPanel = ({ sendMessage }) => {
       : defaultModelParams.use_stream
   );
 
+  const [autoSuggest, setAutoSuggest] = useState(true);
   const onSubmit = (values,imgUrl=null) => {
     setStopFlag(true);
     const prompt = values.trimEnd();
@@ -578,8 +581,24 @@ const PromptPanel = ({ sendMessage }) => {
         stretch={true}
         // label={t('prompt_label')}
       >
-      <SpaceBetween size="m">
+      <SpaceBetween size="s">
+
       <Grid gridDefinition={[{ colspan: 9 }, { colspan: 3 }]}>
+          
+          {autoSuggest?
+          //<SpaceBetween size="xs" direction="horizontal"> 
+          <Grid gridDefinition={[{ colspan: 10 }, { colspan: 2 }]}>
+          <ExampleQuery value={promptValue} setValue={setPromptValue} onSubmit={onSubmit}/>
+          <Checkbox
+            onChange={({ detail }) =>
+            setAutoSuggest(detail.checked)
+            }
+            checked = {autoSuggest}
+          >{t('auto_suggestion')}</Checkbox>
+          </Grid>
+          //</SpaceBetween> 
+          :
+          <Grid gridDefinition={[{ colspan: 10 }, { colspan: 2 }]}>
           <Textarea
             value={promptValue}
             onChange={(event) => setPromptValue(event.detail.value)}
@@ -590,10 +609,21 @@ const PromptPanel = ({ sendMessage }) => {
             }}
             placeholder="Enter to send"
             autoFocus
-            rows={3}
+            rows={1}
           />
+            <Checkbox
+            onChange={({ detail }) =>
+            setAutoSuggest(detail.checked)
+            }
+            checked = {autoSuggest}
+          >{t('auto_suggestion')}</Checkbox>
+          </Grid>
+          }
+          
           <SpaceBetween size="xs" direction="horizontal">
             <Button
+            // iconName="angle-right-double"
+            // variant="inline-icon"
               variant="primary"
               loading={stopFlag&&!newChatLoading}
               disabled={newChatLoading}
@@ -616,7 +646,7 @@ const PromptPanel = ({ sendMessage }) => {
               {t("new_chat")}
             </Button>
           </SpaceBetween>
-          </Grid>
+      </Grid>
       <SpaceBetween size="xl" direction="horizontal">
       <FormField >
               <Toggle
@@ -707,4 +737,50 @@ const PromptPanel = ({ sendMessage }) => {
     </Container>
   );
 };
+
+const ExampleQuery = ({value, setValue,onSubmit}) => {
+  // const [value, setValue] = useState("");
+  const [loadingStatus, setLoadStatus]  = useState('loading');
+  const [options, setOptions] = useState([])
+  const handleLoadItems = async ({
+    detail: { filteringText, firstPage, samePage },
+  }) => {
+      setLoadStatus("loading");
+      fetch('/faq_examples.txt').then(
+        response=>response.text()
+      ).then(data =>{
+        const lines = data.split('\n');
+        // console.log(lines);
+        setOptions(lines.map(it =>({value:it, label:it})));
+
+        setLoadStatus("finished");
+      }).catch(error =>{
+        console.log(error);
+        setLoadStatus("error");
+      })
+  };
+
+  const enteredTextLabel = value => `"${value}"`;
+
+
+  return (
+    <Autosuggest
+      onChange={({ detail }) => setValue(detail.value)}
+      enteredTextLabel = {enteredTextLabel}
+      onLoadItems = {handleLoadItems}
+      value={value}
+      statusType = {loadingStatus}
+      options={options}
+      autoFocus
+      ariaLabel="Autosuggest example with values and labels"
+      placeholder="Input your question and press enter"
+      empty=""
+      onKeyDown={(event) => {
+              if (event.detail.key === "Enter" && !event.detail.ctrlKey) {
+                onSubmit(value);
+              }
+      }}
+    />
+  );
+}
 export default PromptPanel;

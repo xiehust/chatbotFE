@@ -8,7 +8,7 @@ import i18n from '../../common/i18n';
 
 const VISIBLE_CONTENT_OPTIONS = [
   {
-    label: i18n.t('job_info_field'),
+    label: i18n.t('info_field'),
     options: [
       { id: 'index_name', label: i18n.t('index_name'), editable: false },
       { id: 'embedding_model', label: i18n.t('embedding_model_name'),},
@@ -36,7 +36,7 @@ export const COLUMN_DEFINITIONS = addColumnSortLabels([
   {
     id: 'index_name',
     header: i18n.t('index_name'),
-    cell: item => <Link href="#">{item?.index_name}</Link>,
+    cell: item => <Link href={`/examples/${item?.index_name}`}>{item?.index_name}</Link>,
     sortingField: "index_name",
   },
   {
