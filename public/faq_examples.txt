@@ -1,4 +1,5 @@
-ODCR能享受Savings plan吗？
-FOOB里ODCR怎么计费的？
+什么是Gen AI？
+什么是生成式AI？
+ODCR预留实例怎么计费？
 提foob ticket的链接是什么？
-Sagemaker如何使用张量并行技术对模型分层
+OCI的相关资料有什么？

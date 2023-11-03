@@ -43,7 +43,7 @@ const SettingsPanel = ()=>{
                  && localStoredParams.s3_bucket && localStoredParams.s3_region){
           uploadS3(file,
             localStoredParams.s3_bucket,
-            localStoredParams.obj_prefix,
+            localStoredParams.obj_prefix+username+'/',
             localStoredParams.s3_region,
             localStoredParams.ak,
             localStoredParams.sk
@@ -56,7 +56,7 @@ const SettingsPanel = ()=>{
                 {
                   header: t('upload_file'),
                   type: "success",
-                  content: t('upload_file')+`:${localStoredParams.s3_bucket}/${localStoredParams.obj_prefix}${file.name}`,
+                  content: t('upload_file')+`:${localStoredParams.s3_bucket}/${localStoredParams.obj_prefix}${username}/${file.name}`,
                   dismissible: true,
                   dismissLabel: "Dismiss message",
                   onDismiss: () =>
