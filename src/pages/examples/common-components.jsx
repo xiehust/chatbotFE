@@ -158,6 +158,8 @@ export const FullPageHeader = ({
   const isOnlyOneSelected = props.selectedItems.length === 1;
   const [visible, setVisible] = useState(false);
   const [visibleAdd, setVisibleAdd] = useState(false)
+  const userinfo = useAuthUserInfo();
+  const usergroup = userinfo.groupname;
   const deleteAction = ()=>{
     setVisible(true);
   };
@@ -178,13 +180,16 @@ export const FullPageHeader = ({
             iconName="refresh"
           />
           <Button
-            disabled={!isOnlyOneSelected}
+            disabled={
+              usergroup !=='admin' ||
+              !isOnlyOneSelected}
             name="delete"
             onClick={deleteAction}
           >
             {t('delete')}
           </Button>
           <Button
+           disabled={usergroup !=='admin'}
             onClick={()=>setVisibleAdd(true)}
             variant="primary"
           >{t('create')}</Button>

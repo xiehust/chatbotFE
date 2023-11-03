@@ -155,6 +155,8 @@ export const FullPageHeader = ({
   ...props
 }) => {
   const { t } = useTranslation();
+  const userinfo = useAuthUserInfo();
+  const usergroup = userinfo.groupname;
   const isOnlyOneSelected = props.selectedItems.length === 1;
   const [visible, setVisible] = useState(false);
   const [visibleAdd, setVisibleAdd] = useState(false)
@@ -178,7 +180,9 @@ export const FullPageHeader = ({
             iconName="refresh"
           />
           <Button
-            disabled={!isOnlyOneSelected}
+            disabled={
+              usergroup !=='admin' ||
+              !isOnlyOneSelected}
             name="delete"
             onClick={deleteAction}
           >
