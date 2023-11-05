@@ -119,7 +119,7 @@ const SignUp = ({setSignType,username,setUsername,password,setPassword}) =>{
       .catch(error =>{ 
         console.log(error);
         setErrorState(true);
-        setErrMsg(error.response.data);
+        setErrMsg(error.response?.data);
         setLoading(false);
       })
     }else if (activeStep === 1){
@@ -289,7 +289,7 @@ const SignIn = ({setSession,setSignType,username,setUsername,password,setPasswor
 
   useEffect(()=>{
     setChecked(local_stored_crediential?.checked);
-    if (local_stored_crediential.checked) {
+    if (local_stored_crediential?.checked) {
       setUsername(local_stored_crediential.username);
       setPassword(local_stored_crediential.password);
     }
@@ -323,7 +323,7 @@ const SignIn = ({setSession,setSignType,username,setUsername,password,setPasswor
     })  
     .catch(error =>{ 
       setErrorState(true);
-      setErrMsg(error.response.data);
+      setErrMsg(error.response?.data);
       setLoading(false);
     })
 
