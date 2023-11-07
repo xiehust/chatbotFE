@@ -100,7 +100,7 @@ const Content = () => {
         setUseTrace
       }}
     >
-      <ModelSettings />
+      <ModelSettings href={'/chat'}/>
       <ContentLayout header={<Header variant="h1">{t("chatbot")}</Header>}>
         <SpaceBetween size="l">
           {alertopen && (

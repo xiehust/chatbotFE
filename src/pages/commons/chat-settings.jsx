@@ -180,7 +180,8 @@ const SettingsPanel = ()=>{
     );
 }
 
-const ModelSettings =() =>{
+const ModelSettings =({href}) =>{
+    // console.log(href);
     const { t } = useTranslation();
     const { modelSettingVisible, setModelSettingVisible } = useSettingCtx();
     return (
@@ -191,7 +192,10 @@ const ModelSettings =() =>{
             <Box float="right">
               <SpaceBetween direction="horizontal" size="xs">
                 <Button variant="link" onClick={ ()=> setModelSettingVisible(false)}>{t('close')}</Button>
-                <Button variant="primary"  onClick={ ()=> setModelSettingVisible(false)}>{t('confirm')}</Button>
+                <Button variant="primary" href={href} onClick={ ()=> 
+                {
+                  setModelSettingVisible(false);
+                }}>{t('confirm')}</Button>
               </SpaceBetween>
             </Box>
           }

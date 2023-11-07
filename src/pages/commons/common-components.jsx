@@ -49,6 +49,7 @@ const navItems_admin = [
       { type: 'link', text: i18n.t('docs'), href: '/docs' },
       { type: 'link', text: i18n.t('prompt_template'), href: '/template' },
       { type: 'link', text: i18n.t('feedback_management'), href: '/feedback' },
+      { type: 'link', text: i18n.t('examples_management'), href: '/examples' },
       { type: 'link', text: i18n.t('user'), href: '/admin/user' },
     ],
   },
@@ -69,6 +70,8 @@ const navItems = [
       { type: 'link', text: i18n.t('docs'), href: '/docs' },
       { type: 'link', text: i18n.t('prompt_template'), href: '/template' },
       { type: 'link', text: i18n.t('feedback_management'), href: '/feedback' },
+      { type: 'link', text: i18n.t('examples_management'), href: '/examples' },
+
     ],
   },
 ];
@@ -251,7 +254,7 @@ export function Navigation({
 
 export function Notifications({ successNotification }) {
   const notifications = useNotifications(successNotification);
-  return <Flashbar items={notifications} />;
+  return <Flashbar items={notifications} stackItems={true} />;
 }
 
 export const CustomAppLayout = forwardRef((props, ref) => {
@@ -303,9 +306,9 @@ const toolsFooter = (
   </>
 );
 export const ToolsContent = () => (
-  <HelpPanel footer={toolsFooter} header={<h2>BenchHub Portal</h2>}>
+  <HelpPanel footer={toolsFooter} header={<h2>AWS Chatbot</h2>}>
     <p>
-      Benchmark Hub
+      To be added
     </p>
   </HelpPanel>
 );

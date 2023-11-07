@@ -3,7 +3,7 @@
 import React, { useState, useEffect, useContext, createContext } from "react";
 import {useLocalStorage} from "../../common/localStorage";
 // import remoteApis from './remote-apis';
-import {remote_auth} from './api-gateway';
+import {remote_auth,remote_signup,remote_confirm_signup} from './api-gateway';
 import {localStoreKey} from '../../common/shared'
 const authContext = createContext();
 // Provider component that wraps your app and makes auth object ...
@@ -77,11 +77,22 @@ function useProvideAuth() {
       return setUser(null);
     };
   
+    const signup =(username,email,password) =>{
+      return remote_signup(username,email,password).then(data => data);
+    };
+
+    const confirm_signup = (username,confirmcode)=>{
+      return remote_confirm_signup(username,confirmcode).then(data => data);
+    };
+
   
     // Return the user object and auth methods
     return {
       user,
       signin,
       signout,
+      signup,
+      confirm_signup
+      
     };
   } 

@@ -1,8 +1,8 @@
 export const models = [
-  { label:'claude-instant',
-  value:'claude-instant'},
   { label:'claude',
   value:'claude'},
+  { label:'claude-instant',
+  value:'claude-instant'},
   { label:'chatglm-6b',
   value:'chatglm'},
   { label:'visualglm',

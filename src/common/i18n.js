@@ -175,7 +175,9 @@ i18n
             delete_feedback:'Delete feedback',
             new_chat:'New chat',
             info_field:'Info',
-            use_trace:'Trace'
+            use_trace:'Trace',
+            examples_management:'Fewshot Examples',
+            auto_suggestion:'AutoSuggestion'
         }
       },
       zh:{
@@ -337,8 +339,9 @@ i18n
             delete_feedback:'删除反馈',
             new_chat:'新对话',
             info_field:'信息',
-            use_trace:'跟踪日志'
-
+            use_trace:'跟踪日志',
+            examples_management:'Few shot示例管理',
+            auto_suggestion:'自动建议'
         }
       }
     }

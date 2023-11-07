@@ -4,7 +4,7 @@ import React, { useEffect, useRef, useState } from 'react';
 import { useCollection } from '@cloudscape-design/collection-hooks';
 import { COLUMN_DEFINITIONS, DEFAULT_PREFERENCES, Preferences,} from './table-config';
 import { Flashbar, Pagination, Table, TextFilter } from '@cloudscape-design/components';
-import { FullPageHeader ,Breadcrumbs,DeleteConfirmModal} from './common-components';
+import { FullPageHeader ,Breadcrumbs} from './common-components';
 import {
   CustomAppLayout,
   Navigation,
@@ -18,12 +18,10 @@ import { useColumnWidths } from '../commons/use-column-widths';
 import { useLocalStorage } from '../../common/localStorage';
 import {useSimpleNotifications} from '../commons/use-notifications';
 import {useAuthUserInfo, useAuthorizedHeader} from "../commons/use-auth";
-import {listTemplate} from '../commons/api-gateway';
+import {listDocIdx} from '../commons/api-gateway';
 import { useTranslation } from 'react-i18next';
 import {params_local_storage_key} from "../chatbot/common-components";
 import ModelSettings from "../commons/chat-settings";
-
-
 
 function TableContent({ 
   resourceName,
@@ -33,8 +31,8 @@ function TableContent({
   buttonName,
   buttonHref,
  }) {
-  const [preferences, setPreferences] = useLocalStorage('Benchportal-Docs-Table-Preferences', DEFAULT_PREFERENCES);
-  const [columnDefinitions, saveWidths] = useColumnWidths('Benchportal-React-Table-Widths', COLUMN_DEFINITIONS);
+  const [preferences, setPreferences] = useLocalStorage('Chatbot-Examples-Table-Preferences', DEFAULT_PREFERENCES);
+  const [columnDefinitions, saveWidths] = useColumnWidths('Chatbot-Examples-React-Table-Widths', COLUMN_DEFINITIONS);
   const {t} = useTranslation();
 
   const { items, actions, filteredItemsCount, collectionProps, filterProps, paginationProps } = useCollection(
@@ -52,7 +50,7 @@ function TableContent({
 
   return (
     <div>
-        <ModelSettings href={'/template '}/>
+    <ModelSettings href={'/examples'}/>
     <Table
      {...collectionProps}
       columnDefinitions={columnDefinitions}
@@ -88,11 +86,11 @@ function TableContent({
       pagination={<Pagination {...paginationProps} ariaLabels={paginationLabels} />}
       preferences={<Preferences preferences={preferences} setPreferences={setPreferences} />}
     />
-</div>
+    </div>
   );
 }
 
-export default function TemplateTable () {
+export default function ExamplesTable () {
   const appLayout = useRef();
   const {notificationitems} = useSimpleNotifications();
   const [toolsOpen, setToolsOpen] = useState(false);
@@ -102,6 +100,7 @@ export default function TemplateTable () {
   const [docitems,setDocsItems] = useState([]);
   const [refresh, setRefresh] = useState(false);
   const refreshAction =()=>{
+    setLoadingState(true);
     setRefresh(v => !v);
   };
   const userinfo = useAuthUserInfo();
@@ -117,13 +116,14 @@ export default function TemplateTable () {
     apigateway_endpoint:apigateway_endpoint
   }
   useEffect(()=>{
-    setLoadingState(true);
-    listTemplate(headers,queryParams)
+    listDocIdx(headers,queryParams)
     .then(data =>{
       // console.log(data);
-      const items = data.body.map( it =>({template_name:it.template_name.S,
-        comment:it.comment.S,
-        id:it.id.S,
+      const doc_items = data.body.filter((it) =>(it.index_name.S === 'chatbot-example-index'));
+
+      const items = doc_items.map( it =>({embedding_model:it.embedding_model.S,
+        filename:it.filename.S,
+        index_name:it.index_name.S,
         username:it.username.S,
       }))
       setDocsItems(items);
@@ -138,22 +138,21 @@ export default function TemplateTable () {
 },[refresh]);
 
   return (
-
     <CustomAppLayout
       ref={appLayout}
-      navigation={<Navigation activeHref={'/template'} />}
+      navigation={<Navigation activeHref={'/examples'} />}
       notifications={<Flashbar items={notificationitems} stackItems/>}
       breadcrumbs={<Breadcrumbs />}
       content={<TableContent 
-                resourceName={t('prompt_template')}
+                resourceName={t('examples_management')}
                 distributions = {docitems}
                 loadingState={loadingState}
                 refreshAction={refreshAction}
             />}
       contentType="table"
       stickyNotifications
-      // tools={<ToolsContent />}
-      // toolsOpen={toolsOpen}
+      tools={<ToolsContent />}
+      toolsOpen={toolsOpen}
       onToolsChange={({ detail }) => setToolsOpen(detail.open)}
     />
 

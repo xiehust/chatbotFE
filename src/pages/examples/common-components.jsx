@@ -26,7 +26,7 @@ export const Breadcrumbs = () => {
       href: "/",
     },
     {
-      text: t("docs"),
+      text: t("examples_management"),
     },
   ];
   return (
@@ -48,12 +48,12 @@ export const BreadcrumbsDynmic = ({ id }) => {
           href: "/home",
         },
         {
-          text: t("docs"),
-          href: "/docs",
+          text: t("examples_management"),
+          href: "/examples",
         },
         {
           text: id,
-          href: "#",
+          href: "/examples/" + id,
         },
       ]}
       expandAriaLabel="Show path"
@@ -155,11 +155,11 @@ export const FullPageHeader = ({
   ...props
 }) => {
   const { t } = useTranslation();
-  const userinfo = useAuthUserInfo();
-  const usergroup = userinfo.groupname;
   const isOnlyOneSelected = props.selectedItems.length === 1;
   const [visible, setVisible] = useState(false);
   const [visibleAdd, setVisibleAdd] = useState(false)
+  const userinfo = useAuthUserInfo();
+  const usergroup = userinfo.groupname;
   const deleteAction = ()=>{
     setVisible(true);
   };
@@ -189,6 +189,7 @@ export const FullPageHeader = ({
             {t('delete')}
           </Button>
           <Button
+           disabled={usergroup !=='admin'}
             onClick={()=>setVisibleAdd(true)}
             variant="primary"
           >{t('create')}</Button>

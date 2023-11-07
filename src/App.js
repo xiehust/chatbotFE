@@ -8,7 +8,7 @@ import {
 import NotFound from './pages/commons/not-found';
 import {SimpleNotifications} from "./pages/commons/use-notifications";
 import { ProvideAuth, useAuthSignout} from "./pages/commons/use-auth";
-import SignIn from "./pages/login/login";
+import LoginPage from "./pages/login/login";
 import  {RequireAuth} from './pages/commons/private-route';
 import ChatBot from "./pages/chatbot/chatmain";
 import DocsTable from "./pages/docs/docs.index";
@@ -19,6 +19,7 @@ import TemplateTable from './pages/template/template.index';
 import CreateTemplateApp from "./pages/template/create-template";
 import TemplateDetail from "./pages/template/template-detail-new";
 import FeedbackTable from "./pages/feedback/feedback-servertable.index";
+import ExamplesTable from "./pages/examples/docs.index";
 
 export default function App() {
   return (
@@ -27,10 +28,11 @@ export default function App() {
         <ProvideAuth>
        <SimpleNotifications>
         <Routes>
-          <Route path="/" element={<SignIn/>} />
-          <Route path="/login" element={<SignIn/>} />
+          <Route path="/" element={<LoginPage/>} />
+          <Route path="/login" element={<LoginPage/>} />
           <Route path="/chat" element={<RequireAuth redirectPath="/login"><ChatBot/></RequireAuth>}/>
           <Route path="/docs" element={<RequireAuth redirectPath="/login"><DocsTable/></RequireAuth>}/>
+          <Route path="/examples" element={<RequireAuth redirectPath="/login"><ExamplesTable/></RequireAuth>}/>
           <Route path="/template" element={<RequireAuth redirectPath="/login"><TemplateTable/></RequireAuth>}/>
           <Route path="/feedback" element={<RequireAuth redirectPath="/login"><FeedbackTable/></RequireAuth>}/>
           <Route path="/template/create" element={<RequireAuth redirectPath="/login"><CreateTemplateApp/></RequireAuth>}/>

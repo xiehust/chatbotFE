@@ -50,7 +50,7 @@ function TableContent({
 
   return (
     <div>
-    <ModelSettings />
+    <ModelSettings href={'/docs'}/>
     <Table
      {...collectionProps}
       columnDefinitions={columnDefinitions}
@@ -119,7 +119,9 @@ export default function DocsTable () {
     listDocIdx(headers,queryParams)
     .then(data =>{
       // console.log(data);
-      const items = data.body.map( it =>({embedding_model:it.embedding_model.S,
+      //does display examples index
+      const doc_items = data.body.filter((it) =>(it.index_name.S !== 'chatbot-example-index'));
+      const items = doc_items.map( it =>({embedding_model:it.embedding_model.S,
         filename:it.filename.S,
         index_name:it.index_name.S,
         username:it.username.S,
@@ -139,7 +141,7 @@ export default function DocsTable () {
     <CustomAppLayout
       ref={appLayout}
       navigation={<Navigation activeHref={'/docs'} />}
-      notifications={<Flashbar items={notificationitems} />}
+      notifications={<Flashbar items={notificationitems} stackItems/>}
       breadcrumbs={<Breadcrumbs />}
       content={<TableContent 
                 resourceName={t('docs')}

@@ -78,6 +78,7 @@ export const FullPageHeader = ({
   const [injectLoading, setInjectLoading] = useState(false);
   const [deleteLoading,setDeleteLoading] = useState(false);
   const userinfo = useAuthUserInfo();
+  const usergroup = userinfo.groupname;
   const headers = useAuthorizedHeader();
   const username = userinfo?.username || "default";
   const [localStoredParams] = useLocalStorage(
@@ -201,7 +202,7 @@ export const FullPageHeader = ({
           />
           <Button
             disabled={
-              username !== "admin" ||
+              usergroup !== "admin" ||
               !isOnlyOneSelected ||
               props.selectedItems[0].action === "injected"
             } /*disable the button when status is injected*/
@@ -212,7 +213,7 @@ export const FullPageHeader = ({
             {t("inject")}
           </Button>
           <Button disabled={
-              username !== "admin" ||
+              usergroup !== "admin" ||
               !isOnlyOneSelected 
               // ||props.selectedItems[0].action === "injected"
           } name="delete"
