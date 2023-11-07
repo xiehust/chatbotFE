@@ -69,9 +69,9 @@ const LoginPage = ()=>{
   const [username, setUsername] = useState();
   const [password, setPassword] = useState();
   return (
-    signType === 'signin'?
-    <SignIn setSession={setSession} setSignType={setSignType} username={username} setUsername={setUsername} password={password} setPassword={setPassword}/>:
-    <SignUp setSession={setSession} setSignType={setSignType} username={username} setUsername={setUsername} password={password} setPassword={setPassword}/>
+    // signType === 'signin'?
+    <SignIn setSession={setSession} setSignType={setSignType} username={username} setUsername={setUsername} password={password} setPassword={setPassword}/>
+    // :<SignUp setSession={setSession} setSignType={setSignType} username={username} setUsername={setUsername} password={password} setPassword={setPassword}/>
   )
 }
 

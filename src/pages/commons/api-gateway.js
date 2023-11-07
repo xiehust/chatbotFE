@@ -54,7 +54,7 @@ export const remotePostCall = async (headers,api,payload) =>{
     }
 }
 
-export const remote_auth = async(username,password) =>{
+export const remote_auth_ = async(username,password) =>{
     try {
         const resp = await axios.post(`${API_http}/signin`,JSON.stringify({username:username,password:password}));
         console.log(resp.data);
@@ -85,7 +85,7 @@ export const remote_confirm_signup = async(username,confirmation_code) =>{
 }
 
 
-export const remote_auth_ = async(username,password) =>{
+export const remote_auth = async(username,password) =>{
     const options = {
         method:"POST",
         headers:{
