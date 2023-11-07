@@ -5,6 +5,7 @@ import {
   TokenAuthorizer,
   Cors,
   ResponseType,
+  EndpointType
 } from "aws-cdk-lib/aws-apigateway";
 import { DockerImageFunction } from "aws-cdk-lib/aws-lambda";
 import { DockerImageCode, Architecture } from "aws-cdk-lib/aws-lambda";
@@ -253,6 +254,8 @@ export class LambdaStack extends NestedStack {
         allowHeaders: Cors.DEFAULT_HEADERS,
         allowMethods: Cors.ALL_METHODS,
       },
+      endpointConfiguration:{types:[EndpointType.REGIONAL]}
+
     });
 
     api.addGatewayResponse("cors1", {
