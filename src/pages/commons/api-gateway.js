@@ -54,6 +54,16 @@ export const remotePostCall = async (headers,api,payload) =>{
     }
 }
 
+export const remote_refresh_token = async(token) =>{
+    try {
+        const resp = await axios.post(`${API_http}/refresh_token`,JSON.stringify({refresh_token:token}));
+        // console.log(resp.data);
+        return resp.data;
+    } catch (err) {
+        throw err;
+    }
+}
+
 export const remote_auth = async(username,password) =>{
     try {
         const resp = await axios.post(`${API_http}/signin`,JSON.stringify({username:username,password:password}));

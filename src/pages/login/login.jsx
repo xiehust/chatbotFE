@@ -19,8 +19,6 @@ import { createTheme, ThemeProvider } from '@mui/material/styles';
 import { useAuth } from '../commons/use-auth';
 import {useNavigate} from 'react-router-dom';
 import { useLocalStorage } from "../../common/localStorage";
-import {localStoreKey} from '../../common/shared'
-import { blue, deepPurple } from '@mui/material/colors';
 import StepLabel from '@mui/material/StepLabel';
 import Step from '@mui/material/Step';
 import Stepper from '@mui/material/Stepper';
@@ -77,7 +75,7 @@ const LoginPage = ()=>{
 
 const SignUp = ({setSignType,username,setUsername,password,setPassword}) =>{
   const auth = useAuth();
-  const [local_stored_crediential,setLocalStoredCred] = useLocalStorage('chatbot-local-credentials',null)
+  const [setLocalStoredCred] = useLocalStorage('chatbot-local-credentials',null)
   const [errorstate, setErrorState] = useState(false);
   const [errormsg, setErrMsg] = useState('');
   // const [username, setUsername] = useState();

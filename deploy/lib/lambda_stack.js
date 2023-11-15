@@ -32,6 +32,7 @@ export class LambdaStack extends NestedStack {
   users_fn;
   job_fn;
   update_job_fn;
+  signup_fn;
   topicArn;
   lambda_connect_handle;
   lambda_handle_chat;
@@ -82,6 +83,8 @@ export class LambdaStack extends NestedStack {
         UPLOAD_OBJ_PREFIX:process.env.UPLOAD_OBJ_PREFIX,
         OPENAI_API_KEY: process.env.OPENAI_API_KEY,
         START_CMD: process.env.START_CMD,
+        IDENTITY_POOL_ID:process.env.IDENTITY_POOL_ID,
+        COG_CLIENT_ID:process.env.COG_CLIENT_ID
       },
       runtime: lambda.Runtime.NODEJS_18_X,
       memorySize: 256,
@@ -140,32 +143,6 @@ export class LambdaStack extends NestedStack {
       layerVersionName:'ChatbotFELayer',
     });
 
-//     const ecrRepoName = `lambda_chat_py`;
-//     const repo = ecr.Repository.fromRepositoryName(
-//       this,
-//       "Repository",
-//       ecrRepoName
-//     );
-//  const ecrImage = DockerImageCode.fromEcr(repo, { tagOrDigest: "latest" });
-//  const dockerImageProps = {
-//    code: ecrImage,
-//    timeout: Duration.minutes(5),
-//    memorySize: 256,
-//    runtime: "python3.10",
-//    architecture: Architecture.X86_64,
-//    environment: {
-//     OPENAI_API_KEY: process.env.OPENAI_API_KEY,
-//     MAIN_FUN_ARN:process.env.MAIN_FUN_ARN
-//    },
-//  };
-
-//  // Create the Docker image function
-//   this.lambda_chat_py = new DockerImageFunction(
-//    this,
-//    "handle_chat_py",
-//    dockerImageProps
-//  );
-
     this.lambda_chat_py = new lambda.Function(this, 'handle_chat_py',{
       code: lambda.Code.fromAsset('lambda/lambda_chat_py'),
       layers:[layer],
@@ -177,6 +154,20 @@ export class LambdaStack extends NestedStack {
         MAIN_FUN_ARN:process.env.MAIN_FUN_ARN,
         all_in_one_api:process.env.all_in_one_api,
         sd_endpoint_name:process.env.sd_endpoint_name
+      },
+      memorySize: 256,
+    })
+
+    this.signup_fn = new lambda.Function(this, 'signup',{
+      code: lambda.Code.fromAsset('lambda/signup'),
+      layers:[layer],
+      functionName:'user_signup_py',
+      handler: 'app.handler',
+      runtime: lambda.Runtime.PYTHON_3_9,
+      timeout: Duration.minutes(3),
+      environment: {
+        IDENTITY_POOL_ID:process.env.IDENTITY_POOL_ID,
+        COG_CLIENT_ID:process.env.COG_CLIENT_ID
       },
       memorySize: 256,
     })
@@ -323,6 +314,19 @@ export class LambdaStack extends NestedStack {
 
     const singleUser = users.addResource("{id}");
     singleUser.addMethod("GET", adminUsersIntegration, { authorizer });
+
+    const signUp = api.root.addResource('signup')
+    signUp.addMethod('POST',new LambdaIntegration(this.signup_fn))
+
+    const signIn = api.root.addResource('signin')
+    signIn.addMethod('POST',new LambdaIntegration(this.signup_fn))
+
+    const confrimSignUp = api.root.addResource('confirm_signup')
+    confrimSignUp.addMethod('POST',new LambdaIntegration(this.signup_fn))
+
+    const refreshToken = api.root.addResource('refresh_token')
+    refreshToken.addMethod('POST',new LambdaIntegration(this.signup_fn))
+
 
     // create websocket apigw
     const webSocketApi = new apigwv2.WebSocketApi(this, "ChatBotWsApi", {

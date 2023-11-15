@@ -1,18 +1,11 @@
 // Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
 // SPDX-License-Identifier: MIT-0
-import React, { createContext, useState, useEffect } from "react";
-import { Grid } from "@cloudscape-design/components";
+import React, {  useState, useEffect } from "react";
 import { ChatDataCtx } from "./common-components";
 import {
-  Container,
   Header,
   SpaceBetween,
-  Box,
-  Button,
-  Spinner,
-  ColumnLayout,
   ContentLayout,
-  StatusIndicator,
   Alert,
 } from "@cloudscape-design/components";
 import ConversationsPanel from "./conversations";
@@ -20,9 +13,11 @@ import { useTranslation } from "react-i18next";
 import ModelSettings from "../commons/chat-settings";
 import { useLocalStorage } from "../../common/localStorage";
 import {params_local_storage_key} from "./common-components";
-import { useAuthUserInfo } from "../commons/use-auth";
+import { useAuthUserInfo,useAuth } from "../commons/use-auth";
 import { defaultModelParams } from "./prompt-panel";
 import {useSettingCtx} from "../commons/common-components";
+
+
 
 const Content = () => {
   
@@ -36,7 +31,6 @@ const Content = () => {
   const [modalData,setModalData] = useState({});
   const [stopFlag,setStopFlag] = useState(false);
   const [newChatLoading, setNewChatLoading] = useState(false);
-
   const { t } = useTranslation();
   const [alertopen, setAlertOpen] = useState(false);
   const userinfo = useAuthUserInfo();

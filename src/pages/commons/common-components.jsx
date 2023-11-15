@@ -50,7 +50,7 @@ const navItems_admin = [
       { type: 'link', text: i18n.t('prompt_template'), href: '/template' },
       { type: 'link', text: i18n.t('feedback_management'), href: '/feedback' },
       { type: 'link', text: i18n.t('examples_management'), href: '/examples' },
-      { type: 'link', text: i18n.t('user'), href: '/admin/user' },
+      // { type: 'link', text: i18n.t('user'), href: '/admin/user' },
     ],
   },
 ];
@@ -251,6 +251,7 @@ export function Navigation({
     />
   );
 }
+
 
 export function Notifications({ successNotification }) {
   const notifications = useNotifications(successNotification);

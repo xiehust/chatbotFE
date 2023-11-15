@@ -22,7 +22,8 @@ import { useTranslation } from 'react-i18next';
 import CreateQAModal from './addfeedback';
 import {PROPERTY_FILTERING_I18N_CONSTANTS} from '../../common/i18nStrings';
 import ModelSettings from "../commons/chat-settings";
-
+import {isTokenExpires} from '../commons/utils';
+import { useAuth } from '../commons/use-auth';
 
 const DEFAULT_FILTERING_QUERY = { tokens: [], operation: 'and' };
 
@@ -160,10 +161,28 @@ export function TableContent({
 
 export default function FeedbackTable () {
   const {t} = useTranslation();
-
   const [toolsOpen, setToolsOpen] = useState(false);
   const appLayout = useRef();
   const {notificationitems} = useSimpleNotifications();
+
+
+  //check and refresh tokens every 5 sec
+  const auth = useAuth();
+  useEffect(()=>{
+    const refreshToken = async () => {
+      console.log(`token expires, and refresh response:`,await auth.refresh_token());
+    }
+    const timerId = setInterval(() => {
+      if (isTokenExpires()){
+        refreshToken();
+      }
+    },5000);
+    return () => {
+      clearInterval(timerId); // Destroy timer on unmount
+    };
+  },[]);
+
+
   return (
     <CustomAppLayout
       ref={appLayout}

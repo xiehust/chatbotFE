@@ -7,7 +7,7 @@ const { fromCognitoIdentityPool}  = require('@aws-sdk/credential-provider-cognit
 
 const client = new CognitoIdentityProviderClient({
   credentials: fromCognitoIdentityPool({
-    identityPoolId: "us-west-2_DacBygbuZ",
+    identityPoolId: process.env.IDENTITY_POOL_ID,
   }),
 });
 

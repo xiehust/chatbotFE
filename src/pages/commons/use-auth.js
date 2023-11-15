@@ -3,8 +3,9 @@
 import React, { useState, useEffect, useContext, createContext } from "react";
 import {useLocalStorage} from "../../common/localStorage";
 // import remoteApis from './remote-apis';
-import {remote_auth,remote_signup,remote_confirm_signup} from './api-gateway';
-import {localStoreKey} from '../../common/shared'
+import {remote_auth,remote_signup,remote_confirm_signup,remote_refresh_token} from './api-gateway';
+import {localStoreKey} from '../../common/shared';
+import {setExpiresInCookie} from './utils';
 const authContext = createContext();
 // Provider component that wraps your app and makes auth object ...
 // ... available to any child component that calls useAuth().
@@ -17,6 +18,11 @@ export function ProvideAuth({ children }) {
 export function useAuthSignout () {
     const auth = useProvideAuth();
     return auth.signout;
+}
+
+export function useAuthRereshToken () {
+  const auth = useProvideAuth();
+  return auth.refresh_token;
 }
 
 
@@ -60,12 +66,13 @@ export const useAuth = () => {
   // Provider hook that creates auth object and handles state
 function useProvideAuth() {
     const [user, setUser] = useState();
-    const [,setToken] = useLocalStorage(localStoreKey,null);
+    const [tokenData,setToken] = useLocalStorage(localStoreKey,null);
     // Wrap any Firebase methods we want to use making sure ...
     // ... to save the user to state.
     const signin = (email, password) => {
 
       return remote_auth(email,password).then(data => {
+        setExpiresInCookie(data.expiresIn);
         setToken(data);
         setUser(data);
         return data;
@@ -85,6 +92,24 @@ function useProvideAuth() {
       return remote_confirm_signup(username,confirmcode).then(data => data);
     };
 
+    const refresh_token = async () =>{
+      const refresh_token = tokenData?.refreshToken
+      try {
+        const data = await remote_refresh_token(refresh_token);
+        setToken({
+          ...tokenData,
+          isAuthorized: data.isAuthorized,
+          token: data.token,
+          expiresIn: data.expiresIn
+        });
+        setExpiresInCookie(data.expiresIn);
+        return true;
+      } catch (e){
+        console.error(e);
+        return false;
+      }
+    }
+
   
     // Return the user object and auth methods
     return {
@@ -92,7 +117,7 @@ function useProvideAuth() {
       signin,
       signout,
       signup,
-      confirm_signup
-      
+      confirm_signup,
+      refresh_token
     };
   } 

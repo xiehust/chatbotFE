@@ -566,7 +566,7 @@ const ConversationsPanel = () => {
       },
       reconnectAttempts: 100,
       reconnectInterval: (attemptNumber) =>
-        Math.min(Math.pow(2, attemptNumber) * 1000, 15000),
+        Math.min(Math.pow(2, attemptNumber) * 1000, 6000),
     });
 
   return (

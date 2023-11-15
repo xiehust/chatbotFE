@@ -22,7 +22,8 @@ import {listTemplate} from '../commons/api-gateway';
 import { useTranslation } from 'react-i18next';
 import {params_local_storage_key} from "../chatbot/common-components";
 import ModelSettings from "../commons/chat-settings";
-
+import {isTokenExpires} from '../commons/utils';
+import { useAuth } from '../commons/use-auth';
 
 
 function TableContent({ 
@@ -116,6 +117,24 @@ export default function TemplateTable () {
     main_fun_arn:main_fun_arn,
     apigateway_endpoint:apigateway_endpoint
   }
+
+    //check and refresh tokens every 5 sec
+    const auth = useAuth();
+    useEffect(()=>{
+      const refreshToken = async () => {
+        console.log(`token expires, and refresh response:`,await auth.refresh_token());
+      }
+      const timerId = setInterval(() => {
+        if (isTokenExpires()){
+          refreshToken();
+        }
+      },5000);
+      return () => {
+        clearInterval(timerId); // Destroy timer on unmount
+      };
+    },[]);
+
+
   useEffect(()=>{
     setLoadingState(true);
     listTemplate(headers,queryParams)

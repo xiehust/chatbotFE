@@ -38,3 +38,52 @@ export function dbRespErrorMapping(err){
       return "Internal Server Error";
   }
 }
+
+// Function to set a cookie with an expiration date
+const cookieName ='chatbotFE-token-expiration';
+export function setExpiresInCookie(sec) {
+  if (sec) {
+    const date = new Date();
+    date.setTime(date.getTime() + (sec * 1000));
+    const expires = "expires=" + date.toUTCString();
+    document.cookie = cookieName + "=" + expires + "; path=/";
+  }
+}
+
+// Function to get the value of a cookie by its name
+function getCookie() {
+  const nameEQ = cookieName + "=";
+  const cookies = document.cookie.split(';');
+  // console.log(cookies)
+  for (let i = 0; i < cookies.length; i++) {
+    let cookie = cookies[i];
+    while (cookie.charAt(0) === ' ') {
+      cookie = cookie.substring(1, cookie.length);
+    }
+    if (cookie.indexOf(nameEQ) === 0) {
+      return cookie.substring(nameEQ.length, cookie.length);
+    }
+  }
+  return null;
+}
+
+
+
+export function isTokenExpires () {
+  const storedExpiration = getCookie();
+  // Compare the expiration date with the current date
+  if (storedExpiration) {
+    const currentDate = new Date();
+    const expiration = new Date(storedExpiration);
+    if (currentDate > expiration) {
+      console.log("The cookie has expired.");
+      return true;
+    } else {
+      // console.log("The cookie is still valid.");
+      return false
+    }
+  } else {
+    console.log("The cookie does not exist.");
+    return true;
+  }
+}

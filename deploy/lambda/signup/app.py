@@ -9,8 +9,8 @@ cors_headers = {
 }
 
 # Configure AWS Cognito
-userpool_id = os.environ.get('IDENTITY_POOL_ID','us-west-2_DacBygbuZ')
-client_id = os.environ.get('COG_CLIENT_ID','17vppcohjko4ols0najvhd0i2f')
+userpool_id = os.environ.get('IDENTITY_POOL_ID')
+client_id = os.environ.get('COG_CLIENT_ID')
 
 
 client = boto3.client('cognito-idp')
@@ -43,6 +43,27 @@ def confirm_sign_up(username, confirmation_code):
         )
     return True
 
+
+def refresh_token_auth(refresh_token):
+    response = client.initiate_auth(
+        ClientId=client_id,
+        AuthFlow='REFRESH_TOKEN_AUTH',
+        AuthParameters={
+            'REFRESH_TOKEN': refresh_token,
+        }
+    )
+    print(response)
+
+    if 'AuthenticationResult' in response:
+        return {'AccessToken':response['AuthenticationResult']['AccessToken'],
+                'ExpiresIn':response['AuthenticationResult']['ExpiresIn'],
+                'IdToken':response['AuthenticationResult']['IdToken'],
+                }
+    else:
+        raise Exception(f'refresh token auth failed') 
+        
+
+
 def sign_in(username, password):
     try:
         # Try signing in with email
@@ -55,13 +76,17 @@ def sign_in(username, password):
             }
         )
         print(response)
-        AuthenticationResult = response.get('AuthenticationResult')
+
         if 'AuthenticationResult' in response:
-            return {'AccessToken':response['AuthenticationResult']['AccessToken']}
+            return {'AccessToken':response['AuthenticationResult']['AccessToken'],
+                    'ExpiresIn':response['AuthenticationResult']['ExpiresIn'],
+                    'RefreshToken':response['AuthenticationResult']['RefreshToken'],
+                    'IdToken':response['AuthenticationResult']['IdToken'],
+                    }
         elif 'ChallengeName' in response and 'Session' in response:
             return {'ChallengeName':response['ChallengeName'],'Session':response['Session']}
         else:
-            raise Exception(f'initiate_auth fa') 
+            raise Exception(f'initiate_auth faild') 
         
     except client.exceptions.NotAuthorizedException:
         raise Exception('Invalid username, email, or password.')
@@ -180,7 +205,10 @@ def lambda_handler(event, context):
                         "token": access_token,
                         'next_challenge':next_challenge,
                         "username":username,
-                        "groupname":group
+                        "groupname":group,
+                        "expiresIn":ret_dict.get('ExpiresIn'),
+                        "refreshToken":ret_dict.get('RefreshToken'),
+                        "IdToken":ret_dict.get('IdToken'),
                 })
             }
         except Exception as e:
@@ -189,6 +217,28 @@ def lambda_handler(event, context):
                 'headers': cors_headers,
                 'body': str(e)
             }
+    elif event.get('httpMethod') == 'POST'  and event.get('resource') == '/refresh_token':
+        refresh_token = body['refresh_token']
+        try:
+            ret_dict = refresh_token_auth(refresh_token)
+            access_token = ret_dict.get('AccessToken', None)
+            return {
+                    'statusCode': 200,
+                    'headers': cors_headers,
+                    'body': json.dumps({
+                            "isAuthorized":True if access_token else False,
+                            "token": ret_dict.get('AccessToken'),
+                            "expiresIn":ret_dict.get('ExpiresIn'),
+                            "IdToken":ret_dict.get('IdToken'),
+                    })
+                }
+        except Exception as e:
+            return {
+                'statusCode': 400,
+                'headers': cors_headers,
+                'body': str(e)
+            }
+        
 
     return {
         'statusCode': 200,
