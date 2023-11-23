@@ -75,7 +75,7 @@ const LoginPage = ()=>{
 
 const SignUp = ({setSignType,username,setUsername,password,setPassword}) =>{
   const auth = useAuth();
-  const [setLocalStoredCred] = useLocalStorage('chatbot-local-credentials',null)
+  const [local_stored_crediential,setLocalStoredCred] = useLocalStorage('chatbot-local-credentials',null)
   const [errorstate, setErrorState] = useState(false);
   const [errormsg, setErrMsg] = useState('');
   // const [username, setUsername] = useState();
