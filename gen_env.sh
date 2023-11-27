@@ -38,5 +38,32 @@ if [ $? -eq 0 ]; then
     echo "Generate .env file success"
 else
     echo "Failed to fetch stack outputs."
+    exit 1
 fi
 
+## add default user/password
+# DynamoDB table name
+table_name="chatbotFE_user" 
+username="admin"
+email="admin@test.com"
+status="active"
+createtime=$(date -u +"%Y-%m-%dT%H:%M:%S.%3NZ")
+# Generate a random 6 character password
+password=$(cat /dev/urandom | tr -dc 'a-zA-Z0-9' | fold -w 9 | head -n 1)
+group="admin"
+# Items to add
+item='{"username": {"S": "'"$username"'"}, "password": {"S": "'"$password"'"}, "groupname": {"S": "'"admin"'"}, "email": {"S": "'"$email"'"},"status": {"S": "'"$status"'"},"createtime": {"S": "'"$createtime"'"}}'
+
+# Add items
+aws dynamodb put-item \
+    --table-name "$table_name" \
+    --item "$item" --region "$region"
+
+# Check the exit status of the AWS CLI command
+if [ $? -ne 0 ]; then
+    echo "Error: Failed to add item to DynamoDB table."
+    exit 1
+fi
+
+echo "Item added successfully. username:${username},password:${password}, write to file ./default_chatbot_user.txt"
+echo "username:${username},password:${password}" >> default_chatbot_user.txt
