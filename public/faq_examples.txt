@@ -2,4 +2,6 @@
 什么是生成式AI？
 ODCR预留实例怎么计费？
 提foob ticket的链接是什么？
+g5.2xlarge在us-east-1的价格是？
+Sagemaker相关问题应该联系谁？
 OCI的相关资料有什么？
