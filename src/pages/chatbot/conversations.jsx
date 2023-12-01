@@ -424,6 +424,7 @@ const ChatBox = ({ msgItems, loading }) => {
 
 const ConversationsPanel = () => {
   const { t } = useTranslation();
+  const didUnmount = useRef(false);
   const {
     msgItems,
     setMsgItems,
@@ -448,6 +449,11 @@ const ConversationsPanel = () => {
     params_local_storage_key + "-msgitems-" + userinfo.username,
     []
   );
+  useEffect(() => {
+    return () => {
+      didUnmount.current = true;
+    };
+  }, []);
 
   const onMessageCallback = ({ data }) => {
     setLoading(false);
@@ -562,11 +568,11 @@ const ConversationsPanel = () => {
         console.log("connection error");
       },
       shouldReconnect: (closeEvent) => {
-        return true;
+        return didUnmount.current === false;
       },
-      reconnectAttempts: 100,
+      reconnectAttempts: 1000,
       reconnectInterval: (attemptNumber) =>
-        Math.min(Math.pow(2, attemptNumber) * 1000, 15000),
+        Math.min(Math.pow(2, attemptNumber) * 1000, 6000),
     });
 
   return (
