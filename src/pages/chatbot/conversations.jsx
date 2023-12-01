@@ -568,7 +568,7 @@ const ConversationsPanel = () => {
         console.log("connection error");
       },
       shouldReconnect: (closeEvent) => {
-        return didUnmount.current === false;;
+        return didUnmount.current === false;
       },
       reconnectAttempts: 1000,
       reconnectInterval: (attemptNumber) =>
