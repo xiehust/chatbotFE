@@ -2,6 +2,7 @@
 // SPDX-License-Identifier: MIT-0
 import React, { useState,useEffect } from "react";
 import {
+    Select,
     FormField,
     FileUpload,
     Box,
@@ -18,6 +19,57 @@ import {useSimpleNotifications} from '../commons/use-notifications';
 
 const default_bucket = process.env.REACT_APP_DEFAULT_UPLOAD_BUCKET;
 
+const SelectCategory = ({catSelectedOption,setCatSelectedOption}) => {
+  // const [value, setValue] = useState("");
+
+
+  const [options, setOptions] = useState([])
+
+  const [loadingStatus, setLoadStatus]  = useState('loading');
+  const handleLoadItems = async ({
+    detail: { filteringText, firstPage, samePage },
+  }) => {
+      setLoadStatus("loading");
+      fetch('/category_setting.json').then(
+        response=>response.json()
+      ).then(data =>{
+        console.log(data);
+        setOptions(data);
+        setLoadStatus("finished");
+      }).catch(error =>{
+        console.log(error);
+        setLoadStatus("error");
+      })
+  };
+
+  <Select
+  selectedOption={catSelectedOption}
+  onChange={({ detail }) =>
+    setOptions(detail.selectedOption)
+  }
+  options={options}
+  loadingText="Loading"
+  placeholder="Choose a category"
+/>
+
+
+  return (
+    <Select
+      selectedOption={catSelectedOption}
+      onChange={({ detail }) =>
+        setCatSelectedOption(detail.selectedOption)
+      }
+      options={options}
+      loadingText="Loading"
+      placeholder="Choose a category"
+      statusType = {loadingStatus}
+      onLoadItems = {handleLoadItems}
+  
+    />
+  );
+}
+
+
 
 const SettingsPanel = ()=>{
     const { t } = useTranslation();
@@ -29,6 +81,7 @@ const SettingsPanel = ()=>{
       params_local_storage_key+username,
       null
     );
+    const [catSelectedOption,setCatSelectedOption] = useState()
     const [helperMsg, setHelperMsg] = useState(".pdf,.txt,.csv,.faq,.md,.example,.examples,.json,.wiki");
     const [uploadErrtxt, setUploadErr] = useState();
     const [files, setFiles] = useState([]);
@@ -44,9 +97,11 @@ const SettingsPanel = ()=>{
           uploadS3(file,
             localStoredParams.s3_bucket,
             localStoredParams.obj_prefix+username+'/',
+            {"username":username,"category":encodeURIComponent(catSelectedOption?.value)},
             localStoredParams.s3_region,
             localStoredParams.ak,
-            localStoredParams.sk
+            localStoredParams.sk,
+    
             ).then(()=>{
               setLoading(false);
               setHelperMsg(prev => (prev+` Upload ${file.name} success`));
@@ -97,7 +152,8 @@ const SettingsPanel = ()=>{
                  mimeType: file.type,
                  fileSizeBytes: file.size,
                  lastModified: file.lastModified,
-                 buf: bits
+                 buf: bits,
+                 metadata: {"username":username,"category":encodeURIComponent(catSelectedOption?.value)}
               };
 
               uploadFile( username,body, headers)
@@ -160,11 +216,15 @@ const SettingsPanel = ()=>{
 
     return (
         <SpaceBetween direction="vertical" size="l">
+          <FormField label={t("download_template")}>
           <Button variant="link" 
             iconName="external"
             onClick={handleDownload}
           target="_blank"
-          >{t('download_template')}</Button>
+          >{t('template')}
+          </Button>
+          </FormField>
+          <FormField label={t("upload_file")}>
           <FileUpload
             onChange={({ detail }) =>{
               setHelperMsg('');
@@ -174,7 +234,7 @@ const SettingsPanel = ()=>{
              }
              }
             value={files}
-            accept='.pdf,.txt,.csv,.faq,.md,.example,.examples,.json,.wiki'
+            accept='.pdf,.txt,.csv,.faq,.md,.example,.examples,.json,.wiki,.docx'
             multiple 
             constraintText = {helperMsg}
             showFileLastModified
@@ -196,12 +256,16 @@ const SettingsPanel = ()=>{
           errorIconAriaLabel: "Error"
         }}
           />
+          </FormField>
+          <FormField label={t("select_category")}>
+            <SelectCategory catSelectedOption={catSelectedOption} setCatSelectedOption={setCatSelectedOption} />
+          </FormField>
            <Button  variant="normal"
            loading  = {loading}
            onClick={handleUpload}
             >
               {t("upload")}
-            </Button>
+          </Button>
 
 </SpaceBetween>
     );

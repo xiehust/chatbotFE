@@ -71,6 +71,7 @@ exports.handler = async (event) => {
   const body = JSON.parse(event.body)
   const filename = body['filename'];
   const mimeType = body['mimeType'];
+  const metadata = body['metadata'];
   const bufString = body['buf'];
   console.log(`filename:${filename}`)
 
@@ -87,7 +88,8 @@ exports.handler = async (event) => {
     Bucket: bucket,
     Key: prefix + filename,
     Body: buffer,
-    ContentType: mimeType
+    ContentType: mimeType,
+    Metadata:metadata,
   };
   console.log(`File to upload:${bucket}/${prefix + filename},ContentType:${mimeType}`);
   const s3Command = new PutObjectCommand(s3Params);

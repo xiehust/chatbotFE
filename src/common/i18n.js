@@ -177,7 +177,8 @@ i18n
             info_field:'Info',
             use_trace:'Trace',
             examples_management:'Fewshot Examples',
-            auto_suggestion:'AutoSuggestion'
+            auto_suggestion:'AutoSuggestion',
+            select_category:'Select Category'
         }
       },
       zh:{
@@ -341,7 +342,8 @@ i18n
             info_field:'信息',
             use_trace:'跟踪日志',
             examples_management:'Few shot示例管理',
-            auto_suggestion:'自动建议'
+            auto_suggestion:'自动建议',
+            select_category:'选择分类'
         }
       }
     }
