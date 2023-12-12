@@ -26,13 +26,14 @@ export const remoteGetCall = async (headers,api,params,controller) =>{
     }
 }
 
-export const uploadS3 = async (fileob,bucket,objprefix,region,ak,sk) =>{
+export const uploadS3 = async (fileob,bucket,objprefix,metadata,region,ak,sk) =>{
     // console.log(fileob.name,bucket,objprefix,region,ak,sk);
     const s3Client = new S3Client({ region: region,credentials:{accessKeyId:ak,secretAccessKey:sk}});
     const params = {
         Bucket:bucket,
         Key:`${objprefix}${fileob.name}`,
         Body: fileob,
+        Metadata:metadata
     }
     const command = new PutObjectCommand(params);
     try {

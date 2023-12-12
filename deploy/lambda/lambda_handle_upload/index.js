@@ -72,6 +72,8 @@ exports.handler = async (event) => {
   const filename = body['filename'];
   const mimeType = body['mimeType'];
   const bufString = body['buf'];
+  const metadata = body['metadata'];
+  console.log('metadata',metadata);
   console.log(`filename:${filename}`)
 
   const blobFile = binaryStringToBlob(bufString,mimeType)
@@ -87,7 +89,8 @@ exports.handler = async (event) => {
     Bucket: bucket,
     Key: prefix + filename,
     Body: buffer,
-    ContentType: mimeType
+    ContentType: mimeType,
+    Metadata:metadata
   };
   console.log(`File to upload:${bucket}/${prefix + filename},ContentType:${mimeType}`);
   const s3Command = new PutObjectCommand(s3Params);
