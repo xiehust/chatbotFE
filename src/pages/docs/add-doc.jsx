@@ -257,9 +257,9 @@ const SettingsPanel = ()=>{
         }}
           />
           </FormField>
-          <FormField label={t("select_category")}>
+          {/* <FormField label={t("select_category")}>
             <SelectCategory catSelectedOption={catSelectedOption} setCatSelectedOption={setCatSelectedOption} />
-          </FormField>
+          </FormField> */}
            <Button  variant="normal"
            loading  = {loading}
            onClick={handleUpload}
