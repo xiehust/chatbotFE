@@ -14,6 +14,7 @@ const VISIBLE_CONTENT_OPTIONS = [
       { id: 'embedding_model', label: i18n.t('embedding_model_name'),},
       { id: 'filename', label: i18n.t('filename'), },
       { id: 'username', label:  i18n.t('created_by'), },
+      { id: 'createtime', label:  i18n.t('createtime'), },
     ],
   },
 ];
@@ -22,7 +23,7 @@ const VISIBLE_CONTENT_OPTIONS = [
 
 export const DEFAULT_PREFERENCES = {
   pageSize: 30,
-  visibleContent: ['index_name','embedding_model', 'filename','username'],
+  visibleContent: ['index_name','embedding_model', 'filename','username','createtime'],
   wrapLines: false,
 };
 
@@ -56,6 +57,12 @@ export const COLUMN_DEFINITIONS = addColumnSortLabels([
     cell: item =>item?.username,
     header: i18n.t('created_by'),
     sortingField: "username",
+  },
+  {
+    id: 'createtime',
+    cell: item =>item?.createtime,
+    header: i18n.t('createtime'),
+    sortingField: "createtime",
   },
 ]);
 

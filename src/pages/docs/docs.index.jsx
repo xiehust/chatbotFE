@@ -145,7 +145,9 @@ export default function DocsTable () {
       const items = doc_items.map( it =>({embedding_model:it.embedding_model.S,
         filename:it.filename.S,
         index_name:it.index_name.S,
-        username:it.username.S,
+        username:it.username?.S,
+        category:it.category?.S,
+        createtime:it.createtime?.S,
       }))
       setDocsItems(items);
         setLoadingState(false);

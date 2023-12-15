@@ -144,6 +144,7 @@ export default function ExamplesTable () {
         filename:it.filename.S,
         index_name:it.index_name.S,
         username:it.username.S,
+        createtime:it.createtime?.S,
       }))
       setDocsItems(items);
         setLoadingState(false);
