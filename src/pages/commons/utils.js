@@ -71,10 +71,12 @@ function getCookie() {
 
 export function isTokenExpires () {
   const storedExpiration = getCookie();
+  // console.log('storedExpiration:',storedExpiration);
   // Compare the expiration date with the current date
   if (storedExpiration) {
     const currentDate = new Date();
-    const expiration = new Date(storedExpiration);
+    const expiration = new Date(storedExpiration.replace('expires=',''));
+    // console.log('currentDate:',currentDate,"expiration",expiration);
     if (currentDate > expiration) {
       console.log("The cookie has expired.");
       return true;

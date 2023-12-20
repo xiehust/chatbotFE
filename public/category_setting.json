@@ -13,9 +13,19 @@
         "options": [
           { "label": "CI-Playbook", "value": "CI-Playbook" },
           { "label": "CI-FAQ", "value": "CI-FAQ" },
-          { "label": "CI-其他", "value": "CI-其他" }
+          { "label": "CI-其他", "value": "CI-其他" },
+          { "label": "CI-通用", "value": "CI-通用" }
         ]
-      },
+    },
+    {
+      "label": "Gen-AI",
+      "options": [
+        { "label": "Bedrock", "value": "Bedrock" },
+        { "label": "AmazonQ", "value": "AmazonQ" },
+        { "label": "GPU", "value": "GPU" },
+        { "label": "Sagemaker", "value": "Sagemaker" }
+      ]
+  },
     { "label": "AWS知识", "value": "AWS知识" },
     { "label": "内部流程", "value": "内部流程" },
     { "label": "General", "value": "General" },
