@@ -257,7 +257,7 @@ export const ToolsContent = () => (
   </HelpPanel>
 );
 
-export const EditCell = ({ keyname,value ,msgid,sid,action}) => {
+export const EditCell = ({ keyname,value ,origin_username,msgid,sid,action}) => {
   const [toggle, setToggle] = useState(true);
   const [text, setText] = useState(value);
   const [loading,setLoading] = useState(false);
@@ -280,7 +280,7 @@ export const EditCell = ({ keyname,value ,msgid,sid,action}) => {
     let body = {
       msgid: msgidValue,
       session_id: sidValue,
-      username: username,
+      username: origin_username,
       s3_bucket: localStoredParams.s3_bucket,
       obj_prefix: localStoredParams.obj_prefix,
       main_fun_arn: localStoredParams.main_fun_arn,

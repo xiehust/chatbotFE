@@ -146,7 +146,8 @@ def handler(event,lambda_context):
     messages = body.get('payload')['messages']
     params = body.get('payload')['params']
     msgid = body.get('payload')['msgid']+'_res'
-    print(f"{connectionId}\n{messages}\n{params}\n{msgid}")
+    user_id = params.get('username','')
+    print(f"{user_id}\n{connectionId}\n{messages}\n{params}\n{msgid}")
 
     lambda_client = boto3.client('lambda')
     main_func = params.get('main_fun_arn') if params.get('main_fun_arn') else os.getenv('MAIN_FUN_ARN')
@@ -257,11 +258,14 @@ def handler(event,lambda_context):
         data = json.dumps({ 'msgid':msgid, 'role': "AI", 'text': {'content':'[DONE]'} ,'connectionId':connectionId})
         postMessage(wsclient,data,connectionId)
     else:
+        session_id = f'web_chat_{user_id}'
         payload = {
                 "OPENAI_API_KEY":openai_apikey,
                 "ws_endpoint":ws_endpoint,
                 "msgid":msgid,
-                "chat_name":connectionId,
+                "chat_name":session_id,
+                "wsconnection_id":connectionId,
+                "user_id":user_id,
                 "prompt":messages[-1].get('content')
             }
         payload = {**payload,**params}
