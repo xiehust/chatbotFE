@@ -27,7 +27,25 @@ export const remoteGetCall = async (headers,api,params,controller) =>{
 }
 
 export const uploadS3 = async (fileob,bucket,objprefix,metadata,region,ak,sk) =>{
-    // console.log(fileob.name,bucket,objprefix,region,ak,sk);
+    const promiseA = new Promise((resolve, reject)=>{
+        uploadS3a(fileob,bucket,objprefix,metadata,region,ak,sk).then(resp =>{
+            return resolve('success');
+        }).catch(err=>{
+            return reject(Error(err));
+        })
+    });
+    //upload a copy to bedrock kb
+    const promiseB = new Promise((resolve, reject)=>{
+        uploadS3a(fileob,bucket,`bedrock-kb-src/${metadata.username}/`,metadata,region,ak,sk).then(resp =>{
+            return resolve('success');
+        }).catch(err=>{
+            return reject(Error(err));
+        })
+    });
+    await Promise.all([promiseA,promiseB]);
+}
+
+const uploadS3a = async (fileob,bucket,objprefix,metadata,region,ak,sk) =>{
     const s3Client = new S3Client({ region: region,credentials:{accessKeyId:ak,secretAccessKey:sk}});
     const params = {
         Bucket:bucket,
@@ -43,8 +61,9 @@ export const uploadS3 = async (fileob,bucket,objprefix,metadata,region,ak,sk) =>
         console.log(`Error uploading file to S3: ${err}`);
         throw(err);
       }
-
 }
+
+
 export const remotePostCall = async (headers,api,payload) =>{
     try {
         const resp = await axios.post(`${API_http}/${api}`,JSON.stringify(payload), {headers});

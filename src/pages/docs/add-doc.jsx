@@ -111,7 +111,7 @@ const SettingsPanel = ()=>{
                 {
                   header: t('upload_file'),
                   type: "success",
-                  content: t('upload_file')+`:${localStoredParams.s3_bucket}/${localStoredParams.obj_prefix}${username}/${file.name}`,
+                  content: t('upload_file')+`:${localStoredParams.s3_bucket}/${localStoredParams.obj_prefix}${username}/${file.name},${localStoredParams.s3_bucket}/bedrock-kb-src/${username}/${file.name}`,
                   dismissible: true,
                   dismissLabel: "Dismiss message",
                   onDismiss: () =>
@@ -166,7 +166,7 @@ const SettingsPanel = ()=>{
                   {
                     header: t('upload_file'),
                     type: "success",
-                    content: t('upload_file')+`:${default_bucket}/ai-content/${file.name}`,
+                    content: t('upload_file')+`:${default_bucket}/ai-content/${username}/${file.name}, ${default_bucket}/bedrock-kb-src/${username}/${file.name}`,
                     dismissible: true,
                     dismissLabel: "Dismiss message",
                     onDismiss: () =>

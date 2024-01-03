@@ -64,6 +64,18 @@ function binaryStringToBlob(binaryString, mimeType) {
 }
 
 
+const uploadS3 = async (s3Params) =>{
+  const s3Client = new S3Client();
+  const command = new PutObjectCommand(s3Params);
+  try {
+      const response = await s3Client.send(command);
+      console.log(`File uploaded successfully. ${response}`);
+    } catch (err) {
+      console.log(`Error uploading file to S3: ${err}`);
+      throw(err);
+    }
+}
+
 
 exports.handler = async (event) => {
   // console.log(event);
@@ -84,29 +96,50 @@ exports.handler = async (event) => {
   const username = event.queryStringParameters.username??'anonymous';
 
   const prefix = mimeType === "image/jpeg" || mimeType === "image/png" ? `images/${username}/` : process.env.UPLOAD_OBJ_PREFIX+username+'/';
-  const s3Client = new S3Client();
-  const s3Params = {
+  const s3ParamsA = {
     Bucket: bucket,
     Key: prefix + filename,
     Body: buffer,
     ContentType: mimeType,
     Metadata:metadata
   };
-  console.log(`File to upload:${bucket}/${prefix + filename},ContentType:${mimeType}`);
-  const s3Command = new PutObjectCommand(s3Params);
-  try {
-    await s3Client.send(s3Command);
-  } catch (error) {
-    console.log("File uploaded failed", JSON.stringify(error));
+  const s3ParamsB = {
+    Bucket: bucket,
+    Key: `bedrock-kb-src/${username}/${filename}`,
+    Body: buffer,
+    ContentType: mimeType,
+    Metadata:metadata
+  };
+  const promiseA = new Promise((resolve, reject)=>{
+    uploadS3(s3ParamsA).then(resp =>{
+        return resolve('success');
+    }).catch(err=>{
+        return reject(Error(err));
+    })
+  });
+  //upload a copy to bedrock kb
+  const promiseB = new Promise((resolve, reject)=>{
+      uploadS3(s3ParamsB).then(resp =>{
+          return resolve('success');
+      }).catch(err=>{
+          return reject(Error(err));
+      })
+  });
+
+  const reponses = await Promise.all([promiseA,promiseB]);
+  if (reponses[0] === 'success' && reponses[1] === 'success' ){
+    console.log(`File uploaded:${bucket}/${prefix + filename},ContentType:${mimeType}`);
+    console.log(`File uploaded:${bucket}/bedrock-kb-src/${username}/${filename},ContentType:${mimeType}`);
+    return {
+      statusCode: 200,
+      headers,
+      body: "File uploaded successfully"
+    };
+  }else{
     return {
       statusCode: 500,
       headers,
       body: "File uploaded failed"
     };
   }
-  return {
-    statusCode: 200,
-    headers,
-    body: "File uploaded successfully"
-  };
 };
