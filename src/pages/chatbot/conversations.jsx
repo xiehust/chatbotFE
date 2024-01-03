@@ -251,7 +251,7 @@ const ThumbButtons = ({ msgid, session_id }) => {
   const handleClickDown = async () => {
     const body = {
       msgid: msgid,
-      session_id: session_id,
+      session_id: `web_chat_${userInfo.username}`,
       main_fun_arn: main_fun_arn,
       apigateway_endpoint: apigateway_endpoint,
       username: userInfo.username,
@@ -280,7 +280,7 @@ const ThumbButtons = ({ msgid, session_id }) => {
   const handleClickUp = async () => {
     const body = {
       msgid: msgid,
-      session_id: session_id,
+      session_id: `web_chat_${userInfo.username}`,
       main_fun_arn: main_fun_arn,
       apigateway_endpoint: apigateway_endpoint,
       username: userInfo.username,
@@ -330,7 +330,7 @@ const ThumbButtons = ({ msgid, session_id }) => {
         onClick={() => {
           const data = {
             msgid: msgid,
-            session_id: session_id,
+            session_id: `web_chat_${userInfo.username}`,
             main_fun_arn: main_fun_arn,
             apigateway_endpoint: apigateway_endpoint,
             username: userInfo.username,
