@@ -33,7 +33,7 @@ export const COLUMN_DEFINITIONS = addColumnSortLabels( [
   {
     id: "feedback",
     header: "New Answer",
-    cell: item => (<EditCell keyname ={"feedback"} value={item.feedback || "-"} msgid={item.msgid } sid={item.sid} action={item.action} />),
+    cell: item => (<EditCell keyname ={"feedback"} value={item.feedback || "-"} msgid={item.msgid } sid={item.sid} action={item.action} origin_username={item.username}/>),
     minWidth: 180,
   },
   {
