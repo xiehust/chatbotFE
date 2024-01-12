@@ -61,18 +61,21 @@ export function useDistributions(params = {}) {
       setLoading(false);
       // console.log(data.body);
       const itemdata = data.body.items.map(it => {
-        const contentArray = JSON.parse(it.content);
-        const lastContent = contentArray[contentArray.length -1];
+        console.log(it);
+        // const contentArray = JSON.parse(it.content);
+        // const lastContent = contentArray[contentArray.length -1];
+        // const lastContent = JSON.parse(it);
         return  {
         msgid:it.msgid,
         sid:it['session-id'],
-        question:lastContent.question,
-        answer:lastContent.answer,
-        feedback:lastContent.feedback,
-        timestamp:lastContent.timestamp,
-        action:lastContent.action,
-        username:lastContent.username
+        question:it.question,
+        answer:it.answer,
+        feedback:it.feedback,
+        timestamp:it.timestamp,
+        action:it.action,
+        username:it.username
         }
+
       });
 
       setItems(itemdata);
