@@ -75,6 +75,7 @@ export const FullPageHeader = ({
   const isOnlyOneSelected = props.selectedItems.length === 1;
   const sid = isOnlyOneSelected ? props.selectedItems[0].sid : null;
   const msgid = isOnlyOneSelected ? props.selectedItems[0].msgid : null;
+  const origin_username = isOnlyOneSelected ? props.selectedItems[0].username : null;
   const [injectLoading, setInjectLoading] = useState(false);
   const [deleteLoading,setDeleteLoading] = useState(false);
   const userinfo = useAuthUserInfo();
@@ -89,7 +90,7 @@ export const FullPageHeader = ({
     const body = {
       msgid: msgid,
       session_id: sid,
-      username: username,
+      username: origin_username,
       s3_bucket: localStoredParams.s3_bucket,
       obj_prefix: localStoredParams.obj_prefix,
       main_fun_arn: localStoredParams.main_fun_arn,
@@ -140,7 +141,7 @@ export const FullPageHeader = ({
     const body = {
       msgid: msgid,
       session_id: sid,
-      username: username,
+      username: origin_username,
       s3_bucket: localStoredParams.s3_bucket,
       obj_prefix: localStoredParams.obj_prefix,
       main_fun_arn: localStoredParams.main_fun_arn,
