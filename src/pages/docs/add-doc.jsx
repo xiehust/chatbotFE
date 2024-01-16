@@ -77,12 +77,13 @@ const SettingsPanel = ()=>{
     const { setNotificationItems } = useSimpleNotifications();
     const token = useAuthToken();
     const username = userinfo?.username || 'default';
+    const company =  userinfo?.company || 'default';
     const [localStoredParams] = useLocalStorage(
       params_local_storage_key+username,
       null
     );
     const [catSelectedOption,setCatSelectedOption] = useState()
-    const [helperMsg, setHelperMsg] = useState(".pdf,.txt,.csv,.faq,.md,.example,.examples,.json,.wiki");
+    const [helperMsg, setHelperMsg] = useState(".pdf,.txt,.csv,.xlsx,.faq,.md,.example,.examples,.json,.wiki");
     const [uploadErrtxt, setUploadErr] = useState();
     const [files, setFiles] = useState([]);
     const [loading, setLoading] = useState(false);
@@ -96,8 +97,8 @@ const SettingsPanel = ()=>{
                  && localStoredParams.s3_bucket && localStoredParams.s3_region){
           uploadS3(file,
             localStoredParams.s3_bucket,
-            localStoredParams.obj_prefix+username+'/',
-            {"username":username,"category":encodeURIComponent(catSelectedOption?.value)},
+            localStoredParams.obj_prefix+company+'/'+username+'/',
+            {"username":username,"company":encodeURIComponent(company),"category":encodeURIComponent(catSelectedOption?.value)},
             localStoredParams.s3_region,
             localStoredParams.ak,
             localStoredParams.sk,
@@ -153,10 +154,10 @@ const SettingsPanel = ()=>{
                  fileSizeBytes: file.size,
                  lastModified: file.lastModified,
                  buf: bits,
-                 metadata: {"username":username,"category":encodeURIComponent(catSelectedOption?.value)}
+                 metadata: {"username":username,"company":encodeURIComponent(company),"category":encodeURIComponent(catSelectedOption?.value)}
               };
 
-              uploadFile( username,body, headers)
+              uploadFile( username,company,body, headers)
               .then((response) => {
                 setLoading(false);
                 setHelperMsg(prev => (prev+` Upload ${file.name} success`));
@@ -166,7 +167,7 @@ const SettingsPanel = ()=>{
                   {
                     header: t('upload_file'),
                     type: "success",
-                    content: t('upload_file')+`:${default_bucket}/ai-content/${username}/${file.name}, ${default_bucket}/bedrock-kb-src/${username}/${file.name}`,
+                    content: t('upload_file')+`:${default_bucket}/ai-content/${company}/${username}/${file.name}, ${default_bucket}/bedrock-kb-src/${company}/${username}/${file.name}`,
                     dismissible: true,
                     dismissLabel: "Dismiss message",
                     onDismiss: () =>

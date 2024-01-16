@@ -35,6 +35,7 @@ export function useAuthUserInfo(){
     const user = auth.user?auth.user:local_stored_tokendata;
     return {
           username:user?user.username:undefined,
+          company:user?user.company:undefined,
           groupname:user?user.groupname:undefined,
           token:user?user.token:undefined,
         };

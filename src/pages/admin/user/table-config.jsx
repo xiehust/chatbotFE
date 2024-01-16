@@ -13,10 +13,10 @@ export const COLUMN_DEFINITIONS = addColumnSortLabels([
     cell: item => item.username,
   },
   {
-    id: 'email',
-    sortingField: 'email',
-    header: i18n.t('email'),
-    cell: item => item.email,
+    id: 'company',
+    sortingField: 'company',
+    header: i18n.t('company'),
+    cell: item => item.company,
   },
   {
     id: 'group',
@@ -47,7 +47,7 @@ const VISIBLE_CONTENT_OPTIONS = [
     label: 'Main user properties',
     options: [
       { id: 'username', label: i18n.t('username'), editable: false },
-      { id: 'email', label: i18n.t('email') },
+      { id: 'company', label: i18n.t('company') },
       { id: 'group', label:  i18n.t('usergroup')  },
       { id: 'createtime', label:i18n.t('createtime') },
       { id: 'status', label:i18n.t('status') }
@@ -63,7 +63,7 @@ export const PAGE_SIZE_OPTIONS = [
 
 export const DEFAULT_PREFERENCES = {
   pageSize: 30,
-  visibleContent: ['username', 'group','email', 'createtime','status'],
+  visibleContent: ['username', 'group','company', 'createtime','status'],
   wrapLines: false,
 };
 
