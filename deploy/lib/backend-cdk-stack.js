@@ -21,6 +21,7 @@ export class BackendCdkStack extends Stack {
         type: AttributeType.STRING,
       },
       removalPolicy: RemovalPolicy.DESTROY, // NOT recommended for production code
+      tableName:'chatbotFE_user'
     });
    
     // const doc_index_table = new Table(this, "doc_index", {

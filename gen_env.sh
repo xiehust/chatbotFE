@@ -45,14 +45,14 @@ fi
 # DynamoDB table name
 table_name="chatbotFE_user" 
 username="admin"
-email="admin@test.com"
+company="default"
 status="active"
 createtime=$(date -u +"%Y-%m-%dT%H:%M:%S.%3NZ")
 # Generate a random 6 character password
 password=$(cat /dev/urandom | tr -dc 'a-zA-Z0-9' | fold -w 9 | head -n 1)
 group="admin"
 # Items to add
-item='{"username": {"S": "'"$username"'"}, "password": {"S": "'"$password"'"}, "groupname": {"S": "'"admin"'"}, "email": {"S": "'"$email"'"},"status": {"S": "'"$status"'"},"createtime": {"S": "'"$createtime"'"}}'
+item='{"username": {"S": "'"$username"'"}, "password": {"S": "'"$password"'"}, "groupname": {"S": "'"admin"'"}, "company": {"S": "'"$company"'"},"status": {"S": "'"$status"'"},"createtime": {"S": "'"$createtime"'"}}'
 
 # Add items
 aws dynamodb put-item \
