@@ -105,6 +105,8 @@ export default function ExamplesTable () {
   };
   const userinfo = useAuthUserInfo();
   const username = userinfo?.username || 'default';
+  const company = userinfo?.company || 'default';
+
   const [localStoredParams] = useLocalStorage(
     params_local_storage_key+username,
     null
@@ -113,7 +115,9 @@ export default function ExamplesTable () {
   const apigateway_endpoint = localStoredParams.apigateway_endpoint;
   const queryParams = {
     main_fun_arn:main_fun_arn,
-    apigateway_endpoint:apigateway_endpoint
+    apigateway_endpoint:apigateway_endpoint,
+    company:company,
+
   }
   useEffect(()=>{
     listDocIdx(headers,queryParams)

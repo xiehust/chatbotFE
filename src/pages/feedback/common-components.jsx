@@ -82,6 +82,7 @@ export const FullPageHeader = ({
   const usergroup = userinfo.groupname;
   const headers = useAuthorizedHeader();
   const username = userinfo?.username || "default";
+  const company = userinfo?.company || "default";
   const [localStoredParams] = useLocalStorage(
     params_local_storage_key + username,
     null
@@ -142,6 +143,7 @@ export const FullPageHeader = ({
       msgid: msgid,
       session_id: sid,
       username: origin_username,
+      company:company,
       s3_bucket: localStoredParams.s3_bucket,
       obj_prefix: localStoredParams.obj_prefix,
       main_fun_arn: localStoredParams.main_fun_arn,
@@ -267,6 +269,7 @@ export const EditCell = ({ keyname,value ,msgid,sid,action,origin_username}) => 
   const userinfo = useAuthUserInfo();
   const headers = useAuthorizedHeader();
   const username = userinfo?.username || "default";
+  const company = userinfo?.company || "default";
   const [localStoredParams] = useLocalStorage(
     params_local_storage_key + username,
     null
@@ -287,6 +290,7 @@ export const EditCell = ({ keyname,value ,msgid,sid,action,origin_username}) => 
       main_fun_arn: localStoredParams.main_fun_arn,
       apigateway_endpoint: localStoredParams.apigateway_endpoint,
       action: actionValue,
+      company:company
     };
 
     // 如果是question，则更新quesiton字段,如果是feedback，则更新feedback字段

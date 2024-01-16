@@ -21,12 +21,14 @@ export const handler = async(event) => {
         const queryParams = event.queryStringParameters;
         const main_fun_arn = queryParams?.main_fun_arn === 'undefined' ? process.env.MAIN_FUN_ARN:queryParams.main_fun_arn;
         const apigateway_endpoint = queryParams?.apigateway_endpoint === 'undefined'? '':queryParams.apigateway_endpoint;
+        const company = queryParams?.company === 'undefined'? 'default':queryParams.company;
+
         const lambdaClient = new LambdaClient();
        
         if (apigateway_endpoint.length > 0){
           const options ={
             method:'POST',
-            body:JSON.stringify({method:'get',resource:'docs'})
+            body:JSON.stringify({method:'get',resource:'docs',company:company})
           }
             try {
                 const response = await fetch(apigateway_endpoint,options);
@@ -48,7 +50,7 @@ export const handler = async(event) => {
         }
         else if (main_fun_arn&&main_fun_arn.length >0){
           const params = {FunctionName: main_fun_arn,
-                Payload:JSON.stringify({method:'get',resource:'docs'})}
+                Payload:JSON.stringify({method:'get',resource:'docs',company:company})}
           try {
               const response =await lambdaClient.send(new InvokeCommand(params));
               const payload = JSON.parse(Buffer.from(response.Payload).toString());
@@ -72,11 +74,11 @@ export const handler = async(event) => {
         const body = JSON.parse(event.body);
         const main_fun_arn = body.main_fun_arn || process.env.MAIN_FUN_ARN;
         const apigateway_endpoint = body.apigateway_endpoint|| '';
-
+        const company = queryParams?.company === 'undefined'? 'default':queryParams.company;
         if (apigateway_endpoint.length > 0){
           const options ={
             method:'POST',
-            body:JSON.stringify({...body,method:'delete',resource:'docs'})
+            body:JSON.stringify({...body,method:'delete',resource:'docs',company:company})
           }
             try {
                 await fetch(apigateway_endpoint,options);
@@ -95,7 +97,7 @@ export const handler = async(event) => {
         }
         else if (main_fun_arn&&main_fun_arn.length >0){
           const params = {FunctionName: main_fun_arn,
-                Payload: JSON.stringify({...body,method:'delete',resource:'docs'})}
+                Payload: JSON.stringify({...body,method:'delete',resource:'docs',company:company})}
 
           try {
               await lambdaClient.send(new InvokeCommand(params));
@@ -120,11 +122,13 @@ export const handler = async(event) => {
       const main_fun_arn = queryParams?.main_fun_arn === 'undefined' ? process.env.MAIN_FUN_ARN:queryParams.main_fun_arn;
       const apigateway_endpoint = queryParams?.apigateway_endpoint === 'undefined'? '':queryParams.apigateway_endpoint;
       const id = queryParams.id;
+      const company = queryParams?.company === 'undefined'? 'default':queryParams.company;
+
       // const apigateway_endpoint = queryParams.apigateway_endpoint;
       if (apigateway_endpoint.length > 0){
         const options ={
           method:'POST',
-          body:JSON.stringify({method:'get',resource:'template',id:id})
+          body:JSON.stringify({method:'get',resource:'template',id:id,company:company})
         }
           try {
               const response = await fetch(apigateway_endpoint,options);
@@ -146,7 +150,7 @@ export const handler = async(event) => {
       }
       else if (main_fun_arn&&main_fun_arn.length >0){
         const params = {FunctionName: main_fun_arn,
-              Payload:JSON.stringify({method:'get',resource:'template',id:id})}
+              Payload:JSON.stringify({method:'get',resource:'template',id:id,company:company})}
         try {
             const response =await lambdaClient.send(new InvokeCommand(params));
             const payload = JSON.parse(Buffer.from(response.Payload).toString());
@@ -172,10 +176,11 @@ export const handler = async(event) => {
     console.log(event.body);
     const main_fun_arn = body.main_fun_arn || process.env.MAIN_FUN_ARN;
     const apigateway_endpoint = body.apigateway_endpoint|| '';
+    const company = body.company??'default';
     if (apigateway_endpoint.length > 0){
       const options ={
         method:'POST',
-        body:JSON.stringify({method:'post',resource:'template',body:body})
+        body:JSON.stringify({method:'post',resource:'template',body:body,company:company})
       }
         try {
             const response = await fetch(apigateway_endpoint,options);
@@ -197,7 +202,7 @@ export const handler = async(event) => {
     }
     else if (main_fun_arn&&main_fun_arn.length >0){
       const params = {FunctionName: main_fun_arn,
-            Payload:JSON.stringify({method:'post',resource:'template',body:body})}
+            Payload:JSON.stringify({method:'post',resource:'template',body:body,company:company})}
       try {
           const response =await lambdaClient.send(new InvokeCommand(params));
           const payload = JSON.parse(Buffer.from(response.Payload).toString());
@@ -221,12 +226,13 @@ else if (event.httpMethod === 'DELETE' && event.resource === '/template'){
   const lambdaClient = new LambdaClient();
   const body = JSON.parse(event.body);
   console.log(event.body);
+  const company = body.company??'default';
   const main_fun_arn = body.main_fun_arn || process.env.MAIN_FUN_ARN;
   const apigateway_endpoint = body.apigateway_endpoint|| '';
   if (apigateway_endpoint.length > 0){
     const options ={
       method:'POST',
-      body:JSON.stringify({method:'delete',resource:'template',body:body})
+      body:JSON.stringify({method:'delete',resource:'template',body:body,company:company})
     }
       try {
           const response = await fetch(apigateway_endpoint,options);
@@ -248,7 +254,7 @@ else if (event.httpMethod === 'DELETE' && event.resource === '/template'){
   }
   else if (main_fun_arn&&main_fun_arn.length >0){
     const params = {FunctionName: main_fun_arn,
-          Payload:JSON.stringify({method:'delete',resource:'template',body:body})}
+          Payload:JSON.stringify({method:'delete',resource:'template',body:body,company:company})}
     try {
         const response =await lambdaClient.send(new InvokeCommand(params));
         const payload = JSON.parse(Buffer.from(response.Payload).toString());
@@ -272,12 +278,13 @@ else if (event.httpMethod === 'POST' && event.resource === '/feedback'){
   const lambdaClient = new LambdaClient();
   const body = JSON.parse(event.body);
   console.log(event.body);
+  const company = body.company??'default';
   const main_fun_arn = body.main_fun_arn || process.env.MAIN_FUN_ARN;
   const apigateway_endpoint = body.apigateway_endpoint|| '';
   if (apigateway_endpoint.length > 0){
     const options ={
       method:'POST',
-      body:JSON.stringify({method:'post',resource:'feedback',body:body})
+      body:JSON.stringify({method:'post',resource:'feedback',body:body,company:company})
     }
       try {
           const response = await fetch(apigateway_endpoint,options);
@@ -299,7 +306,7 @@ else if (event.httpMethod === 'POST' && event.resource === '/feedback'){
   }
   else if (main_fun_arn&&main_fun_arn.length >0){
     const params = {FunctionName: main_fun_arn,
-          Payload:JSON.stringify({method:'post',resource:'feedback',body:body})}
+          Payload:JSON.stringify({method:'post',resource:'feedback',body:body,company:company})}
     try {
         const response =await lambdaClient.send(new InvokeCommand(params));
         const payload = JSON.parse(Buffer.from(response.Payload).toString());
@@ -322,6 +329,7 @@ else if (event.httpMethod === 'GET' && event.resource === '/feedback'){
   const lambdaClient = new LambdaClient();
   const queryParams = event.queryStringParameters;
   console.log(queryParams);
+  const company = queryParams?.company === 'undefined'? 'default':queryParams.company;
   const main_fun_arn = queryParams?.main_fun_arn === 'undefined' ? process.env.MAIN_FUN_ARN:queryParams.main_fun_arn;
   const apigateway_endpoint = queryParams?.apigateway_endpoint === 'undefined'? '':queryParams.apigateway_endpoint;
   const body = {
@@ -332,7 +340,7 @@ else if (event.httpMethod === 'GET' && event.resource === '/feedback'){
   if (apigateway_endpoint.length > 0){
     const options ={
       method:'POST',
-      body:JSON.stringify({method:'get',resource:'feedback',body:body})
+      body:JSON.stringify({method:'get',resource:'feedback',body:body,company:company})
     }
       try {
           const response = await fetch(apigateway_endpoint,options);
@@ -354,7 +362,7 @@ else if (event.httpMethod === 'GET' && event.resource === '/feedback'){
   }
   else if (main_fun_arn&&main_fun_arn.length >0){
     const params = {FunctionName: main_fun_arn,
-          Payload:JSON.stringify({method:'get',resource:'feedback',body:body})}
+          Payload:JSON.stringify({method:'get',resource:'feedback',body:body,company:company})}
     try {
         const response =await lambdaClient.send(new InvokeCommand(params));
         const payload = JSON.parse(Buffer.from(response.Payload).toString());
@@ -378,12 +386,13 @@ else if (event.httpMethod === 'DELETE' && event.resource === '/feedback'){
   const lambdaClient = new LambdaClient();
   const body = JSON.parse(event.body);
   console.log(event.body);
+  const company = body.company??'default';
   const main_fun_arn = body.main_fun_arn || process.env.MAIN_FUN_ARN;
   const apigateway_endpoint = body.apigateway_endpoint|| '';
   if (apigateway_endpoint.length > 0){
     const options ={
       method:'POST',
-      body:JSON.stringify({method:'delete',resource:'feedback',body:body})
+      body:JSON.stringify({method:'delete',resource:'feedback',body:body,company:company})
     }
       try {
           const response = await fetch(apigateway_endpoint,options);
@@ -405,7 +414,7 @@ else if (event.httpMethod === 'DELETE' && event.resource === '/feedback'){
   }
   else if (main_fun_arn&&main_fun_arn.length >0){
     const params = {FunctionName: main_fun_arn,
-          Payload:JSON.stringify({method:'delete',resource:'feedback',body:body})}
+          Payload:JSON.stringify({method:'delete',resource:'feedback',body:body,company:company})}
     try {
         const response =await lambdaClient.send(new InvokeCommand(params));
         const payload = JSON.parse(Buffer.from(response.Payload).toString());

@@ -59,6 +59,7 @@ const ExpandableSettingPanel = () => {
 
   const userinfo = useAuthUserInfo();
   const username = userinfo?.username || "default";
+  const company = userinfo?.company || "default";
   const [localStoredParams, setLocalStoredParams] = useLocalStorage(
     params_local_storage_key + username,
     null
@@ -112,6 +113,7 @@ const ExpandableSettingPanel = () => {
   const queryParams = {
     main_fun_arn: main_fun_arn,
     apigateway_endpoint: apigateway_endpoint,
+    company:company,
   };
 
   const handleImageUpload = () => {

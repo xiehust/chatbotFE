@@ -36,6 +36,7 @@ const EditPanel = ({ setVisible }) => {
     Authorization: token.token,
   };
   const username = userinfo?.username || "default";
+  const company = userinfo?.company || "default";
   const [localStoredParams, setLocalStoredParams] = useLocalStorage(
     params_local_storage_key + username,
     null
@@ -64,6 +65,7 @@ const EditPanel = ({ setVisible }) => {
           answer: answerValue,
           action: "new-added",
           username: username,
+          company:company,
         };
         try {
           console.log(body);

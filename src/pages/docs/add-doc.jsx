@@ -112,7 +112,7 @@ const SettingsPanel = ()=>{
                 {
                   header: t('upload_file'),
                   type: "success",
-                  content: t('upload_file')+`:${localStoredParams.s3_bucket}/${localStoredParams.obj_prefix}${username}/${file.name},${localStoredParams.s3_bucket}/bedrock-kb-src/${username}/${file.name}`,
+                  content: t('upload_file')+`:${localStoredParams.s3_bucket}/${localStoredParams.obj_prefix}${company}/${username}/${file.name},${localStoredParams.s3_bucket}/bedrock-kb-src/${username}/${file.name}`,
                   dismissible: true,
                   dismissLabel: "Dismiss message",
                   onDismiss: () =>
@@ -235,7 +235,7 @@ const SettingsPanel = ()=>{
              }
              }
             value={files}
-            accept='.pdf,.txt,.csv,.faq,.md,.example,.examples,.json,.wiki,.docx'
+            accept='.pdf,.txt,.xlsx,.csv,.faq,.md,.example,.examples,.json,.wiki,.docx'
             multiple 
             constraintText = {helperMsg}
             showFileLastModified

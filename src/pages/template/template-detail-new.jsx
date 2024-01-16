@@ -48,6 +48,7 @@ function BaseFormContent({ content, errorText = null }) {
   const { setNotificationItems } = useSimpleNotifications();
   const headers = useAuthorizedHeader();
   const userInfo = useAuthUserInfo();
+  const company = userInfo.company??'default';
   const navigate = useNavigate();
   const [sumbitloading, setSubLoading] = useState(false);
   const msgid = generateId();
@@ -72,7 +73,9 @@ function BaseFormContent({ content, errorText = null }) {
         id: formData.id, 
         main_fun_arn:main_fun_arn,
         apigateway_endpoint:apigateway_endpoint,
-        username:userInfo.username };
+        username:userInfo.username,
+        company:company
+         };
 
         return addTemplate(headers, body)
           .then((data) => {
@@ -250,6 +253,7 @@ export default function TemplateDetail() {
   const [toolsOpen, setToolsOpen] = useState(false);
   const appLayout = useRef();
   const userInfo = useAuthUserInfo();
+  const company = userInfo.company??'default';
   const [localStoredParams] = useLocalStorage(
     params_local_storage_key+userInfo.username,
     null
@@ -264,6 +268,7 @@ export default function TemplateDetail() {
       id:templateId,
       main_fun_arn:main_fun_arn,
       apigateway_endpoint:apigateway_endpoint,
+      company:company,
     })
     .then(data =>{
       setDetail(data.body);
