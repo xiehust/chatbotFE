@@ -35,7 +35,9 @@ export const handler = async(event) => {
             try {
                 const response = await fetch(apigateway_endpoint,options);
                 const ret = await response.json();
-                let docs = examples?ret.filter((it) =>(it.index_name.S.startsWith('chatbot-example-index'))):ret;
+                let docs = examples?
+                        ret.body.filter((it) =>(it.index_name.S.startsWith('chatbot-example-index')))
+                        :ret.body.filter((it) =>(!it.index_name.S.startsWith('chatbot-example-index')));
                 return {
                   statusCode: 200,
                   headers:cors_headers,
@@ -56,11 +58,13 @@ export const handler = async(event) => {
           try {
               const response =await lambdaClient.send(new InvokeCommand(params));
               const payload = JSON.parse(Buffer.from(response.Payload).toString());
-              console.log(JSON.stringify(payload));
+              let docs = examples?
+              payload.body.filter((it) =>(it.index_name.S.startsWith('chatbot-example-index')))
+              :payload.body.filter((it) =>(!it.index_name.S.startsWith('chatbot-example-index')));
             return {
               statusCode: 200,
               headers:cors_headers,
-              body:JSON.stringify(payload)
+              body:JSON.stringify(docs)
             }
           }catch(err){  
             return {
