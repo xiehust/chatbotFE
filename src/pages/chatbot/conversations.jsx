@@ -255,6 +255,7 @@ const ThumbButtons = ({ msgid, session_id }) => {
       main_fun_arn: main_fun_arn,
       apigateway_endpoint: apigateway_endpoint,
       username: userInfo.username,
+      company: userInfo.company,
       action: downFilled ? "cancel-thumbs-down" : "thumbs-down",
     };
     setDownLoading(true);
@@ -284,6 +285,7 @@ const ThumbButtons = ({ msgid, session_id }) => {
       main_fun_arn: main_fun_arn,
       apigateway_endpoint: apigateway_endpoint,
       username: userInfo.username,
+      company: userInfo.company,
       action: upFilled ? "cancel-thumbs-up" : "thumbs-up",
     };
     setUpLoading(true);
@@ -334,6 +336,7 @@ const ThumbButtons = ({ msgid, session_id }) => {
             main_fun_arn: main_fun_arn,
             apigateway_endpoint: apigateway_endpoint,
             username: userInfo.username,
+            company: userInfo.company,
             action: upFilled ? "thumbs-up" : downFilled ? "thumbs-down" : "",
           };
           setFeedBackModalVisible(true);
