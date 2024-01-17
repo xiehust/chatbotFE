@@ -328,7 +328,7 @@ const ExpandableSettingPanel = () => {
       template_id:
         localStoredParams?.template_id || defaultModelParams.template_id,
       username: userinfo?.username,
-      tenant:userinfo?.company || "default",
+      company:userinfo?.company || "default",
       feedback:null,
     });
   }, []);
