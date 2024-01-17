@@ -181,7 +181,7 @@ export const FullPageHeader = ({
           />
           <Button
             disabled={
-              usergroup !=='admin' ||
+              // usergroup !=='admin' ||
               !isOnlyOneSelected}
             name="delete"
             onClick={deleteAction}
@@ -189,7 +189,7 @@ export const FullPageHeader = ({
             {t('delete')}
           </Button>
           <Button
-           disabled={usergroup !=='admin'}
+          //  disabled={usergroup !=='admin'}
             onClick={()=>setVisibleAdd(true)}
             variant="primary"
           >{t('create')}</Button>

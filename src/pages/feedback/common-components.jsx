@@ -205,7 +205,7 @@ export const FullPageHeader = ({
           />
           <Button
             disabled={
-              usergroup !== "admin" ||
+              // usergroup !== "admin" ||
               !isOnlyOneSelected ||
               props.selectedItems[0].action === "injected"
             } /*disable the button when status is injected*/
@@ -216,7 +216,7 @@ export const FullPageHeader = ({
             {t("inject")}
           </Button>
           <Button disabled={
-              usergroup !== "admin" ||
+              // usergroup !== "admin" ||
               !isOnlyOneSelected 
               // ||props.selectedItems[0].action === "injected"
           } name="delete"
