@@ -1,5 +1,2 @@
-什么是Gen AI？
-什么是生成式AI？
-ODCR预留实例怎么计费？
-提foob ticket的链接是什么？
-OCI的相关资料有什么？
+AWS clean rooms是什么？
+AWS MSK有什么优势？
