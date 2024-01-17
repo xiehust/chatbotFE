@@ -13,12 +13,13 @@ const cors_headers = {
 
 
 export const handler = async(event) => {
-    // console.log(event);
+
 
     //获取所有文档
     if (event.httpMethod === 'GET' && event.resource === '/docs'){
         // const records = await scanTableData()
         const queryParams = event.queryStringParameters;
+        console.log(queryParams);
         const main_fun_arn = queryParams?.main_fun_arn === 'undefined' ? process.env.MAIN_FUN_ARN:queryParams.main_fun_arn;
         const apigateway_endpoint = queryParams?.apigateway_endpoint === 'undefined'? '':queryParams.apigateway_endpoint;
         const company = queryParams?.company === 'undefined'? 'default':queryParams.company;
