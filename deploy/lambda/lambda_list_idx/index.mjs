@@ -23,7 +23,7 @@ export const handler = async(event) => {
         const main_fun_arn = queryParams?.main_fun_arn === 'undefined' ? process.env.MAIN_FUN_ARN:queryParams.main_fun_arn;
         const apigateway_endpoint = queryParams?.apigateway_endpoint === 'undefined'? '':queryParams.apigateway_endpoint;
         const company = queryParams?.company === 'undefined'? 'default':queryParams.company;
-        const examples = queryParams?.examples === 'undefined'? false:queryParams.examples;
+        const examples = queryParams?.examples === 'undefined' ? false:( queryParams.examples === 'true');
 
         const lambdaClient = new LambdaClient();
        
