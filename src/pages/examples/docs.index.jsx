@@ -123,7 +123,7 @@ export default function ExamplesTable () {
     listDocIdx(headers,queryParams)
     .then(data =>{
       // console.log(data);
-      const doc_items = data.body.filter((it) =>(it.index_name.S === 'chatbot-example-index'));
+      const doc_items = data.body.filter((it) =>(it.index_name.S.startsWith('chatbot-example-index')));
 
       const items = doc_items.map( it =>({embedding_model:it.embedding_model.S,
         filename:it.filename.S,
