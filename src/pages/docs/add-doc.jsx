@@ -199,13 +199,13 @@ const SettingsPanel = ()=>{
 
     const handleDownload = (type) => {
         // Send a request to the server to download the file
-        fetch(type === 'csv'?'./faq_template.csv':'./ask_user_faq.xlsx')
+        fetch('./ask_user_faq.xlsx')
           .then((response) => response.blob())
           .then((blob) => {
             const url = window.URL.createObjectURL(new Blob([blob]));
             const link = document.createElement('a');
             link.href = url;
-            link.setAttribute('download', type === 'csv'?`faq_template.csv`:`ask_user_faq.xlsx`); 
+            link.setAttribute('download', `ask_user_faq_template.xlsx`); 
             document.body.appendChild(link);
             link.click();
             link.remove();
@@ -220,13 +220,7 @@ const SettingsPanel = ()=>{
           <FormField label={t("download_template")}>
           <Button variant="link" 
             iconName="external"
-            onClick={handleDownload('csv')}
-          target="_blank"
-          >{t('template')+'(simple csv)'}
-          </Button>
-          <Button variant="link" 
-            iconName="external"
-            onClick={handleDownload('other')}
+            onClick={handleDownload()}
           target="_blank"
           >{t('template')+'(.xlsx)'}
           </Button>
