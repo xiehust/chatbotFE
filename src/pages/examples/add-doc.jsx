@@ -46,7 +46,7 @@ const SettingsPanel = ()=>{
           uploadS3(file,
             localStoredParams.s3_bucket,
             localStoredParams.obj_prefix+company+'/'+username+'/',
-            {"username":username,"company":encodeURIComponent(company),"category":encodeURIComponent(catSelectedOption?.value)},
+            {"username":username,"company":encodeURIComponent(company),"category":encodeURIComponent(catSelectedOption?.value??'')},
             localStoredParams.s3_region,
             localStoredParams.ak,
             localStoredParams.sk,
@@ -101,7 +101,7 @@ const SettingsPanel = ()=>{
                  fileSizeBytes: file.size,
                  lastModified: file.lastModified,
                  buf: bits,
-                 metadata: {"username":username,"company":encodeURIComponent(company),"category":encodeURIComponent(catSelectedOption?.value)}
+                 metadata: {"username":username,"company":encodeURIComponent(company),"category":encodeURIComponent(catSelectedOption?.value??'')}
               };
 
               uploadFile( username,company,body, headers)

@@ -154,7 +154,7 @@ const SettingsPanel = ()=>{
                  fileSizeBytes: file.size,
                  lastModified: file.lastModified,
                  buf: bits,
-                 metadata: {"username":username,"company":encodeURIComponent(company),"category":encodeURIComponent(catSelectedOption?.value)}
+                 metadata: {"username":username,"company":encodeURIComponent(company),"category":encodeURIComponent(catSelectedOption?.value??'')}
               };
 
               uploadFile( username,company,body, headers)
