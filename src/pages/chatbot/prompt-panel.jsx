@@ -327,7 +327,8 @@ const ExpandableSettingPanel = () => {
         defaultModelParams.system_role_prompt,
       template_id:
         localStoredParams?.template_id || defaultModelParams.template_id,
-      username: userinfo.username,
+      username: userinfo?.username,
+      tenant:userinfo?.company || "default",
       feedback:null,
     });
   }, []);
