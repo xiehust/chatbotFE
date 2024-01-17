@@ -24,6 +24,7 @@ const SettingsPanel = ()=>{
     const userinfo = useAuthUserInfo();
     const { setNotificationItems } = useSimpleNotifications();
     const token = useAuthToken();
+    const [catSelectedOption,setCatSelectedOption] = useState()
     const username = userinfo?.username || 'default';
     const company = userinfo?.company || 'default';
     const [localStoredParams] = useLocalStorage(
