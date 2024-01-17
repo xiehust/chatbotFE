@@ -197,7 +197,7 @@ const SettingsPanel = ()=>{
       
       }, []);
 
-    const handleDownload = (type) => {
+    const handleDownload = () => {
         // Send a request to the server to download the file
         fetch('./ask_user_faq.xlsx')
           .then((response) => response.blob())
@@ -220,7 +220,7 @@ const SettingsPanel = ()=>{
           <FormField label={t("download_template")}>
           <Button variant="link" 
             iconName="external"
-            onClick={handleDownload()}
+            onClick={handleDownload}
           target="_blank"
           >{t('template')+'(.xlsx)'}
           </Button>
