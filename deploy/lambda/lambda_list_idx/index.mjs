@@ -22,6 +22,7 @@ export const handler = async(event) => {
         const main_fun_arn = queryParams?.main_fun_arn === 'undefined' ? process.env.MAIN_FUN_ARN:queryParams.main_fun_arn;
         const apigateway_endpoint = queryParams?.apigateway_endpoint === 'undefined'? '':queryParams.apigateway_endpoint;
         const company = queryParams?.company === 'undefined'? 'default':queryParams.company;
+        const examples = queryParams?.examples === 'undefined'? false:queryParams.examples;
 
         const lambdaClient = new LambdaClient();
        
@@ -33,11 +34,11 @@ export const handler = async(event) => {
             try {
                 const response = await fetch(apigateway_endpoint,options);
                 const ret = await response.json();
-                console.log(JSON.stringify(ret));
+                let docs = examples?ret.filter((it) =>(it.index_name.S.startsWith('chatbot-example-index'))):ret;
                 return {
                   statusCode: 200,
                   headers:cors_headers,
-                  body:JSON.stringify(ret)
+                  body:JSON.stringify(docs)
                 }
             }catch(err){
               return {
@@ -74,11 +75,10 @@ export const handler = async(event) => {
         const body = JSON.parse(event.body);
         const main_fun_arn = body.main_fun_arn || process.env.MAIN_FUN_ARN;
         const apigateway_endpoint = body.apigateway_endpoint|| '';
-        const company = queryParams?.company === 'undefined'? 'default':queryParams.company;
         if (apigateway_endpoint.length > 0){
           const options ={
             method:'POST',
-            body:JSON.stringify({...body,method:'delete',resource:'docs',company:company})
+            body:JSON.stringify({...body,method:'delete',resource:'docs'})
           }
             try {
                 await fetch(apigateway_endpoint,options);
@@ -97,7 +97,7 @@ export const handler = async(event) => {
         }
         else if (main_fun_arn&&main_fun_arn.length >0){
           const params = {FunctionName: main_fun_arn,
-                Payload: JSON.stringify({...body,method:'delete',resource:'docs',company:company})}
+                Payload: JSON.stringify({...body,method:'delete',resource:'docs'})}
 
           try {
               await lambdaClient.send(new InvokeCommand(params));

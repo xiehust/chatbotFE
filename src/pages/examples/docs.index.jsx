@@ -117,14 +117,14 @@ export default function ExamplesTable () {
     main_fun_arn:main_fun_arn,
     apigateway_endpoint:apigateway_endpoint,
     company:company,
-
+    examples:true
   }
   useEffect(()=>{
     listDocIdx(headers,queryParams)
     .then(data =>{
       // console.log(data);
-      const doc_items = data.body.filter((it) =>(it.index_name.S.startsWith('chatbot-example-index')));
-
+      // const doc_items = data.body.filter((it) =>(it.index_name.S.startsWith('chatbot-example-index')));
+      const doc_items = data.body;
       const items = doc_items.map( it =>({embedding_model:it.embedding_model.S,
         filename:it.filename.S,
         index_name:it.index_name.S,
