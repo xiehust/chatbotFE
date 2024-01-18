@@ -82,7 +82,7 @@ const SettingsPanel = ()=>{
       null
     );
     const [catSelectedOption,setCatSelectedOption] = useState()
-    const [helperMsg, setHelperMsg] = useState(".pdf,.txt,.csv,.faq,.md,.example,.examples,.json,.wiki");
+    const [helperMsg, setHelperMsg] = useState(".pdf,.txt,.xlsx,.csv,.faq,.md,.example,.examples,.json,.wiki");
     const [uploadErrtxt, setUploadErr] = useState();
     const [files, setFiles] = useState([]);
     const [loading, setLoading] = useState(false);
@@ -198,13 +198,13 @@ const SettingsPanel = ()=>{
 
     const handleDownload = () => {
         // Send a request to the server to download the file
-        fetch('./faq_template.csv')
+        fetch('./ask_user_faq_template.xlsx')
           .then((response) => response.blob())
           .then((blob) => {
             const url = window.URL.createObjectURL(new Blob([blob]));
             const link = document.createElement('a');
             link.href = url;
-            link.setAttribute('download', `template-${new Date().getTime()}.csv`); 
+            link.setAttribute('download', `ask_user_faq_template.xlsx`); 
             document.body.appendChild(link);
             link.click();
             link.remove();
@@ -221,7 +221,7 @@ const SettingsPanel = ()=>{
             iconName="external"
             onClick={handleDownload}
           target="_blank"
-          >{t('template')}
+          >{t('template')+'(.xlsx)'}
           </Button>
           </FormField>
           <FormField label={t("upload_file")}>
@@ -234,7 +234,7 @@ const SettingsPanel = ()=>{
              }
              }
             value={files}
-            accept='.pdf,.txt,.csv,.faq,.md,.example,.examples,.json,.wiki,.docx'
+            accept='.pdf,.txt,.xlsx,.csv,.faq,.md,.example,.examples,.json,.wiki,.docx'
             multiple 
             constraintText = {helperMsg}
             showFileLastModified

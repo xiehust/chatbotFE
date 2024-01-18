@@ -17,6 +17,8 @@
           { "label": "CI-通用", "value": "CI-通用" }
         ]
     },
+    {"label": "CI-Global-Spot", "value": "CI-Global-Spot" },
+    {"label": "CI-Global-Wisdom", "value": "CI-Global-Wisdom" },
     {
       "label": "Gen-AI",
       "options": [
