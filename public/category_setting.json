@@ -11,14 +11,14 @@
     {
         "label": "CI",
         "options": [
+          {"label": "CI-Global-Spot", "value": "CI-Global-Spot" },
+          {"label": "CI-Global-Wisdom", "value": "CI-Global-Wisdom" },
           { "label": "CI-Playbook", "value": "CI-Playbook" },
           { "label": "CI-FAQ", "value": "CI-FAQ" },
           { "label": "CI-其他", "value": "CI-其他" },
           { "label": "CI-通用", "value": "CI-通用" }
         ]
     },
-    {"label": "CI-Global-Spot", "value": "CI-Global-Spot" },
-    {"label": "CI-Global-Wisdom", "value": "CI-Global-Wisdom" },
     {
       "label": "Gen-AI",
       "options": [
