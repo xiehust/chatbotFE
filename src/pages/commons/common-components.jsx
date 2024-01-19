@@ -198,7 +198,7 @@ function TopNavHeader (){
     {
       type: "menu-dropdown",
       iconName: "user-profile",
-      text:userInfo.username+"@"+userInfo.groupname,
+      text:userInfo.username+"@"+userInfo.company,
       description: `${t('group')}:${userInfo.groupname}`,
       title: t('Settings'),
       onItemClick:({detail})=>{
