@@ -513,7 +513,9 @@ const PromptPanel = ({ sendMessage }) => {
     newChatLoading, 
     setNewChatLoading,
     useTrace,
-    setUseTrace
+    setUseTrace,
+    enableSearch,
+    setEnableSearch
   } = useChatData();
   const [localStoredParams, setLocalStoredParams] = useLocalStorage(
     params_local_storage_key + userinfo.username,
@@ -735,6 +737,23 @@ const PromptPanel = ({ sendMessage }) => {
                 checked={useTrace}
               >{t("use_trace")}</Toggle>
             </FormField>
+            <FormField >
+              <Toggle
+                onChange={({ detail }) => {
+                  setEnableSearch(detail.checked);
+                  setModelParams((prev) => ({
+                    ...prev,
+                    feature_config: detail.checked?'default':'search_disabled',
+                  }));
+                  setLocalStoredParams({
+                    ...localStoredParams,
+                    enableSearch: detail.checked,
+                  });
+                }}
+                checked={enableSearch}
+              >{t("enable_search")}</Toggle>
+            </FormField>
+
           </SpaceBetween>
       </SpaceBetween>
       

@@ -56,6 +56,10 @@ const Content = () => {
     : defaultModelParams.use_trace);
   const { modelSettingVisible } = useSettingCtx();
 
+  const [enableSearch,setEnableSearch] = useState( localStoredParams?.enableSearch !== undefined
+    ? localStoredParams?.enableSearch
+    : false);
+
 
   useEffect(()=>{
     setModelParams(prev =>({
@@ -67,6 +71,7 @@ const Content = () => {
       ak:localStoredParams?.ak||'',
       sk:localStoredParams?.sk||'',
       obj_prefix:localStoredParams?.obj_prefix||defaultModelParams.obj_prefix,
+      feature_config:localStoredParams?.enableSearch === true?'default':'search_disabled' //the search is enabled using 'default';
     }))
   },[modelSettingVisible]);
 
@@ -97,7 +102,9 @@ const Content = () => {
         newChatLoading, 
         setNewChatLoading,
         useTrace,
-        setUseTrace
+        setUseTrace,
+        enableSearch,
+        setEnableSearch
       }}
     >
       <ModelSettings href={'/chat'}/>
