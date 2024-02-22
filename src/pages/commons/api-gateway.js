@@ -5,7 +5,9 @@ import axios from 'axios';
 import { S3Client,PutObjectCommand } from "@aws-sdk/client-s3"
 
 console.log(process.env)
-export const API_http = process.env.REACT_APP_API_http;
+export const API_http = process.env.REACT_APP_API_http.slice(-1) === '/'?
+                        process.env.REACT_APP_API_http.slice(0,-1):
+                        process.env.REACT_APP_API_http;
 export const API_socket = process.env.REACT_APP_API_socket;
 
 export const API_login = 'login';
@@ -201,6 +203,39 @@ export const addTemplate = async(headers,formdata) =>{
         throw err;
     }
 }
+
+export const listAgents = async(headers,queryParams={}) =>{
+    // Build the query string parameters
+    const queryString = Object.keys(queryParams)
+    .map(key => `${encodeURIComponent(key)}=${encodeURIComponent(queryParams[key])}`)
+    .join('&');
+    try {
+        const resp = await axios.get(`${API_http}/agents?${queryString}`, {headers});
+        return resp.data;
+    } catch (err) {
+        throw err;
+    }
+}
+
+
+export const addAgent = async(headers,formdata) =>{
+    try {
+        const resp = await axios.post(`${API_http}/agents`,JSON.stringify(formdata), {headers});
+        return resp.data;
+    } catch (err) {
+        throw err;
+    }
+}
+
+export const deleteAgent = async(headers,formdata) =>{
+    try {
+        const resp = await axios.delete(`${API_http}/agents`,{headers,data:JSON.stringify(formdata)});
+        return resp.data;
+    } catch (err) {
+        throw err;
+    }
+}
+
 
 export const postFeedback = async(headers,formdata) =>{
     try {

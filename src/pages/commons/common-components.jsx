@@ -44,6 +44,14 @@ const navItems_admin = [
   }, 
   {
     type: 'section',
+    text: i18n.t('agents'),
+    items: [
+      { type: 'link', text: i18n.t('agents_store'), href: '/agents' },
+      // { type: 'link', text: i18n.t('chat_agent'), href: '/agentschat' },
+    ],
+  }, 
+  {
+    type: 'section',
     text: i18n.t('admin'),
     items: [
       { type: 'link', text: i18n.t('docs'), href: '/docs' },
@@ -61,6 +69,14 @@ const navItems = [
     text: i18n.t('chatspace'),
     items: [
       { type: 'link', text: i18n.t('chatbot'), href: '/chat' },
+    ],
+  }, 
+  {
+    type: 'section',
+    text: i18n.t('agents'),
+    items: [
+      { type: 'link', text: i18n.t('agents_store'), href: '/agents' },
+      // { type: 'link', text: i18n.t('chat_agent'), href: '/agentschat' },
     ],
   }, 
   {

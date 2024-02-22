@@ -27,7 +27,19 @@ export function formatDate(date){
     return fmt
 }
 
+export function getTimestamp() {
+    const date = new Date(Date.now() ); // 将秒级时间戳转换为毫秒级时间戳
+    const year = date.getFullYear();
+    const month = ('0' + (date.getMonth() + 1)).slice(-2);
+    const day = ('0' + date.getDate()).slice(-2);
+    const hours = ('0' + date.getHours()).slice(-2);
+    const minutes = ('0' + date.getMinutes()).slice(-2);
+    const seconds = ('0' + date.getSeconds()).slice(-2);
+  
+    const formattedDate = `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
+    return formattedDate;
 
+}
 export function dbRespErrorMapping(err){
   switch (err){
     case 501:
@@ -37,4 +49,12 @@ export function dbRespErrorMapping(err){
     default:
       return "Internal Server Error";
   }
+}
+
+export function generateUUID() {
+  return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
+    var r = Math.random() * 16 | 0,
+        v = c == 'x' ? r : (r & 0x3 | 0x8);
+    return v.toString(16);
+  });
 }

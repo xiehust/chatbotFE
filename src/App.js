@@ -20,6 +20,11 @@ import CreateTemplateApp from "./pages/template/create-template";
 import TemplateDetail from "./pages/template/template-detail-new";
 import FeedbackTable from "./pages/feedback/feedback-servertable.index";
 import ExamplesTable from "./pages/examples/docs.index";
+import AgentsTable from "./pages/agents/agents.index";
+import CreateAgentApp from "./pages/agents/create-agent";
+import AgentDetail from "./pages/agents/agent-detail";
+import AgentsChat from "./pages/agents_chat";
+import AgentsCards from "./pages/agents/agents.cards.index";
 
 export default function App() {
   return (
@@ -31,6 +36,13 @@ export default function App() {
           <Route path="/" element={<LoginPage/>} />
           <Route path="/login" element={<LoginPage/>} />
           <Route path="/chat" element={<RequireAuth redirectPath="/login"><ChatBot/></RequireAuth>}/>
+          <Route path="/agents" element={<RequireAuth redirectPath="/login"><AgentsCards/></RequireAuth>}/>
+          <Route path="/agents/create" element={<RequireAuth redirectPath="/login"><CreateAgentApp/></RequireAuth>}/>
+          <Route path="/agents/:agentId" element={<RequireAuth redirectPath="/login"><AgentDetail/></RequireAuth>}/>
+          {/* <Route path="/agentschat/" element={<RequireAuth redirectPath="/login"><AgentsChat/></RequireAuth>}/> */}
+          <Route path="/agentschat/:agentId" element={<RequireAuth redirectPath="/login"><AgentsChat/></RequireAuth>}/>
+
+
           <Route path="/docs" element={<RequireAuth redirectPath="/login"><DocsTable/></RequireAuth>}/>
           <Route path="/examples" element={<RequireAuth redirectPath="/login"><ExamplesTable/></RequireAuth>}/>
           <Route path="/template" element={<RequireAuth redirectPath="/login"><TemplateTable/></RequireAuth>}/>

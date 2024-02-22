@@ -7,8 +7,6 @@ import {
   ResponseType,
   EndpointType
 } from "aws-cdk-lib/aws-apigateway";
-import { DockerImageFunction } from "aws-cdk-lib/aws-lambda";
-import { DockerImageCode, Architecture } from "aws-cdk-lib/aws-lambda";
 import * as s3 from "aws-cdk-lib/aws-s3";
 
 import * as sns from "aws-cdk-lib/aws-sns";
@@ -49,6 +47,7 @@ export class LambdaStack extends NestedStack {
     super(scope, id, props);
 
     const user_table = props.user_table;
+    const agents_table = props.agents_table;
     // const doc_index_table = props.doc_index_table;
     this.handlersMap = new Map();
 
@@ -140,31 +139,6 @@ export class LambdaStack extends NestedStack {
       layerVersionName:'ChatbotFELayer',
     });
 
-//     const ecrRepoName = `lambda_chat_py`;
-//     const repo = ecr.Repository.fromRepositoryName(
-//       this,
-//       "Repository",
-//       ecrRepoName
-//     );
-//  const ecrImage = DockerImageCode.fromEcr(repo, { tagOrDigest: "latest" });
-//  const dockerImageProps = {
-//    code: ecrImage,
-//    timeout: Duration.minutes(5),
-//    memorySize: 256,
-//    runtime: "python3.10",
-//    architecture: Architecture.X86_64,
-//    environment: {
-//     OPENAI_API_KEY: process.env.OPENAI_API_KEY,
-//     MAIN_FUN_ARN:process.env.MAIN_FUN_ARN
-//    },
-//  };
-
-//  // Create the Docker image function
-//   this.lambda_chat_py = new DockerImageFunction(
-//    this,
-//    "handle_chat_py",
-//    dockerImageProps
-//  );
 
     this.lambda_chat_py = new lambda.Function(this, 'handle_chat_py',{
       code: lambda.Code.fromAsset('lambda/lambda_chat_py'),
@@ -218,7 +192,7 @@ export class LambdaStack extends NestedStack {
       {
         ...commonProps,
         environment: {
-          DOC_INDEX_TABLE:'chatbot_doc_index',
+          AGENTS_TABLE_NAME:agents_table.tableName,
           MAIN_FUN_ARN:process.env.MAIN_FUN_ARN
         },
       }
@@ -246,6 +220,8 @@ export class LambdaStack extends NestedStack {
     const main_fn = lambda.Function.fromFunctionArn(this,'main func',process.env.MAIN_FUN_ARN);
     main_fn.grantInvoke(this.lambda_chat_py);
     main_fn.grantInvoke(this.lambda_list_idx);
+
+    agents_table.grantReadWriteData(this.lambda_list_idx);
 
     const api = new RestApi(this, "ChatbotFERestApi", {
       cloudWatchRole: true,
@@ -310,7 +286,12 @@ export class LambdaStack extends NestedStack {
     feedback.addMethod('DELETE',feedbackIntegration,{authorizer});
     feedback.addMethod('GET',feedbackIntegration,{authorizer});
 
-
+    const agentsIntegration = new LambdaIntegration(this.lambda_list_idx );
+    const agents = api.root.addResource('agents');
+    agents.addMethod('POST',agentsIntegration,{authorizer});
+    agents.addMethod('DELETE',agentsIntegration,{authorizer});
+    agents.addMethod('GET',agentsIntegration,{authorizer});
+    agents.addResource("{id}").addMethod("GET",agentsIntegration,{authorizer});
 
 
     const loginIntegration = new LambdaIntegration(this.login_fn);

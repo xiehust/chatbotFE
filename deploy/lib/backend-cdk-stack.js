@@ -5,7 +5,7 @@ import * as dotenv from "dotenv";
 
 dotenv.config();
 
-export class BackendCdkStack extends Stack {
+export class FrontendCdkStack extends Stack {
   /**
    *
    * @param {Construct} scope
@@ -24,21 +24,17 @@ export class BackendCdkStack extends Stack {
       tableName:'chatbotFE_user'
     });
    
-    // const doc_index_table = new Table(this, "doc_index", {
-    //   partitionKey: {
-    //     name: "filename",
-    //     type: AttributeType.STRING,
-    //   },
-    //   sortKey: {
-    //     name: "embedding_model",
-    //     type: AttributeType.STRING,
-    //   },
-    //   tableName:'chatbot_doc_index',
-    //   removalPolicy: RemovalPolicy.DESTROY, // NOT recommended for production code
-    // });
+    const agents_table = new Table(this, "agents_table", {
+      partitionKey: {
+        name: "agentid",
+        type: AttributeType.STRING,
+      },
+      tableName:'agents_table',
+      removalPolicy: RemovalPolicy.DESTROY, // NOT recommended for production code
+    });
     const lambdastack = new LambdaStack(this, "lambdas", {
       user_table,
-      // doc_index_table
+      agents_table
     });
 
     new CfnOutput(this, `API gateway endpoint url`, {
