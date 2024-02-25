@@ -36,7 +36,7 @@ export const uploadS3 = async (fileob,bucket,objprefix,metadata,region,ak,sk) =>
     });
     //upload a copy to bedrock kb
     const promiseB = new Promise((resolve, reject)=>{
-        uploadS3a(fileob,bucket,`bedrock-kb-src/${metadata.username}/`,metadata,region,ak,sk).then(resp =>{
+        uploadS3a(fileob,bucket,`bedrock-kb-src/${metadata.company}/${metadata.username}/`,metadata,region,ak,sk).then(resp =>{
             return resolve('success');
         }).catch(err=>{
             return reject(Error(err));
@@ -124,9 +124,9 @@ export const remote_auth = async(username,password) =>{
                 .then(data => (data))
 }
 
-export const uploadFile = async(username,formdata,headers) =>{
+export const uploadFile = async(username,company,formdata,headers) =>{
     try {
-        const resp = await axios.post(`${API_http}/upload?username=${username}`,formdata, {headers,responseType: 'blob'}, );
+        const resp = await axios.post(`${API_http}/upload?username=${username}&company=${company}`,formdata, {headers,responseType: 'blob'}, );
         // console.log(resp.data);
         return resp.data;
     } catch (err) {

@@ -1,2 +1,2 @@
-什么是Gen AI？
-什么是生成式AI？
+AWS clean rooms是什么？
+AWS MSK有什么优势？

@@ -86,7 +86,7 @@ exports.handler  = async (event) => {
         username: { S: body.username }, 
         password: { S: hash_pwd }, 
         status:{S:'active'},
-        email:{S:body.email},
+        company:{S:body.company},
         groupname: { S: body.groupname||'default' }, 
         aws_access_key: { S: body.aws_access_key||'' }, 
         aws_secret_key:{ S: body.aws_secret_key||'' }, 

@@ -23,6 +23,7 @@ export function useDistributions(params = {}) {
   const headers = useAuthorizedHeader();
   const userinfo = useAuthUserInfo();
   const username = userinfo?.username || 'default';
+  const company = userinfo?.company || 'default';
   const [localStoredParams] = useLocalStorage(
     params_local_storage_key+username,
     null
@@ -31,7 +32,8 @@ export function useDistributions(params = {}) {
   const apigateway_endpoint = localStoredParams.apigateway_endpoint;
   const queryParams = {
     main_fun_arn:main_fun_arn,
-    apigateway_endpoint:apigateway_endpoint
+    apigateway_endpoint:apigateway_endpoint,
+    company:company
   }
   const refreshAction =()=>{
       setLoading(true);
@@ -61,18 +63,21 @@ export function useDistributions(params = {}) {
       setLoading(false);
       // console.log(data.body);
       const itemdata = data.body.items.map(it => {
-        const contentArray = JSON.parse(it.content);
-        const lastContent = contentArray[contentArray.length -1];
+        console.log(it);
+        // const contentArray = JSON.parse(it.content);
+        // const lastContent = contentArray[contentArray.length -1];
+        // const lastContent = JSON.parse(it);
         return  {
         msgid:it.msgid,
         sid:it['session-id'],
-        question:lastContent.question,
-        answer:lastContent.answer,
-        feedback:lastContent.feedback,
-        timestamp:lastContent.timestamp,
-        action:lastContent.action,
-        username:lastContent.username
+        question:it.question,
+        answer:it.answer,
+        feedback:it.feedback,
+        timestamp:it.timestamp,
+        action:it.action,
+        username:it.username
         }
+
       });
 
       setItems(itemdata);

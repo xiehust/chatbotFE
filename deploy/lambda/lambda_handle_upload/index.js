@@ -94,8 +94,9 @@ exports.handler = async (event) => {
 
 /*global ReadableStream */
   const username = event.queryStringParameters.username??'anonymous';
+  const company = event.queryStringParameters.company??'default';
 
-  const prefix = mimeType === "image/jpeg" || mimeType === "image/png" ? `images/${username}/` : process.env.UPLOAD_OBJ_PREFIX+username+'/';
+  const prefix = mimeType === "image/jpeg" || mimeType === "image/png" ? `images/${username}/` : process.env.UPLOAD_OBJ_PREFIX+company+'/'+username+'/';
   const s3ParamsA = {
     Bucket: bucket,
     Key: prefix + filename,
@@ -105,7 +106,7 @@ exports.handler = async (event) => {
   };
   const s3ParamsB = {
     Bucket: bucket,
-    Key: `bedrock-kb-src/${username}/${filename}`,
+    Key: `bedrock-kb-src/${company}/${username}/${filename}`,
     Body: buffer,
     ContentType: mimeType,
     Metadata:metadata

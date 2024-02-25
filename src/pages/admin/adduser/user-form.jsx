@@ -28,7 +28,7 @@ const addUserFormCtx = createContext();
 function validateForm(props) {
   if (
     !props.username?.length ||
-    !props.email?.length ||
+    !props.company?.length ||
     !props.password?.length
   ) {
     return false;
@@ -190,18 +190,17 @@ function AddUserPanel({ readOnlyWithErrors = false }) {
           />
         </FormField>
         <FormField
-          label="Email"
-          errorText={getErrorText("You must enter a valid email")}
+          label="Company"
+          errorText={getErrorText("You must enter a company name")}
           i18nStrings={{ errorIconAriaLabel: "Error" }}
         >
           <Input
-            placeholder="Email"
-            type="email"
+            placeholder="Company"
             ariaRequired={true}
-            value={formData.email}
+            value={formData.company}
             onChange={(event) =>
               !readOnlyWithErrors &&
-              setFormData((prev) => ({ ...prev, email: event.detail.value }))
+              setFormData((prev) => ({ ...prev, company: event.detail.value }))
             }
           />
         </FormField>
@@ -227,7 +226,7 @@ function AddUserPanel({ readOnlyWithErrors = false }) {
         </FormField>
         <FormField
           label={t('confirm_password')}
-          errorText={getErrorText("You must enter a valid email")}
+          errorText={getErrorText("You must enter a valid password")}
           i18nStrings={{ errorIconAriaLabel: "Error" }}
         >
           <Input

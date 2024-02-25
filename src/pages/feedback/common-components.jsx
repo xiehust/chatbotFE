@@ -75,12 +75,14 @@ export const FullPageHeader = ({
   const isOnlyOneSelected = props.selectedItems.length === 1;
   const sid = isOnlyOneSelected ? props.selectedItems[0].sid : null;
   const msgid = isOnlyOneSelected ? props.selectedItems[0].msgid : null;
+  const origin_username = isOnlyOneSelected ? props.selectedItems[0].username : null;
   const [injectLoading, setInjectLoading] = useState(false);
   const [deleteLoading,setDeleteLoading] = useState(false);
   const userinfo = useAuthUserInfo();
   const usergroup = userinfo.groupname;
   const headers = useAuthorizedHeader();
   const username = userinfo?.username || "default";
+  const company = userinfo?.company || "default";
   const [localStoredParams] = useLocalStorage(
     params_local_storage_key + username,
     null
@@ -89,7 +91,7 @@ export const FullPageHeader = ({
     const body = {
       msgid: msgid,
       session_id: sid,
-      username: username,
+      username: origin_username,
       s3_bucket: localStoredParams.s3_bucket,
       obj_prefix: localStoredParams.obj_prefix,
       main_fun_arn: localStoredParams.main_fun_arn,
@@ -140,7 +142,8 @@ export const FullPageHeader = ({
     const body = {
       msgid: msgid,
       session_id: sid,
-      username: username,
+      username: origin_username,
+      company:company,
       s3_bucket: localStoredParams.s3_bucket,
       obj_prefix: localStoredParams.obj_prefix,
       main_fun_arn: localStoredParams.main_fun_arn,
@@ -202,7 +205,7 @@ export const FullPageHeader = ({
           />
           <Button
             disabled={
-              usergroup !== "admin" ||
+              // usergroup !== "admin" ||
               !isOnlyOneSelected ||
               props.selectedItems[0].action === "injected"
             } /*disable the button when status is injected*/
@@ -213,7 +216,7 @@ export const FullPageHeader = ({
             {t("inject")}
           </Button>
           <Button disabled={
-              usergroup !== "admin" ||
+              // usergroup !== "admin" ||
               !isOnlyOneSelected 
               // ||props.selectedItems[0].action === "injected"
           } name="delete"
@@ -266,6 +269,7 @@ export const EditCell = ({ keyname,value ,msgid,sid,action,origin_username}) => 
   const userinfo = useAuthUserInfo();
   const headers = useAuthorizedHeader();
   const username = userinfo?.username || "default";
+  const company = userinfo?.company || "default";
   const [localStoredParams] = useLocalStorage(
     params_local_storage_key + username,
     null
@@ -286,6 +290,7 @@ export const EditCell = ({ keyname,value ,msgid,sid,action,origin_username}) => 
       main_fun_arn: localStoredParams.main_fun_arn,
       apigateway_endpoint: localStoredParams.apigateway_endpoint,
       action: actionValue,
+      company:company
     };
 
     // 如果是question，则更新quesiton字段,如果是feedback，则更新feedback字段

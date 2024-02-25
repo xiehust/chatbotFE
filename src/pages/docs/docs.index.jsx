@@ -105,6 +105,7 @@ export default function DocsTable () {
   };
   const userinfo = useAuthUserInfo();
   const username = userinfo?.username || 'default';
+  const company = userinfo?.company || 'default';
   const [localStoredParams] = useLocalStorage(
     params_local_storage_key+username,
     null
@@ -113,15 +114,17 @@ export default function DocsTable () {
   const apigateway_endpoint = localStoredParams.apigateway_endpoint;
   const queryParams = {
     main_fun_arn:main_fun_arn,
-    apigateway_endpoint:apigateway_endpoint
+    company:company,
+    apigateway_endpoint:apigateway_endpoint,
+    examples:false
   }
   useEffect(()=>{
     listDocIdx(headers,queryParams)
     .then(data =>{
       // console.log(data);
       //does display examples index
-      const doc_items = data.body.filter((it) =>(it.index_name.S !== 'chatbot-example-index'));
-      const items = doc_items.map( it =>({embedding_model:it.embedding_model.S,
+      // const doc_items = data.filter((it) =>(it.index_name.S !== 'chatbot-example-index'));
+      const items = data.map( it =>({embedding_model:it.embedding_model.S,
         filename:it.filename.S,
         index_name:it.index_name.S,
         username:it.username.S,

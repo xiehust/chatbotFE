@@ -181,7 +181,7 @@ export const FullPageHeader = ({
           />
           <Button
             disabled={
-              usergroup !=='admin' ||
+              // usergroup !=='admin' ||
               !isOnlyOneSelected}
             name="delete"
             onClick={deleteAction}

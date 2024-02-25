@@ -59,6 +59,7 @@ const ExpandableSettingPanel = () => {
 
   const userinfo = useAuthUserInfo();
   const username = userinfo?.username || "default";
+  const company = userinfo?.company || "default";
   const [localStoredParams, setLocalStoredParams] = useLocalStorage(
     params_local_storage_key + username,
     null
@@ -112,6 +113,7 @@ const ExpandableSettingPanel = () => {
   const queryParams = {
     main_fun_arn: main_fun_arn,
     apigateway_endpoint: apigateway_endpoint,
+    company:company,
   };
 
   const handleImageUpload = () => {
@@ -325,7 +327,8 @@ const ExpandableSettingPanel = () => {
         defaultModelParams.system_role_prompt,
       template_id:
         localStoredParams?.template_id || defaultModelParams.template_id,
-      username: userinfo.username,
+      username: userinfo?.username,
+      company:userinfo?.company || "default",
       feedback:null,
     });
   }, []);
@@ -510,7 +513,9 @@ const PromptPanel = ({ sendMessage }) => {
     newChatLoading, 
     setNewChatLoading,
     useTrace,
-    setUseTrace
+    setUseTrace,
+    enableSearch,
+    setEnableSearch
   } = useChatData();
   const [localStoredParams, setLocalStoredParams] = useLocalStorage(
     params_local_storage_key + userinfo.username,
@@ -732,6 +737,23 @@ const PromptPanel = ({ sendMessage }) => {
                 checked={useTrace}
               >{t("use_trace")}</Toggle>
             </FormField>
+            <FormField >
+              <Toggle
+                onChange={({ detail }) => {
+                  setEnableSearch(detail.checked);
+                  setModelParams((prev) => ({
+                    ...prev,
+                    feature_config: detail.checked?'default':'search_disabled',
+                  }));
+                  setLocalStoredParams({
+                    ...localStoredParams,
+                    enableSearch: detail.checked,
+                  });
+                }}
+                checked={enableSearch}
+              >{t("enable_search")}</Toggle>
+            </FormField>
+
           </SpaceBetween>
       </SpaceBetween>
       

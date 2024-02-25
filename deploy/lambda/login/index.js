@@ -20,7 +20,9 @@ const queryDynamoDb = async (key) => {
       return null;
     } else {
       console.log(results.Item);
-      return [results.Item.password.S,results.Item.groupname.S];
+      return {password:results.Item.password.S,
+        group:results.Item.groupname.S,
+      company:results.Item.company.S};
     }
   } catch (err) {
     console.error(err);
@@ -66,7 +68,7 @@ exports.handler  = async (event) => {
   const user_name = authorization[0];
   const plain_user_pwd = authorization[1];
   //query user in DB
-  const [password,group] = await queryDynamoDb(user_name);
+  const {password,group,company} = await queryDynamoDb(user_name);
     
    //if user is not found, return 403
    if (!password) {
@@ -93,7 +95,8 @@ exports.handler  = async (event) => {
       isAuthorized:true,
       token: token,
       username:user_name,
-      groupname:group
+      groupname:group,
+      company:company
     }),
   };
   return response;
