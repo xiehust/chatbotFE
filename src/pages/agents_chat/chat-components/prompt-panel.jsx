@@ -32,8 +32,8 @@ export const defaultModelParams = {
   max_tokens: 3000,
   model_name: models[0].value,
   model_name_opt: models[0],
-  use_qa: true,
-  multi_rounds:false,
+  use_qa: false,
+  multi_rounds:true,
   // embedding_model_name: embeddings[0].value,
   // embedding_model_name_opt: embeddings[0],
   obj_prefix: "ai-content/",
@@ -225,33 +225,33 @@ const ExpandableSettingPanel = () => {
     
   };
 
-  // const handleLoadItems = async ({
-  //   detail: { filteringText, firstPage, samePage },
-  // }) => {
-  //   const headers = {
-  //     Authorization: token.token,
-  //   };
-  //   setLoadStatus("loading");
-  //   try {
-  //     const data = await listTemplate(headers, queryParams);
-  //     let items = data.body.map((it) => ({
-  //       template_name: it.template_name.S,
-  //       id: it.id.S,
-  //       username: it.username.S,
-  //     }));
-  //     items.sort((a,b) => a.template_name > b.template_name ?1:-1);
-  //     items.unshift({
-  //       id: defaultModelParams.template_id,
-  //       template_name: defaultModelParams.template_id,
-  //       username: "system",
-  //     });
-  //     setAlldocs(items);
-  //     setLoadStatus("finished");
-  //   } catch (error) {
-  //     console.log(error);
-  //     setLoadStatus("error");
-  //   }
-  // };
+  const handleLoadItems = async ({
+    detail: { filteringText, firstPage, samePage },
+  }) => {
+    const headers = {
+      Authorization: token.token,
+    };
+    setLoadStatus("loading");
+    try {
+      const data = await listTemplate(headers, queryParams);
+      let items = data.body.map((it) => ({
+        template_name: it.template_name.S,
+        id: it.id.S,
+        username: it.username.S,
+      }));
+      items.sort((a,b) => a.template_name > b.template_name ?1:-1);
+      items.unshift({
+        id: defaultModelParams.template_id,
+        template_name: defaultModelParams.template_id,
+        username: "system",
+      });
+      setAlldocs(items);
+      setLoadStatus("finished");
+    } catch (error) {
+      console.log(error);
+      setLoadStatus("error");
+    }
+  };
 
 
   useEffect(() => {
@@ -289,6 +289,8 @@ const ExpandableSettingPanel = () => {
     });
   }, []);
 
+  
+
   useEffect(() => {
     setModelParams({
       ...localStoredParams,
@@ -298,10 +300,11 @@ const ExpandableSettingPanel = () => {
         localStoredParams?.max_tokens || defaultModelParams.max_tokens,
       temperature:
         localStoredParams?.temperature || defaultModelParams.temperature,
-      use_qa:
-        localStoredParams?.use_qa !== undefined
-          ? localStoredParams?.use_qa
-          : defaultModelParams.use_qa,
+      use_qa:false,
+      // use_qa:
+      //   localStoredParams?.use_qa !== undefined
+      //     ? localStoredParams?.use_qa
+      //     : defaultModelParams.use_qa,
       multi_rounds:
           localStoredParams?.multi_rounds !== undefined
             ? localStoredParams?.multi_rounds
@@ -418,7 +421,7 @@ const ExpandableSettingPanel = () => {
             }}
             value={systemRolePromptValue}
           />
-        </FormField>
+        </FormField> */}
         <FormField label={t("prompt_template")}>
           <Select
             statusType={loadStatus}
@@ -442,7 +445,7 @@ const ExpandableSettingPanel = () => {
             }))}
             selectedAriaLabel="Selected"
           />
-        </FormField> */}
+        </FormField> 
       </ColumnLayout>
       <ColumnLayout borders="vertical" columns="2" variant="text-grid">
         <FormField label={t("upload_image")}>
@@ -699,7 +702,7 @@ const PromptPanel = ({ sendMessage }) => {
               >{t("multi_rounds")}</Toggle>
             </FormField>
 
-            <FormField >
+            {/* <FormField >
               <Toggle
                 onChange={({ detail }) => {
                   setRefDocChecked(detail.checked);
@@ -715,8 +718,8 @@ const PromptPanel = ({ sendMessage }) => {
                 }}
                 checked={hideRefchecked}
               >{t("hide_ref_doc")}</Toggle>
-            </FormField> 
-            <FormField >
+            </FormField>  */}
+            {/* <FormField >
               <Toggle
                 onChange={({ detail }) => {
                   setUseTrace(detail.checked);
@@ -731,7 +734,7 @@ const PromptPanel = ({ sendMessage }) => {
                 }}
                 checked={useTrace}
               >{t("use_trace")}</Toggle>
-            </FormField>
+            </FormField> */}
             {/* <FormField >
               <Toggle
                 onChange={({ detail }) => {
