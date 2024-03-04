@@ -5,7 +5,7 @@ import * as dotenv from "dotenv";
 
 dotenv.config();
 
-export class BackendCdkStack extends Stack {
+export class FrontendCdkStack extends Stack {
   /**
    *
    * @param {Construct} scope

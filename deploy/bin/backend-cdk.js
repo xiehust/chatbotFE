@@ -1,12 +1,12 @@
 #!/usr/bin/env node
 
 import cdk  from 'aws-cdk-lib';
-import { BackendCdkStack }  from '../lib/backend-cdk-stack.js';
+import { FrontendCdkStack }  from '../lib/backend-cdk-stack.js';
 import * as dotenv from 'dotenv';
 dotenv.config();
 const app = new cdk.App();
 console.log(process.env.CDK_DEFAULT_ACCOUNT,process.env.CDK_DEFAULT_REGION)
-new BackendCdkStack(app, 'BackendCdkStack', {
+new FrontendCdkStack(app, 'ChatFrontendDeployStack', {
   /* If you don't specify 'env', this stack will be environment-agnostic.
    * Account/Region-dependent features and context lookups will not work,
    * but a single synthesized template can be deployed anywhere. */
