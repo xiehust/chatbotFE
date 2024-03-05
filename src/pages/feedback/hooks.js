@@ -66,7 +66,6 @@ export function useDistributions(params = {}) {
         console.log(it);
         // const contentArray = JSON.parse(it.content);
         // const lastContent = contentArray[contentArray.length -1];
-        // const lastContent = JSON.parse(it);
         return  {
         msgid:it.msgid,
         sid:it['session-id'],

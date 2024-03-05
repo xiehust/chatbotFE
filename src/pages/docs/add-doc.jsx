@@ -199,7 +199,7 @@ const SettingsPanel = ()=>{
 
     const handleDownload = () => {
         // Send a request to the server to download the file
-        fetch('./ask_user_faq.xlsx')
+        fetch('./ask_user_faq_template.xlsx')
           .then((response) => response.blob())
           .then((blob) => {
             const url = window.URL.createObjectURL(new Blob([blob]));

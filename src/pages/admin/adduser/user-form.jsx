@@ -131,11 +131,11 @@ function SelectGroup({ setFormData }) {
   const [options, setOptions] = useState([
     {
       label:t('admin_group'),
-      value:'admin_group'
+      value:'admin'
     },
     {
       label:t('normal_group'),
-      value:'normal_group'
+      value:'normal'
     },
 
   ]);
