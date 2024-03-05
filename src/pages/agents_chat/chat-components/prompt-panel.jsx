@@ -56,7 +56,7 @@ function generateId() {
 
 const ExpandableSettingPanel = () => {
   const { t } = useTranslation();
-
+  const {agentInfo} = useChatData();
   const userinfo = useAuthUserInfo();
   const username = userinfo?.username || "default";
   const company = userinfo?.company || "default";
@@ -83,12 +83,12 @@ const ExpandableSettingPanel = () => {
     ? defaultModelParams.system_role
     : localStoredParams.system_role
   );
-  const [systemRolePromptValue, setSystemRolePromptValue] = useState(
-    localStoredParams?.system_role_prompt === undefined
-          ? defaultModelParams.system_role_prompt
-          : localStoredParams.system_role_prompt,
-  );
-  const { setMsgItems, msgItems,setModelParams, setImg2txtUrl} = useChatData();
+  // const [systemRolePromptValue, setSystemRolePromptValue] = useState(
+  //   localStoredParams?.system_role_prompt === undefined
+  //         ? defaultModelParams.system_role_prompt
+  //         : localStoredParams.system_role_prompt,
+  // );
+  const { setMsgItems, msgItems,modelParams,setModelParams, setImg2txtUrl} = useChatData();
   const [alldocs, setAlldocs] = useState([]);
 
   const [selectTemplate, setSelectTemplate] = useState(
@@ -321,9 +321,7 @@ const ExpandableSettingPanel = () => {
         localStoredParams?.model_name || defaultModelParams.model_name,
       system_role:
         localStoredParams?.system_role || defaultModelParams.system_role,
-      system_role_prompt:
-        localStoredParams?.system_role_prompt ||
-        defaultModelParams.system_role_prompt,
+      system_role_prompt:agentInfo.system_role_prompt,
       template_id:
         localStoredParams?.template_id || defaultModelParams.template_id,
       username: userinfo?.username,
@@ -577,7 +575,7 @@ const PromptPanel = ({ sendMessage }) => {
       action: "sendprompt",
       payload: { msgid: respid, messages: messages, params: params },
     });
-    console.log("modelParams:", params);
+    console.log("PromptPanel modelParams:", params);
     setPromptValue("");
   };
 

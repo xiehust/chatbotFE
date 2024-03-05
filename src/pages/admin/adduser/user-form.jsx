@@ -147,7 +147,7 @@ function SelectGroup({ setFormData }) {
         setSelectedOption(detail.selectedOption);
         setFormData((prev) => ({
           ...prev,
-          groupid: detail.selectedOption.value,
+          groupname: detail.selectedOption.value,
         }));
       }}
       options={options}

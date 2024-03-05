@@ -134,7 +134,8 @@ export default function Content({id}){
         useTrace,
         setUseTrace,
         enableSearch,
-        setEnableSearch
+        setEnableSearch,
+        agentInfo
       }}
     >
       <ModelSettings href={'/chat'}/>

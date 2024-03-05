@@ -47,7 +47,13 @@ const navItems_admin = [
     text: i18n.t('agents'),
     items: [
       { type: 'link', text: i18n.t('agents_store'), href: '/agents' },
-      // { type: 'link', text: i18n.t('chat_agent'), href: '/agentschat' },
+    ],
+  }, 
+  {
+    type: 'section',
+    text: i18n.t('prompt_hub'),
+    items: [
+      { type: 'link', text: i18n.t('prompt_hub'), href: '/prompt_hub' },
     ],
   }, 
   {
@@ -76,7 +82,13 @@ const navItems = [
     text: i18n.t('agents'),
     items: [
       { type: 'link', text: i18n.t('agents_store'), href: '/agents' },
-      // { type: 'link', text: i18n.t('chat_agent'), href: '/agentschat' },
+    ],
+  }, 
+  {
+    type: 'section',
+    text: i18n.t('prompt_hub'),
+    items: [
+      { type: 'link', text: i18n.t('prompt_hub'), href: '/prompt_hub' },
     ],
   }, 
   {

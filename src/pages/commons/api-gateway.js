@@ -218,6 +218,38 @@ export const listAgents = async(headers,queryParams={}) =>{
 }
 
 
+export const addPrompt = async(headers,formdata) =>{
+    try {
+        const resp = await axios.post(`${API_http}/prompt_hub`,JSON.stringify(formdata), {headers});
+        return resp.data;
+    } catch (err) {
+        throw err;
+    }
+}
+
+export const deletePrompt = async(headers,formdata) =>{
+    try {
+        const resp = await axios.delete(`${API_http}/prompt_hub`,{headers,data:JSON.stringify(formdata)});
+        return resp.data;
+    } catch (err) {
+        throw err;
+    }
+}
+
+export const getPrompts = async(headers,queryParams={}) =>{
+    // Build the query string parameters
+    const queryString = Object.keys(queryParams)
+    .map(key => `${encodeURIComponent(key)}=${encodeURIComponent(queryParams[key])}`)
+    .join('&');
+    try {
+        const resp = await axios.get(`${API_http}/prompt_hub?${queryString}`, {headers});
+        return resp.data;
+    } catch (err) {
+        throw err;
+    }
+}
+
+
 export const addAgent = async(headers,formdata) =>{
     try {
         const resp = await axios.post(`${API_http}/agents`,JSON.stringify(formdata), {headers});
@@ -235,7 +267,6 @@ export const deleteAgent = async(headers,formdata) =>{
         throw err;
     }
 }
-
 
 export const postFeedback = async(headers,formdata) =>{
     try {

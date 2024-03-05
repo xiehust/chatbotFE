@@ -48,7 +48,7 @@ export class LambdaStack extends NestedStack {
 
     const user_table = props.user_table;
     const agents_table = props.agents_table;
-    // const doc_index_table = props.doc_index_table;
+    const prompt_hub_table = props.prompt_hub_table;
     this.handlersMap = new Map();
 
     const createNodeJsLambdaFn = (scope, path, index_fname, api, envProps) => {
@@ -213,6 +213,19 @@ export class LambdaStack extends NestedStack {
         },
       }
     );
+    
+    // prompt hub 管理函数
+    this.lambda_prompt_hub = new lambda.Function(this, 'lambda_prompthub',{
+      code: lambda.Code.fromAsset('lambda/lambda_prompthub'),
+      handler: 'app.handler',
+      runtime: lambda.Runtime.PYTHON_3_10,
+      timeout: Duration.minutes(3),
+      environment: {
+      },
+      memorySize: 256,
+    })
+    prompt_hub_table.grantReadWriteData(this.lambda_prompt_hub);
+
     // doc_index_table.grantReadWriteData(this.lambda_list_idx )
     const bucket = s3.Bucket.fromBucketName(this, 'DocUploadBucket',process.env.UPLOAD_BUCKET);
     bucket.grantReadWrite(this.lambda_handle_upload);
@@ -292,6 +305,16 @@ export class LambdaStack extends NestedStack {
     agents.addMethod('DELETE',agentsIntegration,{authorizer});
     agents.addMethod('GET',agentsIntegration,{authorizer});
     agents.addResource("{id}").addMethod("GET",agentsIntegration,{authorizer});
+
+
+     // prompt hub api
+    const promptHubIntegration = new LambdaIntegration(this.lambda_prompt_hub );
+    const prompt_hub = api.root.addResource('prompt_hub');
+    prompt_hub.addMethod('POST',promptHubIntegration,{authorizer});
+    prompt_hub.addMethod('DELETE',promptHubIntegration,{authorizer});
+    prompt_hub.addMethod('GET',promptHubIntegration,{authorizer});
+    prompt_hub.addResource("{id}").addMethod("GET",promptHubIntegration,{authorizer});
+
 
 
     const loginIntegration = new LambdaIntegration(this.login_fn);

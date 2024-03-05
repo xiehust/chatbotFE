@@ -32,9 +32,21 @@ export class FrontendCdkStack extends Stack {
       tableName:'agents_table',
       removalPolicy: RemovalPolicy.DESTROY, // NOT recommended for production code
     });
+
+    const prompt_hub_table = new Table(this, "prompt_hub_table", {
+      partitionKey: {
+        name: "id",
+        type: AttributeType.STRING,
+      },
+      tableName:'prompt_hub_table',
+      removalPolicy: RemovalPolicy.RETAIN, // NOT recommended for production code
+    });
+
+
     const lambdastack = new LambdaStack(this, "lambdas", {
       user_table,
-      agents_table
+      agents_table,
+      prompt_hub_table
     });
 
     new CfnOutput(this, `API gateway endpoint url`, {

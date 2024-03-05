@@ -25,6 +25,9 @@ import CreateAgentApp from "./pages/agents/create-agent";
 import AgentDetail from "./pages/agents/agent-detail";
 import AgentsChat from "./pages/agents_chat";
 import AgentsCards from "./pages/agents/agents.cards.index";
+import PromptHubTable from "./pages/prompt_hub/prompt.index";
+import CreatePromptApp from "./pages/prompt_hub/create-prompt";
+import PromptDetail from "./pages/prompt_hub/prompt-detail";
 
 export default function App() {
   return (
@@ -39,9 +42,11 @@ export default function App() {
           <Route path="/agents" element={<RequireAuth redirectPath="/login"><AgentsCards/></RequireAuth>}/>
           <Route path="/agents/create" element={<RequireAuth redirectPath="/login"><CreateAgentApp/></RequireAuth>}/>
           <Route path="/agents/:agentId" element={<RequireAuth redirectPath="/login"><AgentDetail/></RequireAuth>}/>
-          {/* <Route path="/agentschat/" element={<RequireAuth redirectPath="/login"><AgentsChat/></RequireAuth>}/> */}
           <Route path="/agentschat/:agentId" element={<RequireAuth redirectPath="/login"><AgentsChat/></RequireAuth>}/>
 
+          <Route path="/prompt_hub" element={<RequireAuth redirectPath="/login"><PromptHubTable/></RequireAuth>}/>
+          <Route path="/prompt_hub/create" element={<RequireAuth redirectPath="/login"><CreatePromptApp/></RequireAuth>}/>
+          <Route path="/prompt_hub/:templateId" element={<RequireAuth redirectPath="/login"><PromptDetail/></RequireAuth>}/>
 
           <Route path="/docs" element={<RequireAuth redirectPath="/login"><DocsTable/></RequireAuth>}/>
           <Route path="/examples" element={<RequireAuth redirectPath="/login"><ExamplesTable/></RequireAuth>}/>
