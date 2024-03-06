@@ -550,7 +550,7 @@ const PromptPanel = ({ sendMessage }) => {
       : defaultModelParams.use_stream
   );
 
-  const [autoSuggest, setAutoSuggest] = useState(true);
+  const [autoSuggest, setAutoSuggest] = useState(false);
   const onSubmit = (values,imgUrl=null) => {
     setStopFlag(true);
     const prompt = values.trimEnd();
