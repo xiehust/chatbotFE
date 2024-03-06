@@ -1,7 +1,7 @@
 // Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
 // SPDX-License-Identifier: MIT-0
 import React from 'react';
-import { CollectionPreferences,Badge,SpaceBetween, Link ,StatusIndicator} from '@cloudscape-design/components';
+import { CollectionPreferences,Badge,Box,Button, Link ,StatusIndicator} from '@cloudscape-design/components';
 import { addColumnSortLabels } from '../../common/labels';
 import i18n from '../../common/i18n';
 
@@ -15,6 +15,7 @@ const VISIBLE_CONTENT_OPTIONS = [
       { id: 'description', label: i18n.t('description'),},
       { id: 'username', label:  i18n.t('created_by'), },
       { id: 'prompt_category', label:  i18n.t('prompt_category'), },
+      { id: 'start_chat', label:  i18n.t('action'), },
     ],
   },
 ];
@@ -31,7 +32,7 @@ export const PROMPT_CATS = [
 
 export const DEFAULT_PREFERENCES = {
   pageSize: 30,
-  visibleContent: ['id','template_name','description','username','prompt_category'],
+  visibleContent: ['id','template_name','description','username','prompt_category','start_chat'],
   wrapLines: false,
 };
 
@@ -71,6 +72,12 @@ export const COLUMN_DEFINITIONS = addColumnSortLabels([
     cell: item =>item.prompt_category?.label||'-',
     header: i18n.t('prompt_category'),
     sortingField: "prompt_category",
+  },
+  {
+    id: 'start_chat',
+    cell: item =>( <Box float="right"> <Button href={'prompt_playground/'+item.id}>{i18n.t('start_chat')}</Button></Box>),
+    header: i18n.t('start_chat'),
+    sortingField: "start_chat",
   },
 ]);
 

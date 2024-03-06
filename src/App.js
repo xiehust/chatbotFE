@@ -28,6 +28,8 @@ import AgentsCards from "./pages/agents/agents.cards.index";
 import PromptHubTable from "./pages/prompt_hub/prompt.index";
 import CreatePromptApp from "./pages/prompt_hub/create-prompt";
 import PromptDetail from "./pages/prompt_hub/prompt-detail";
+import PromptChat from "./pages/prompt_playground";
+// import PromptHubCards from "./pages/prompt_hub/prompthub.cards.index";
 
 export default function App() {
   return (
@@ -47,6 +49,7 @@ export default function App() {
           <Route path="/prompt_hub" element={<RequireAuth redirectPath="/login"><PromptHubTable/></RequireAuth>}/>
           <Route path="/prompt_hub/create" element={<RequireAuth redirectPath="/login"><CreatePromptApp/></RequireAuth>}/>
           <Route path="/prompt_hub/:templateId" element={<RequireAuth redirectPath="/login"><PromptDetail/></RequireAuth>}/>
+          <Route path="/prompt_playground/:id" element={<RequireAuth redirectPath="/login"><PromptChat/></RequireAuth>}/>
 
           <Route path="/docs" element={<RequireAuth redirectPath="/login"><DocsTable/></RequireAuth>}/>
           <Route path="/examples" element={<RequireAuth redirectPath="/login"><ExamplesTable/></RequireAuth>}/>

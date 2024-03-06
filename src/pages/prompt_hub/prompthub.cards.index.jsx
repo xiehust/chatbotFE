@@ -2,39 +2,36 @@
 // SPDX-License-Identifier: MIT-0
 import React, { useEffect, useRef, useState } from 'react';
 import { useCollection } from '@cloudscape-design/collection-hooks';
-import { COLUMN_DEFINITIONS, DEFAULT_PREFERENCES, Preferences,} from './table-config';
-import { Flashbar, Pagination, Table, TextFilter } from '@cloudscape-design/components';
+import { CARD_DEFINITIONS, CARD_CONFIG,VISIBLE_CONTENT_OPTIONS, PAGE_SIZE_OPTIONS, DEFAULT_PREFERENCES,Preferences } from './cards-config';
+import { Flashbar, Pagination, Table, TextFilter,Cards } from '@cloudscape-design/components';
 import { FullPageHeader ,Breadcrumbs,DeleteConfirmModal} from './common-components';
 import {
   CustomAppLayout,
   Navigation,
   TableNoMatchState,
   TableEmptyState,
-  ToolsContent,
 } from '../commons/common-components';
 import { paginationLabels,distributionSelectionLabels } from '../../common/labels';
 import { getFilterCounterText } from '../../common/tableCounterStrings';
-import { useColumnWidths } from '../commons/use-column-widths';
 import { useLocalStorage } from '../../common/localStorage';
 import {useSimpleNotifications} from '../commons/use-notifications';
 import {useAuthUserInfo, useAuthorizedHeader} from "../commons/use-auth";
 import {getPrompts} from '../commons/api-gateway';
 import { useTranslation } from 'react-i18next';
-import {params_local_storage_key} from "../chatbot/common-components";
 import ModelSettings from "../commons/chat-settings";
 
 
-
-function TableContent({ 
+function CardsContent({
   resourceName,
   distributions,
   loadingState,
   refreshAction,
   buttonName,
   buttonHref,
- }) {
-  const [preferences, setPreferences] = useLocalStorage('Benchportal-Docs-Table-Preferences', DEFAULT_PREFERENCES);
-  const [columnDefinitions, saveWidths] = useColumnWidths('Benchportal-React-Table-Widths', COLUMN_DEFINITIONS);
+}){
+
+  const [preferences, setPreferences] = useLocalStorage('Chatbot-Cards-Preferences', DEFAULT_PREFERENCES);
+//   const [columnDefinitions, saveWidths] = useColumnWidths('Benchportal-React-Table-Widths', COLUMN_DEFINITIONS);
   const {t} = useTranslation();
 
   const { items, actions, filteredItemsCount, collectionProps, filterProps, paginationProps } = useCollection(
@@ -45,7 +42,6 @@ function TableContent({
         noMatch: <TableNoMatchState onClearFilter={() => actions.setFiltering('')} />,
       },
       pagination: { pageSize: preferences.pageSize },
-      sorting: { defaultState: { sortingColumn: columnDefinitions[0] } },
       selection: {},
     }
   );
@@ -53,20 +49,19 @@ function TableContent({
   return (
     <div>
         <ModelSettings href={'/prompt_hub'}/>
-    <Table
+    <Cards
      {...collectionProps}
-      columnDefinitions={columnDefinitions}
-      visibleColumns={preferences.visibleContent}
+      stickyHeader={true}
+      cardDefinition={CARD_DEFINITIONS}
+      visibleSections={preferences.visibleContent}
+      cardsPerRow={CARD_CONFIG}
+      entireCardClickable
       items={items}
       selectionType="single"
       loading = {loadingState}
       loadingText = {t("loading")}
       ariaLabels={distributionSelectionLabels}
       variant="full-page"
-      stickyHeader={true}
-      resizableColumns={true}
-      onColumnWidthsChange={saveWidths}
-      wrapLines={preferences.wrapLines}
       filter={
         <TextFilter
           {...filterProps}
@@ -92,7 +87,7 @@ function TableContent({
   );
 }
 
-export default function PromptHubTable () {
+export default function PromptHubCards () {
   const appLayout = useRef();
   const {notificationitems} = useSimpleNotifications();
   const [toolsOpen, setToolsOpen] = useState(false);
@@ -107,15 +102,8 @@ export default function PromptHubTable () {
   const userinfo = useAuthUserInfo();
   const username = userinfo?.username || 'default';
   const company = userinfo?.company || 'default';
-  const [localStoredParams] = useLocalStorage(
-    params_local_storage_key+username,
-    null
-  );
-  const main_fun_arn = localStoredParams.main_fun_arn;
-  const apigateway_endpoint = localStoredParams.apigateway_endpoint;
   const queryParams = {
-    main_fun_arn:main_fun_arn,
-    apigateway_endpoint:apigateway_endpoint,
+
     company:company
   }
   useEffect(()=>{
@@ -147,7 +135,7 @@ export default function PromptHubTable () {
       navigation={<Navigation activeHref={'/prompt_hub'} />}
       notifications={<Flashbar items={notificationitems} stackItems/>}
       breadcrumbs={<Breadcrumbs />}
-      content={<TableContent 
+      content={<CardsContent 
                 resourceName={t('prompt_template')}
                 distributions = {docitems}
                 loadingState={loadingState}

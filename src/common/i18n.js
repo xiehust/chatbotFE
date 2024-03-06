@@ -206,6 +206,7 @@ i18n
             variable:"Variable",
             field:"Field Name",
             default_value:"Default Value",
+            action:'Action'
         }
       },
       zh:{
@@ -398,6 +399,7 @@ i18n
             field:"变量名",
             default_value:"默认值",
             prompt_category: 'Prompt分类',
+            action:'动作'
 
         }
       }
