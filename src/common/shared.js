@@ -1,6 +1,4 @@
 export const models = [
-  { label:'claude-v2',
-  value:'claude-v2'},
   { label:'claude-v3-Sonnet',
   value:'claude-v3-sonnet'},
   { label:'claude-v3-Haiku',
@@ -9,6 +7,8 @@ export const models = [
   value:'claude-v3-opus'},
   { label:'claude-instant',
   value:'claude-instant'},
+  { label:'claude-v2',
+  value:'claude-v2'},
   { label:'gpt-3.5-turbo-16k',
   value:'gpt-3.5-turbo-16k'},
   { label:'sagemaker',

@@ -128,14 +128,14 @@ const ExpandableSettingPanel = () => {
       uploadS3(
         file[0],
         localStoredParams.s3_bucket,
-        `images/${username}/`,
+        `images/${company}/${username}/`,
         localStoredParams.s3_region,
         localStoredParams.ak,
         localStoredParams.sk
       )
         .then(() => {
           setLoading(false);
-          setImg2txtUrl(`${localStoredParams.s3_bucket}/images/${username}/${file[0].name}`); 
+          setImg2txtUrl(`${localStoredParams.s3_bucket}/images/${company}/${username}/${file[0].name}`); 
           setMsgItems(
             (prev) => [
               ...prev,
@@ -167,7 +167,7 @@ const ExpandableSettingPanel = () => {
         });
     } else {
       console.log(`missing buckets params, using default bucket:${default_bucket} to upload`);
-      setHelperMsg(`missing buckets params, using default bucket`);
+      // setHelperMsg(`missing buckets params, using default bucket`);
       //upload to default bucket
       // const formData = new FormData();
       //   formData.append("image", file[0]);
@@ -189,10 +189,10 @@ const ExpandableSettingPanel = () => {
              buf: bits
           };
 
-          uploadFile( username,body, headers)
+          uploadFile( username,company,body, headers)
           .then((response) => {
             setLoading(false);
-            setImg2txtUrl(`${default_bucket}/images/${username}/${file[0].name}`); 
+            setImg2txtUrl(`${default_bucket}/images/${company}/${username}/${file[0].name}`); 
             setMsgItems(
               (prev) => [
                 ...prev,

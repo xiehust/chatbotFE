@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: MIT-0
 // Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
 // SPDX-License-Identifier: MIT-0
-import React, { useEffect, useState, useRef } from "react";
+import React, { useEffect, useState, useRef,memo } from "react";
 import {
   Container,
   Header,
@@ -15,6 +15,7 @@ import { a11yDark } from "react-syntax-highlighter/dist/esm/styles/hljs";
 import { useChatData, generateUniqueId } from "./common-components";
 import { useTranslation } from "react-i18next";
 import botlogo from "../../../resources/Res_Amazon-SageMaker_Model_48_Light.svg";
+import userlogo from "../../../resources/icons8-user-96.png"
 import { useAuthToken, useAuthUserInfo } from "../../commons/use-auth";
 import useWebSocket from "react-use-websocket";
 import { API_socket, postFeedback } from "../../commons/api-gateway";
@@ -40,32 +41,6 @@ import { grey } from "@mui/material/colors";
 
 const BOTNAME = "AI";
 const MAX_CONVERSATIONS = 6;
-
-function stringToColor(string) {
-  let hash = 0;
-  let i;
-  /* eslint-disable no-bitwise */
-  for (i = 0; i < string.length; i += 1) {
-    hash = string.charCodeAt(i) + ((hash << 5) - hash);
-  }
-  let color = "#";
-  for (i = 0; i < 3; i += 1) {
-    const value = (hash >> (i * 8)) & 0xff;
-    color += `00${value.toString(16)}`.slice(-2);
-  }
-  /* eslint-enable no-bitwise */
-  return color;
-}
-
-function stringAvatar(name) {
-  return {
-    sx: {
-      bgcolor: stringToColor(name),
-    },
-    //   children: `${name.split(' ')[0][0]}${name.split(' ')[1][0]}`,
-    children: name[0].toUpperCase() + name[name.length - 1].toUpperCase(),
-  };
-}
 
 function extractImagTag(text) {
   const imageRegex = /<img>(.*?)<\/img>/g;
@@ -122,7 +97,7 @@ const MarkdownToHtml = ({ text }) => {
           <img
             src={image.src || ""}
             alt={image.alt || ""}
-            width={500}
+            width={300}
             loading="lazy"
             sx={{
               objectFit: "contain",
@@ -134,43 +109,86 @@ const MarkdownToHtml = ({ text }) => {
   );
 };
 
-const MsgItem = ({ who, text, image, msgid, connectionId }) => {
-  if (image) {
-    console.log("image:", image);
-    let url;
-    try {
-      url = URL.createObjectURL(image);
-    } catch (err) {
-      url = null;
-      return <div />;
-    }
+
+const ImageUrlItems = ({images})=>{
+
+return (
+  <ImageList
+  sx={{ width: 1024, height: "auto", objectFit: "contain" }}
+  cols={Math.max( 4)}
+  // rowHeight={256}
+>
+  {images.map(image =>
+    {
+      try {
+        const url = URL.createObjectURL(image);
+        // const url = image;
+        return (<ImageListItem key={image.name}>
+          <img
+            src={url}
+            alt={image.name}
+            loading="lazy"
+            sx={{
+              objectFit: "contain",
+            }}
+          />
+          <ImageListItemBar
+            title={image.name}
+            subtitle={
+              <span>size: {(image.size / 1024).toFixed(1)}KB</span>
+            }
+            // position="below"
+          />
+        </ImageListItem>)
+      } catch (err) {
+        return <div />;
+      }
+  }
+  )}
+</ImageList>
+)
+
+}
+const MsgItem = ({ who, text, images_base64,images, msgid, connectionId }) => {
+  const userInfo = useAuthUserInfo();
+  const sessionId = `web_chat_${userInfo.username}_${connectionId}`
+
+  //restore image file from localstorage
+  if (images_base64){
+    
+    let key = 0;
+    const imagesObj = images_base64.map( base64Data =>{
+      const binaryString = window.atob(base64Data); // 将 base64 字符串解码为二进制字符串
+      const bytes = new Uint8Array(binaryString.length);
+      
+      for (let i = 0; i < binaryString.length; i++) {
+        bytes[i] = binaryString.charCodeAt(i);
+      }
+      const blob = new Blob([bytes], { type: 'image/png' }); 
+       key ++;
+        // Create a new File object from the Blob
+        return new File([blob], `image_${key}.png`, { type: 'image/png' });
+    });
     return (
       who !== BOTNAME && (
-        <ListItem sx={{ display: "flex", justifyContent: "flex-end" }}>
+        <ListItem >
           <Stack direction="row" spacing={2} sx={{ alignItems: "top" }}>
-            <ImageList
-              sx={{ width: 500, height: "auto", objectFit: "contain" }}
-              cols={1}
-            >
-              <ImageListItem key={image.name}>
-                <img
-                  src={url}
-                  alt={image.name}
-                  loading="lazy"
-                  sx={{
-                    objectFit: "contain",
-                  }}
-                />
-                <ImageListItemBar
-                  title={image.name}
-                  subtitle={
-                    <span>size: {(image.size / 1024).toFixed(1)}KB</span>
-                  }
-                  position="below"
-                />
-              </ImageListItem>
-            </ImageList>
-            <Avatar {...stringAvatar(who)} />
+          <Avatar src={userlogo}  alt={"User"}/>
+          <ImageUrlItems images={imagesObj}/>
+          </Stack>
+        </ListItem>
+      )
+    );
+
+  }
+  else if (images) {
+
+    return (
+      who !== BOTNAME && (
+        <ListItem >
+          <Stack direction="row" spacing={2} sx={{ alignItems: "top" }}>
+          <Avatar src={userlogo}  alt={"User"}/>
+          <ImageUrlItems images={images}/>
           </Stack>
         </ListItem>
       )
@@ -186,27 +204,28 @@ const MsgItem = ({ who, text, image, msgid, connectionId }) => {
     // console.log(text);
 
     return who !== BOTNAME ? (
-      <ListItem sx={{ display: "flex", justifyContent: "flex-end" }}>
+      <ListItem >
         <Stack direction="row" spacing={2} sx={{ alignItems: "top" }}>
-          <TextItem sx={{ bgcolor: "#f2fcf3", borderColor: "#037f0c" }}>
-            <MarkdownToHtml text={newlines.join(" ")} />
-          </TextItem>
-
-          <Avatar {...stringAvatar(who)} />
+          <Avatar src={userlogo}  alt={"User"}/>
+          <Grid container spacing={0.1}>
+            <TextItem sx={{ bgcolor: "#f2fcf3", borderColor: "#037f0c" }}>
+              <MarkdownToHtml text={newlines.join(" ")} />
+            </TextItem>
+          </Grid>
         </Stack>
       </ListItem>
     ) : (
-      <ListItem>
+      <ListItem >
         <Stack direction="row" spacing={2} sx={{ alignItems: "top" }}>
           <Avatar src={botlogo} alt={"AIBot"} />
-          <Grid container spacing={0.5}>
+          <Grid container spacing={0.1}>
             <Grid item xs={11}>
               <TextItem>
                 <MarkdownToHtml text={newlines.join(" ")} />
               </TextItem>
             </Grid>
             <Grid item xs={11}>
-              <ThumbButtons msgid={msgid} session_id={connectionId} />
+              <ThumbButtons msgid={msgid} sessionId={sessionId} />
             </Grid>
           </Grid>
         </Stack>
@@ -215,7 +234,7 @@ const MsgItem = ({ who, text, image, msgid, connectionId }) => {
   }
 };
 
-const ThumbButtons = ({ msgid, session_id }) => {
+const ThumbButtons = ({ msgid, sessionId }) => {
   const [downLoading, setDownLoading] = useState(false);
   const [upLoading, setUpLoading] = useState(false);
   const { setFeedBackModalVisible, setModalData } = useChatData();
@@ -251,7 +270,7 @@ const ThumbButtons = ({ msgid, session_id }) => {
   const handleClickDown = async () => {
     const body = {
       msgid: msgid,
-      session_id: `web_chat_${userInfo.username}`,
+      session_id: sessionId,
       main_fun_arn: main_fun_arn,
       apigateway_endpoint: apigateway_endpoint,
       username: userInfo.username,
@@ -281,7 +300,7 @@ const ThumbButtons = ({ msgid, session_id }) => {
   const handleClickUp = async () => {
     const body = {
       msgid: msgid,
-      session_id: `web_chat_${userInfo.username}`,
+      session_id: sessionId,
       main_fun_arn: main_fun_arn,
       apigateway_endpoint: apigateway_endpoint,
       username: userInfo.username,
@@ -325,14 +344,14 @@ const ThumbButtons = ({ msgid, session_id }) => {
         target="_blank"
         onClick={handleClickUp}
       ></Button>
-      <Button
+      {/* <Button
         iconAlign="right"
         iconName="external"
         target="_blank"
         onClick={() => {
           const data = {
             msgid: msgid,
-            session_id: `web_chat_${userInfo.username}`,
+            session_id: sessionId,
             main_fun_arn: main_fun_arn,
             apigateway_endpoint: apigateway_endpoint,
             username: userInfo.username,
@@ -344,7 +363,7 @@ const ThumbButtons = ({ msgid, session_id }) => {
         }}
       >
         {t("correct_answer")}
-      </Button>
+      </Button> */}
     </SpaceBetween>
   );
 };
@@ -376,6 +395,8 @@ const TextItem = (props) => {
   );
 };
 
+const MemoizedMsgItem = memo(MsgItem);
+
 const ChatBox = ({ msgItems, loading }) => {
   const [loadingtext, setLoaderTxt] = useState(".");
   useEffect(() => {
@@ -395,11 +416,13 @@ const ChatBox = ({ msgItems, loading }) => {
     }
   }, [msgItems.length]);
   const items = msgItems.map((msg) => (
-    <MsgItem
-      key={generateUniqueId()}
+    <MemoizedMsgItem
+      // key={generateUniqueId()}
+      key={msg.id}
       who={msg.who}
       text={msg.text}
-      image={msg.image}
+      images={msg.images}
+      images_base64 = {msg.images_base64}
       msgid={msg.id}
       connectionId={msg.connectionId}
     />
@@ -425,7 +448,7 @@ const ChatBox = ({ msgItems, loading }) => {
   );
 };
 
-const ConversationsPanel = () => {
+const ConversationsPanel = ({id}) => {
   const { t } = useTranslation();
   const didUnmount = useRef(false);
   const {
@@ -449,7 +472,7 @@ const ConversationsPanel = () => {
   const authtoken = useAuthToken();
   const userinfo = useAuthUserInfo();
   const [localStoredMsgItems, setLocalStoredMsgItems] = useLocalStorage(
-    params_local_storage_key + "-msgitems-" + userinfo.username,
+    params_local_storage_key + "-msgitems-" + id,
     []
   );
   useEffect(() => {
@@ -588,7 +611,7 @@ const ConversationsPanel = () => {
         <ChatBox msgItems={msgItems} loading={loading} />
       </Container>
 
-      <PromptPanel sendMessage={sendJsonMessage} />
+      <PromptPanel sendMessage={sendJsonMessage} id={id} />
     </SpaceBetween>
   );
 };

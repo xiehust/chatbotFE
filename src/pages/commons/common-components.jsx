@@ -31,24 +31,24 @@ export const useSettingCtx = ()=>{
   return useContext(settingCtx);
 }
 
-export const navHeader = { text: 'AWS Chat Portal', href: '#/', logo: { alt: "logo", src: sidebarlogo} };
+export const navHeader = { text: 'GCR GenAI Juggle Hub', href: '#/', logo: { alt: "logo", src: sidebarlogo} };
 
 
 const navItems_admin = [
-  {
-    type: 'section',
-    text: i18n.t('chatspace'),
-    items: [
-      { type: 'link', text: i18n.t('chatbot'), href: '/chat' },
-    ],
-  }, 
-  {
-    type: 'section',
-    text: i18n.t('agents'),
-    items: [
-      { type: 'link', text: i18n.t('agents_store'), href: '/agents' },
-    ],
-  }, 
+  // {
+  //   type: 'section',
+  //   text: i18n.t('chatspace'),
+  //   items: [
+  //     { type: 'link', text: i18n.t('chatbot'), href: '/chat' },
+  //   ],
+  // }, 
+  // {
+  //   type: 'section',
+  //   text: i18n.t('agents'),
+  //   items: [
+  //     { type: 'link', text: i18n.t('agents_store'), href: '/agents' },
+  //   ],
+  // }, 
   {
     type: 'section',
     text: i18n.t('prompt_hub'),
@@ -58,32 +58,39 @@ const navItems_admin = [
   }, 
   {
     type: 'section',
+    text: i18n.t('model_hub'),
+    items: [
+      { type: 'link', text: i18n.t('model_hub'), href: '/model_hub' },
+    ],
+  }, 
+  {
+    type: 'section',
     text: i18n.t('admin'),
     items: [
-      { type: 'link', text: i18n.t('docs'), href: '/docs' },
-      { type: 'link', text: i18n.t('prompt_template'), href: '/template' },
+      // { type: 'link', text: i18n.t('docs'), href: '/docs' },
+      // { type: 'link', text: i18n.t('prompt_template'), href: '/template' },
       { type: 'link', text: i18n.t('feedback_management'), href: '/feedback' },
-      { type: 'link', text: i18n.t('examples_management'), href: '/examples' },
+      // { type: 'link', text: i18n.t('examples_management'), href: '/examples' },
       { type: 'link', text: i18n.t('user'), href: '/admin/user' },
     ],
   },
 ];
 
 const navItems = [
-  {
-    type: 'section',
-    text: i18n.t('chatspace'),
-    items: [
-      { type: 'link', text: i18n.t('chatbot'), href: '/chat' },
-    ],
-  }, 
-  {
-    type: 'section',
-    text: i18n.t('agents'),
-    items: [
-      { type: 'link', text: i18n.t('agents_store'), href: '/agents' },
-    ],
-  }, 
+  // {
+  //   type: 'section',
+  //   text: i18n.t('chatspace'),
+  //   items: [
+  //     { type: 'link', text: i18n.t('chatbot'), href: '/chat' },
+  //   ],
+  // }, 
+  // {
+  //   type: 'section',
+  //   text: i18n.t('agents'),
+  //   items: [
+  //     { type: 'link', text: i18n.t('agents_store'), href: '/agents' },
+  //   ],
+  // }, 
   {
     type: 'section',
     text: i18n.t('prompt_hub'),
@@ -93,12 +100,19 @@ const navItems = [
   }, 
   {
     type: 'section',
+    text: i18n.t('model_hub'),
+    items: [
+      { type: 'link', text: i18n.t('model_hub'), href: '/model_hub' },
+    ],
+  }, 
+  {
+    type: 'section',
     text: i18n.t('admin'),
     items: [
-      { type: 'link', text: i18n.t('docs'), href: '/docs' },
-      { type: 'link', text: i18n.t('prompt_template'), href: '/template' },
+      // { type: 'link', text: i18n.t('docs'), href: '/docs' },
+      // { type: 'link', text: i18n.t('prompt_template'), href: '/template' },
       { type: 'link', text: i18n.t('feedback_management'), href: '/feedback' },
-      { type: 'link', text: i18n.t('examples_management'), href: '/examples' },
+      // { type: 'link', text: i18n.t('examples_management'), href: '/examples' },
 
     ],
   },

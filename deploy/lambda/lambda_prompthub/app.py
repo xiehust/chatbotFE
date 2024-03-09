@@ -3,7 +3,7 @@ import os
 import boto3
 import json
 import logging
-
+import time
 logger = logging.getLogger()
 logger.setLevel(logging.INFO)
 dynamodb_resource = boto3.resource('dynamodb')
@@ -18,23 +18,48 @@ cors_headers = {
 }
 
 
-def get_template(id, company):
-    records = None
-    if id:
-        try:
-            response = table.get_item(Key={'id': id})
-            records = response.get('Item')
-        except Exception as e:
-            logger.info(str(e))
-    else:
-        try:
-            response = table.scan(
-                FilterExpression='company = :val',
-                ExpressionAttributeValues={':val': company}
-            )
-            records = response.get('Items')
-        except Exception as e:
-            logger.info(str(e))
+
+def get_template(id, company,start_key=None) ->list:
+    
+    def get_template_sub(id, company, limit=25, start_key=None):
+        records = None
+        last_evaluated_key = None
+        if id:
+            try:
+                response = table.get_item(Key={'id': id})
+                records = response.get('Item')
+            except Exception as e:
+                logger.info(str(e))
+        else:
+            try:
+                if start_key:
+                    response = table.scan(
+                        FilterExpression='company = :val',
+                        ExpressionAttributeValues={':val': company},
+                        Limit=limit,
+                        ExclusiveStartKey=start_key
+                    )
+                else:
+                    response = table.scan(
+                        FilterExpression='company = :val',
+                        ExpressionAttributeValues={':val': company},
+                        Limit=limit
+                    )
+                records = response.get('Items')
+                last_evaluated_key = response.get('LastEvaluatedKey')
+            except Exception as e:
+                logger.info(str(e))
+        return records, last_evaluated_key
+
+    results = []
+    last_evaluated_key = None
+    while True:
+        records, last_evaluated_key = get_template_sub(id, company, limit=1000, start_key=last_evaluated_key)
+        if not records:
+            break
+        results += records
+        if not last_evaluated_key:
+            break
     return records
         
 def add_template(data):
@@ -78,13 +103,14 @@ def handler(event,lambda_context):
     elif http_method == 'POST' and resource == '/prompt_hub':
         body = json.loads(event['body'])
         print(body)
-        # item = {
-        #     'id': {'S': body.get('id')},
-        #     'payload': {'S',event['body']},
-        #     'username':{'S':body.get('username','')},
-        #     'company':{'S':body.get('company','default')}
-        # }
-        result = add_template(body)
+        time_tuple = time.localtime( time.time())
+        createtime = time.strftime("%Y-%m-%d %H:%M:%S", time_tuple)
+
+        item = {
+            **body,
+            "createtime":createtime
+        }
+        result = add_template(item)
         return {'statusCode': 200 if result else 500,'headers': cors_headers, 'body':'' if result else 'Error'}
     
     elif http_method == 'DELETE' and resource == '/prompt_hub':

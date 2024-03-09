@@ -18,7 +18,7 @@ import {params_local_storage_key} from "./common-components";
 import { useAuthUserInfo,useAuthorizedHeader } from "../../commons/use-auth";
 import { defaultModelParams } from "./prompt-panel";
 import {useSettingCtx} from "../../commons/common-components";
-import { listAgents } from "../../commons/api-gateway";
+import { getPrompts } from "../../commons/api-gateway";
 
 export default function Content({id}){
   
@@ -27,7 +27,7 @@ export default function Content({id}){
   const [modelParams, setModelParams] = useState({});
   const [loading, setLoading] = useState(false);
   const [conversations, setConversations] = useState([]);
-  const [img2txtUrl, setImg2txtUrl] = useState(null);
+  const [img2txtUrl, setImg2txtUrl] = useState([]);
   const [feedBackModalVisible,setFeedBackModalVisible] = useState(false);
   const [modalData,setModalData] = useState({});
   const [stopFlag,setStopFlag] = useState(false);
@@ -42,21 +42,22 @@ export default function Content({id}){
     null
   );
   const [localStoredMsgItems, setLocalStoredMsgItems] = useLocalStorage(
-    params_local_storage_key + '-msgitems-'+userinfo.username,
+    params_local_storage_key + '-msgitems-'+id,
     []
   );
   const [msgItems, setMsgItems] = useState(localStoredMsgItems);
-  const [useTrace, setUseTrace] = useState( 
-    localStoredParams?.use_trace !== undefined
-    ? localStoredParams?.use_trace
-    : defaultModelParams.use_trace);
+  // const [useTrace, setUseTrace] = useState( 
+  //   localStoredParams?.use_trace !== undefined
+  //   ? localStoredParams?.use_trace
+  //   : defaultModelParams.use_trace);
   const { modelSettingVisible } = useSettingCtx();
 
-  const [enableSearch,setEnableSearch] = useState( localStoredParams?.enableSearch !== undefined
-    ? localStoredParams?.enableSearch
-    : false);
+  // const [enableSearch,setEnableSearch] = useState( localStoredParams?.enableSearch !== undefined
+  //   ? localStoredParams?.enableSearch
+  //   : false);
 
   const [loadingState,setLoadingState] = useState(false);
+  const [formData, setFormData] = useState();
 
   const headers = useAuthorizedHeader();
   const [agentInfo,setAgentInfo] = useState({});
@@ -68,9 +69,9 @@ export default function Content({id}){
 
   useEffect(()=>{
     setLoadingState(true);
-    listAgents(headers,queryParams)
+    getPrompts(headers,queryParams)
     .then(data =>{
-      console.log(data);
+      // console.log(data);
       setAgentInfo(data);
       setLoadingState(false);
       setReady(true);
@@ -100,8 +101,8 @@ export default function Content({id}){
       s3_bucket:localStoredParams?.s3_bucket||'',
       ak:localStoredParams?.ak||'',
       sk:localStoredParams?.sk||'',
-      obj_prefix:localStoredParams?.obj_prefix||defaultModelParams.obj_prefix,
-      feature_config:localStoredParams?.enableSearch === true?'default':'search_disabled' //the search is enabled using 'default';
+      // obj_prefix:localStoredParams?.obj_prefix||defaultModelParams.obj_prefix,
+      // feature_config:localStoredParams?.enableSearch === true?'default':'search_disabled' //the search is enabled using 'default';
     }))
   },[modelSettingVisible]);
 
@@ -131,16 +132,18 @@ export default function Content({id}){
         setStopFlag,
         newChatLoading, 
         setNewChatLoading,
-        useTrace,
-        setUseTrace,
-        enableSearch,
-        setEnableSearch,
+        formData, 
+        setFormData,
+        // useTrace,
+        // setUseTrace,
+        // enableSearch,
+        // setEnableSearch,
         agentInfo
       }}
     >
-      <ModelSettings href={'/chat'}/>
+      <ModelSettings href={'/prompt_hub'}/>
       {ready?
-      <ContentLayout header={<Header variant="h1">{t("chatbot")+" "+agentInfo.agent_name}</Header>}>
+      <ContentLayout header={<Header variant="h1">{t("chatbot")+" "+agentInfo.template_name}</Header>}>
         <SpaceBetween size="l">
           {alertopen && (
             <Alert statusIconAriaLabel="Error" dismissible type="error">
@@ -148,7 +151,7 @@ export default function Content({id}){
             </Alert>
           )}
 
-          <ConversationsPanel />
+          <ConversationsPanel id={id} />
         </SpaceBetween>
       </ContentLayout>
       :<Spinner size="large" description={t("loading")}/>

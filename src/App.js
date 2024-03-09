@@ -40,23 +40,27 @@ export default function App() {
         <Routes>
           <Route path="/" element={<LoginPage/>} />
           <Route path="/login" element={<LoginPage/>} />
-          <Route path="/chat" element={<RequireAuth redirectPath="/login"><ChatBot/></RequireAuth>}/>
-          <Route path="/agents" element={<RequireAuth redirectPath="/login"><AgentsCards/></RequireAuth>}/>
+          {/* <Route path="/chat" element={<RequireAuth redirectPath="/login"><ChatBot/></RequireAuth>}/> */}
+          {/* <Route path="/agents" element={<RequireAuth redirectPath="/login"><AgentsCards/></RequireAuth>}/>
           <Route path="/agents/create" element={<RequireAuth redirectPath="/login"><CreateAgentApp/></RequireAuth>}/>
           <Route path="/agents/:agentId" element={<RequireAuth redirectPath="/login"><AgentDetail/></RequireAuth>}/>
-          <Route path="/agentschat/:agentId" element={<RequireAuth redirectPath="/login"><AgentsChat/></RequireAuth>}/>
+          <Route path="/agentschat/:agentId" element={<RequireAuth redirectPath="/login"><AgentsChat/></RequireAuth>}/> */}
 
           <Route path="/prompt_hub" element={<RequireAuth redirectPath="/login"><PromptHubTable/></RequireAuth>}/>
           <Route path="/prompt_hub/create" element={<RequireAuth redirectPath="/login"><CreatePromptApp/></RequireAuth>}/>
           <Route path="/prompt_hub/:templateId" element={<RequireAuth redirectPath="/login"><PromptDetail/></RequireAuth>}/>
           <Route path="/prompt_playground/:id" element={<RequireAuth redirectPath="/login"><PromptChat/></RequireAuth>}/>
 
-          <Route path="/docs" element={<RequireAuth redirectPath="/login"><DocsTable/></RequireAuth>}/>
-          <Route path="/examples" element={<RequireAuth redirectPath="/login"><ExamplesTable/></RequireAuth>}/>
-          <Route path="/template" element={<RequireAuth redirectPath="/login"><TemplateTable/></RequireAuth>}/>
+          {/* <Route path="/model_hub" element={<RequireAuth redirectPath="/login"><PromptHubTable/></RequireAuth>}/>
+          <Route path="/model_hub/create" element={<RequireAuth redirectPath="/login"><CreatePromptApp/></RequireAuth>}/>
+          <Route path="/model_hub/:Id" element={<RequireAuth redirectPath="/login"><PromptDetail/></RequireAuth>}/> */}
+
+          {/* <Route path="/docs" element={<RequireAuth redirectPath="/login"><DocsTable/></RequireAuth>}/> */}
+          {/* <Route path="/examples" element={<RequireAuth redirectPath="/login"><ExamplesTable/></RequireAuth>}/> */}
+          {/* <Route path="/template" element={<RequireAuth redirectPath="/login"><TemplateTable/></RequireAuth>}/> */}
           <Route path="/feedback" element={<RequireAuth redirectPath="/login"><FeedbackTable/></RequireAuth>}/>
-          <Route path="/template/create" element={<RequireAuth redirectPath="/login"><CreateTemplateApp/></RequireAuth>}/>
-          <Route path="/template/:templateId" element={<RequireAuth redirectPath="/login"><TemplateDetail/></RequireAuth>}/>
+          {/* <Route path="/template/create" element={<RequireAuth redirectPath="/login"><CreateTemplateApp/></RequireAuth>}/> */}
+          {/* <Route path="/template/:templateId" element={<RequireAuth redirectPath="/login"><TemplateDetail/></RequireAuth>}/> */}
           <Route path="/admin/user" element={<RequireAuth  requireAdmin redirectPath="/login"><UserApp/></RequireAuth>}/>
           <Route path="/admin/adduser" element={<RequireAuth requireAdmin redirectPath="/login"><AddUserApp/></RequireAuth>}/>
 

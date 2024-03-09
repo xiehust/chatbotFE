@@ -18,7 +18,7 @@ export const useChatData = ()=>{
   return useContext(ChatDataCtx)
 }
 
-export const params_local_storage_key = "agentschat-params-prompt-panel-";
+export const params_local_storage_key = "pehubchat-params-prompt-panel-";
 
 
 export const Breadcrumbs = () => {
@@ -51,12 +51,12 @@ export const Breadcrumbs = () => {
             href: "/home",
           },
           {
-            text: t("chat_agent"),
-            href: "/agentschat",
+            text: t("prompt_hub"),
+            href: "/prompt_hub",
           },
           {
             text: id,
-            href: "/agentschat/" + id,
+            href: "/prompt_playground/" + id,
           },
         ]}
         expandAriaLabel="Show path"

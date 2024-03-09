@@ -13,6 +13,10 @@ import {
   Input,
   Select,
   Textarea,
+  Multiselect,
+  Header,
+  Toggle,
+  RadioGroup,
 } from "@cloudscape-design/components";
 import { TableHeader } from "../commons/common-components";
 import { useTranslation, Trans } from "react-i18next";
@@ -21,7 +25,7 @@ import { params_local_storage_key } from "../chatbot/common-components";
 import { deletePrompt } from "../commons/api-gateway";
 import { useAuthorizedHeader, useAuthUserInfo } from "../commons/use-auth";
 import { useSimpleNotifications } from '../commons/use-notifications';
-import {PROMPT_CATS} from './table-config';
+import { PROMPT_CATS, GEO_CATS, COMPAT_MODELS } from './table-config';
 import 'ace-builds/css/ace.css';
 import 'ace-builds/css/theme/dawn.css';
 import 'ace-builds/css/theme/tomorrow_night_bright.css';
@@ -40,8 +44,8 @@ export const generateId = () => {
   return `${timestamp}-${randomNumber}`
 }
 
-const formatHtmlLines = (text)=>{
-  return text?.split("\n").map((it,idx) => (
+const formatHtmlLines = (text) => {
+  return text?.split("\n").map((it, idx) => (
     <span key={idx}>
       {it}
       <br />
@@ -69,7 +73,7 @@ export const TemplateEditor = (props) => {
       .then(ace => setAce(ace))
       .finally(() => setLoading(false));
   }, []);
-  return (props.readOnly? <Textarea readOnly value={props.value}/> : <CodeEditor
+  return (props.readOnly ? <Textarea readOnly value={props.value} /> : <CodeEditor
     {...props}
     preferences={preferences}
     onPreferencesChange={e => setPreferences(e.detail)}
@@ -217,13 +221,14 @@ export const FullPageHeader = ({
   ...props
 }) => {
   const { t } = useTranslation();
+  const userinfo = useAuthUserInfo();
   const isOnlyOneSelected = props.selectedItems.length === 1;
   const [visible, setVisible] = useState(false)
   const deleteAction = () => {
     setVisible(true);
   };
   const selectItem = isOnlyOneSelected ? props.selectedItems[0] : undefined;
-  // console.log(selectItem);
+  console.log(selectItem);
   return (
     <div>
       <DeleteConfirmModal visible={visible} setVisible={setVisible} selectItem={selectItem} refreshAction={props.refreshAction} />
@@ -238,19 +243,18 @@ export const FullPageHeader = ({
               iconName="refresh"
             />
             <Button
-              disabled={!isOnlyOneSelected}
+              disabled={!isOnlyOneSelected || userinfo.groupname != 'admin'}
               name="delete"
               onClick={deleteAction}
             >
               {t('delete')}
             </Button>
-            {/* <Button
-            disabled={!isOnlyOneSelected}
-            name="edit"
-            onClick={deleteAction}
-          >
-            {t('edit')}
-          </Button> */}
+            <Button
+              disabled={!isOnlyOneSelected}
+              href={'/prompt_playground/'+selectItem?.id}
+              variant="primary"
+            >{t('start_chat')}
+            </Button>
             <Button
               href={'/prompt_hub/create'}
               variant="primary"
@@ -263,6 +267,18 @@ export const FullPageHeader = ({
     </div>
   );
 };
+
+export function previewTemplate(formData) {
+  let rawText = formData.template;
+  formData.variable_names &&
+    Object.keys(formData.variable_names).map(key => {
+      const name = formData.variable_names && formData.variable_names[key];
+      const value = formData.variable_values && formData.variable_values[key];
+      rawText = rawText?.replaceAll(`{${name}}`, value);
+    });
+  return rawText;
+}
+
 
 export const DetailPanel = ({ readOnlyWithErrors = false, readOnly = false }) => {
 
@@ -278,120 +294,235 @@ export const DetailPanel = ({ readOnlyWithErrors = false, readOnly = false }) =>
   const getErrorText = (errorMessage) => {
     return readOnlyWithErrors ? errorMessage : undefined;
   };
-  function previewTemplate(formData) {
-    let rawText = formData.template;
-    formData.variable_names &&
-      Object.keys(formData.variable_names).map(key => {
-        const name = formData.variable_names && formData.variable_names[key];
-        const value = formData.variable_values && formData.variable_values[key];
-        rawText = rawText?.replaceAll(`{${name}}`, value);
-      });
-    return rawText;
-  }
-  return (
-    <Container
-    >
-      <SpaceBetween size="l">
-        <FormField label={t("select_category")}> 
-            <CategorySelect formData={formData} setFormData={setFormData} readOnly={readOnly}/>
-        </FormField>
 
-        <FormField
-          label={t("template_name")}
-          errorText={getErrorText("You must enter a unique template name")}
-          i18nStrings={{ errorIconAriaLabel: "Error" }}
-        >
-          <Input
-            invalid={inValid}
-            readOnly={readOnly}
-            placeholder="Required"
-            value={formData.template_name}
-            onChange={(event) => {
-              !readOnlyWithErrors &&
-                setFormData((prev) => ({ ...prev, template_name: event.detail.value }));
-              setInvalid(false);
-            }
-            }
-          />
-        </FormField>
-        <FormField
-          label={t("description")}
-        >
-          <Input
-            placeholder="Optional"
-            readOnly={readOnly}
-            value={formData.description}
-            onChange={(event) =>
-              !readOnlyWithErrors &&
-              setFormData((prev) => ({ ...prev, description: event.detail.value }))
-            }
-          />
-        </FormField>
-        <FormField
-          label={t("template")}
-        >
-          <TemplateEditor
-            readOnly={readOnly}
-            invalid={inValid}
-            value={formData.template}
-            onChange={(event) => {
-              setFormData((prev) => ({ ...prev, template: event.detail.value }));
-              setInvalid(false);
-            }
-            }
-          />
-        </FormField>
-        <FormField>
-            <AddVariablesComp formData={formData} setFormData={setFormData} readOnly={readOnly}/>
-        </FormField>
-        <FormField
-          label={t("preview")}
-        >
-          <Box variant="code">
-            {formatHtmlLines(previewTemplate(formData))}
-          </Box>
-        </FormField>
-      </SpaceBetween>
-    </Container>
+  return (
+    <SpaceBetween size="l">
+      <Container
+        header={
+          <Header variant="h3" 
+          actions={<Button
+            disabled={!readOnly}
+            href={'/prompt_playground/'+formData?.id}
+            variant="primary"
+          >{t('start_chat')}
+          </Button>}>
+            {t('basic_info')}
+          </Header>}
+      >
+        <SpaceBetween size="l">
+          <FormField label={t("select_geo_category")}>
+            <GeoSelect readOnly={readOnly} />
+          </FormField>
+          <FormField label={t("email")} description={t("your_amazon_email")}>
+            <Input
+              invalid={inValid && !formData.email}
+              placeholder="Required"
+              readOnly={readOnly}
+              inputMode="email"
+              value={formData.email}
+              onChange={(event) =>
+                !readOnlyWithErrors &&
+                setFormData((prev) => ({ ...prev, email: event.detail.value }))
+              }
+            />
+          </FormField>
+          <FormField label={t("department")} description={t("your_department")}>
+            <Input
+              placeholder="Optional"
+              readOnly={readOnly}
+              value={formData.department}
+              onChange={(event) =>
+                !readOnlyWithErrors &&
+                setFormData((prev) => ({ ...prev, department: event.detail.value }))
+              }
+            />
+          </FormField>
+        </SpaceBetween>
+      </Container >
+      <Container
+        header={
+          <Header variant="h3" >
+            {t('main_info')}
+          </Header>}
+      >
+        <SpaceBetween size="l">
+          <FormField label={t("select_compat_models")}>
+            <ModelSelect readOnly={readOnly} />
+          </FormField>
+          <FormField label={t("select_category")}>
+            <CategorySelect readOnly={readOnly} />
+          </FormField>
+          <FormField
+            label={t("template_name")}
+          >
+            <Input
+              invalid={inValid && !formData.template_name}
+              readOnly={readOnly}
+              placeholder="Required"
+              value={formData.template_name}
+              onChange={(event) => {
+                !readOnlyWithErrors &&
+                  setFormData((prev) => ({ ...prev, template_name: event.detail.value }));
+                setInvalid(false);
+              }
+              }
+            />
+          </FormField>
+          <FormField label={t("description")}>
+            <Input
+              placeholder="Optional"
+              readOnly={readOnly}
+              value={formData.description}
+              onChange={(event) =>
+                !readOnlyWithErrors &&
+                setFormData((prev) => ({ ...prev, description: event.detail.value }))
+              }
+            />
+          </FormField>
+          <FormField label={t("system_role_prompt")}>
+            <Input
+              placeholder="Optional"
+              readOnly={readOnly}
+              value={formData.system_role_prompt}
+              onChange={(event) =>
+                !readOnlyWithErrors &&
+                setFormData((prev) => ({ ...prev, system_role_prompt: event.detail.value }))
+              }
+            />
+          </FormField>
+          <FormField label={t("prompt_content")}>
+            <TemplateEditor
+              readOnly={readOnly}
+              invalid={inValid}
+              value={formData.template}
+              onChange={(event) => {
+                setFormData((prev) => ({ ...prev, template: event.detail.value }));
+                setInvalid(false);
+                }
+              }
+            />
+          </FormField>
+          <FormField>
+            <AddMigrationComp readOnly={readOnly} />
+          </FormField>
+          <FormField stretch={true}>
+            <AddVariablesComp formData={formData} setFormData={setFormData} readOnly={readOnly} />
+          </FormField>
+          <FormField
+            label={t("preview")}
+          >
+            <PreviewBox formData={formData}/>
+          </FormField>
+        </SpaceBetween>
+      </Container>
+    </SpaceBetween>
   );
 }
 
-export const CategorySelect = ({formData, setFormData,readOnly}) =>{
-  const [selectedOption, setSelectedOption] = useState(formData.prompt_category??{});
+export const PreviewBox = ({formData})=>{
   return (
-    <Select
-    disabled = {readOnly}
-    selectedOption={selectedOption}
-    onChange={({ detail }) => {
-      setSelectedOption(detail.selectedOption);
-      setFormData((prev) => ({
-        ...prev,
-        prompt_category: detail.selectedOption,
-      }));
-    }}
-    options={PROMPT_CATS}
-    selectedAriaLabel="Selected"
+  //   <Box variant="code">
+  //   {formatHtmlLines(previewTemplate(formData))}
+  // </Box>
+  <Textarea
+      value={previewTemplate(formData)}
+      rows={12}
+      readOnly
     />
   )
-} 
+}
 
-const VariableComp = ({ sn, formData, setFormData,readOnly }) => {
+const CategorySelect = ({ readOnly }) => {
+  const { inValid, formData, setFormData } = useContext(addTemplateFormCtx);
+  const [selectedOption, setSelectedOption] = useState(formData.prompt_category);
+  return (
+    <Select
+      invalid={inValid && !formData.prompt_category}
+      disabled={readOnly}
+      selectedOption={selectedOption}
+      onChange={({ detail }) => {
+        setSelectedOption(detail.selectedOption);
+        setFormData((prev) => ({
+          ...prev,
+          prompt_category: detail.selectedOption,
+        }));
+      }}
+      options={PROMPT_CATS}
+      selectedAriaLabel="Selected"
+    />
+  )
+}
+
+const ModelSelect = ({ readOnly }) => {
+  const { inValid, formData, setFormData } = useContext(addTemplateFormCtx);
+
+  const [selectedOptions, setSelectedOptions] = useState(formData.compat_models);
+  return (
+    <Multiselect
+      invalid={inValid && !formData.compat_models}
+      disabled={readOnly}
+      selectedOptions={selectedOptions}
+      onChange={({ detail }) => {
+        setSelectedOptions(detail.selectedOptions);
+        setFormData((prev) => ({
+          ...prev,
+          compat_models: detail.selectedOptions,
+        }));
+      }}
+      options={COMPAT_MODELS}
+    />
+  )
+}
+
+
+const GeoSelect = ({ readOnly }) => {
+  const { formData, setFormData } = useContext(addTemplateFormCtx);
+
+  const [value, setValue] = useState(formData.geo ?? GEO_CATS[0].value);
+
+  useEffect(() => {
+    setFormData((prev) => ({
+      ...prev,
+      geo: formData.geo ?? GEO_CATS[0].value
+    }));
+  }, [])
+  return (
+    <RadioGroup
+      disabled={readOnly}
+      value={value}
+      onChange={({ detail }) => {
+        if (!readOnly) {
+          setValue(detail.value);
+          setFormData((prev) => ({
+            ...prev,
+            geo: detail.value,
+          }));
+        }
+      }
+      }
+      items={GEO_CATS}
+    />
+  )
+}
+
+
+const VariableComp = ({ sn, formData, setFormData, readOnly }) => {
   const { t } = useTranslation();
   const [inValid1, setInvalid1] = useState(false);
-  const [fieldName, setFieldName] = useState(formData.variable_names?formData.variable_names[sn]:'');
+  const [fieldName, setFieldName] = useState(formData.variable_names ? formData.variable_names[sn] ?? '' : '');
   const [inValid2, setInvalid2] = useState(false);
-  const [defaultValue, setDefaultValue] = useState(formData.variable_values?formData.variable_values[sn]:'');
+  const [defaultValue, setDefaultValue] = useState(formData.variable_values ? formData.variable_values[sn] ?? '' : '');
 
   return (
 
     <SpaceBetween direction="horizontal" size="xl">
-      <FormField label={t('field') + ' ' + sn}
+      <FormField label={t('field') + ' ' + sn} stretch={true}
         constraintText={`${fieldName.length}/30`}
       >
         <Input
           invalid={inValid1}
           placeholder="(Required)"
-          readOnly = {readOnly}
+          readOnly={readOnly}
           value={fieldName}
           onChange={({ detail }) => {
             detail.value?.length > 30 ? setInvalid1(true) : setInvalid1(false);
@@ -402,11 +533,11 @@ const VariableComp = ({ sn, formData, setFormData,readOnly }) => {
           }
         />
       </FormField>
-      <FormField label={t('default_value')}
+      <FormField label={t('default_value')} stretch={true}
         constraintText={`${defaultValue.length}/1000`}>
         <Textarea
           invalid={inValid2}
-          readOnly = {readOnly}
+          readOnly={readOnly}
           placeholder="(Required)"
           rows={1}
           value={defaultValue}
@@ -421,44 +552,78 @@ const VariableComp = ({ sn, formData, setFormData,readOnly }) => {
       </FormField>
     </SpaceBetween>
   )
+}
 
+const AddMigrationComp = ({ readOnly }) => {
+  const { t } = useTranslation();
+  const { formData, setFormData, inValid, setInvalid } = useContext(addTemplateFormCtx);
+  const [checked, setChecked] = useState(formData.is_migration ?? false);
+  return (
+    <SpaceBetween size="l">
+      <Toggle 
+       description={t('if_is_gpt_migrate_desc')}
+       disabled={readOnly} checked={checked} onChange={(event) => {
+        setChecked(event.detail.checked);
+        setFormData((prev) => ({ ...prev, is_migration: event.detail.checked }))
+      }}>
+        {t('is_migration')}
+      </Toggle>
+      {checked &&
+         <FormField  description={t('gpt_prompt_content_desc')}>
+        <TemplateEditor
+          readOnly={readOnly}
+          invalid={inValid}
+          value={formData.gpt_template}
+          onChange={(event) => {
+            setFormData((prev) => ({
+              ...prev,
+              gpt_template: event.detail.value
+            }));
+            setInvalid(false);
+          }
+          }
+        />
+         </FormField>
+      }
+    </SpaceBetween>
+  )
 
 }
 
-const AddVariablesComp = ({ formData, setFormData,readOnly }) => {
+export const AddVariablesComp = ({ formData, setFormData, readOnly }) => {
   const { t } = useTranslation();
-  const [addVariable, setAddVariable] = useState(false);
+  const [addVariable, setAddVariable] = useState(formData.variable_names ? true : false);
   const [cnts, setCnts] = useState(formData.variable_names
     ? Object.keys(formData.variable_names).map(key => Number(key))
     : [1]);
   return (
     (!addVariable && !readOnly) ?
-    <Button variant="normal" onClick={(event) => {
-      event.preventDefault();
-      setAddVariable(true);
-    }}>
-      {t('add_variables')}
-    </Button> :
-    <SpaceBetween size='xs'>
-      {cnts.map(sn => <VariableComp readOnly={readOnly} key={sn} sn={sn} formData={formData} setFormData={setFormData} />)}
-      <SpaceBetween size='xs' direction="horizontal">
-        <Button iconName="add-plus" variant="icon"
-          disabled={cnts.length >= 10 || readOnly}
-          onClick={(event) => {
-            event.preventDefault();
-            setCnts(prev => [...prev, prev[prev.length - 1] + 1])
-          }} />
-        <Button iconName="remove" variant="icon"
-          disabled={cnts.length <= 0 || readOnly}
-          onClick={(event) => {
-            event.preventDefault();
-            //重新显示AddVariable button
-            cnts.length <= 1 
-            ? setAddVariable(false)
-              :setCnts((prev) => prev.slice(0, prev.length - 1))
-          }} />
+      <Button variant="normal" onClick={(event) => {
+        event.preventDefault();
+        setAddVariable(true);
+      }}>
+        {t('add_variables')}
+      </Button> :
+      <SpaceBetween size='xs'>
+        {cnts.map(sn => <VariableComp readOnly={readOnly} key={sn} sn={sn} formData={formData} setFormData={setFormData} />)}
+        <SpaceBetween size='xs' direction="horizontal">
+          <Button iconName="add-plus" variant="icon"
+            disabled={cnts.length >= 10 || readOnly}
+            onClick={(event) => {
+              event.preventDefault();
+              setCnts(prev => [...prev, prev[prev.length - 1] + 1])
+            }} />
+          <Button iconName="remove" variant="icon"
+            disabled={cnts.length <= 0 || readOnly}
+            onClick={(event) => {
+              event.preventDefault();
+              //重新显示AddVariable button
+              cnts.length <= 1
+                ? setAddVariable(false)
+                : setCnts((prev) => prev.slice(0, prev.length - 1))
+            }} />
+        </SpaceBetween>
       </SpaceBetween>
-    </SpaceBetween>
   )
 }
 

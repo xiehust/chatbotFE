@@ -13,12 +13,25 @@ const VISIBLE_CONTENT_OPTIONS = [
       { id: 'id', label: i18n.t('template_id') },
       { id: 'template_name', label: i18n.t('template_name') },
       { id: 'description', label: i18n.t('description'),},
-      { id: 'username', label:  i18n.t('created_by'), },
+      { id: 'email', label:  i18n.t('created_by'), },
+      { id: 'createtime', label:  i18n.t('createtime'), },
       { id: 'prompt_category', label:  i18n.t('prompt_category'), },
-      { id: 'start_chat', label:  i18n.t('action'), },
+      { id: 'geo', label:  i18n.t('geo'), },
     ],
   },
 ];
+
+export const COMPAT_MODELS = [
+  { label: "Claude 2", value: "Claude_2" },
+  { label: "Claude 3", value: "Claude_3" },
+  { label: "GPT", value: "GPT" },
+  { label: "Llama2", value: "Llama2" },
+  { label: "Baichuan", value: "Baichuan" },
+  { label: "Qwen", value: "Qwen" },
+  { label: "ChatGLM", value: "ChatGLM" },
+  { label: "Titan", value: "Titan" },
+  { label: "Others", value: "Others" },
+]
 
 
 export const PROMPT_CATS = [
@@ -29,10 +42,18 @@ export const PROMPT_CATS = [
   { label: "other", value: "other" },
 ]
 
+export const GEO_CATS = [
+  { label: "GCR", value: "GCR" },
+  { label: "APJ", value: "APJ" },
+  { label: "AMER", value: "AMER" },
+  { label: "EMER Call", value: "EMER" },
+  { label: "Global", value: "Global" },
+]
+
 
 export const DEFAULT_PREFERENCES = {
   pageSize: 30,
-  visibleContent: ['id','template_name','description','username','prompt_category','start_chat'],
+  visibleContent: ['id','template_name','geo','description','email','createtime','prompt_category',],
   wrapLines: false,
 };
 
@@ -62,10 +83,16 @@ export const COLUMN_DEFINITIONS = addColumnSortLabels([
     sortingField: "description",
   },
   {
-    id: 'username',
-    cell: item =>item.username||'-',
+    id: 'email',
+    cell: item =>item.email||'-',
     header: i18n.t('created_by'),
-    sortingField: "username",
+    sortingField: "email",
+  },
+  {
+    id: 'geo',
+    cell: item =>item.geo||'-',
+    header: i18n.t('geo'),
+    sortingField: "geo",
   },
   {
     id: 'prompt_category',
@@ -74,11 +101,11 @@ export const COLUMN_DEFINITIONS = addColumnSortLabels([
     sortingField: "prompt_category",
   },
   {
-    id: 'start_chat',
-    cell: item =>( <Box float="right"> <Button href={'prompt_playground/'+item.id}>{i18n.t('start_chat')}</Button></Box>),
-    header: i18n.t('start_chat'),
-    sortingField: "start_chat",
-  },
+    id: 'createtime',
+    cell: item =>item.createtime||'-',
+    header: i18n.t('createtime'),
+    sortingField: "createtime",
+  }
 ]);
 
 

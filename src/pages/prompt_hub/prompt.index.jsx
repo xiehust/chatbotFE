@@ -123,12 +123,7 @@ export default function PromptHubTable () {
     getPrompts(headers,queryParams)
     .then(data =>{
       console.log(data);
-      const items = data.map( it =>({template_name:it.template_name,
-        description:it.description,
-        id:it.id,
-        username:it.username,
-        prompt_category:it.prompt_category
-      }))
+      const items = data.map( it =>(it))
       setDocsItems(items);
         setLoadingState(false);
     })

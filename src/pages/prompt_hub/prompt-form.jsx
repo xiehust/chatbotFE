@@ -19,9 +19,12 @@ import { useLocalStorage } from '../../common/localStorage';
 
 function validateForm(props) {
   if (
-    !props.template_name?.length ||
-    !props.template?.length
-  ) {
+    !props.template_name ||
+    !props.template ||
+    !props.prompt_category||
+    !props.geo||
+    !props.email
+      ) {
     return false;
   } else return true;
 }

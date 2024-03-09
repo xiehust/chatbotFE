@@ -135,7 +135,7 @@ i18n
             chat:'Chat',
             addtional_settings:'Additional settings',
             conversations:'Conversations',
-            awschatportal:'AWS Chat Portal',
+            awschatportal:'GCR GenAI Juggle Hub',
             embedding_endpoint:'Embedding model endpoint',
             apigateway_endpoint:'API Gateway endpoint',
             openai_api_key:'OPENAI API KEY',
@@ -144,7 +144,8 @@ i18n
             close:'Close',
             clear:'Clear',
             system_role:"System Role Name",
-            system_role_prompt:"System Role Prompt",
+            system_role_prompt:"System Prompt",
+            prompt_content:"Prompt Content",
             delete:'Delete',
             delete_doc_index:'Delete doc index',
             prompt_template:'Prompt template',
@@ -206,7 +207,19 @@ i18n
             variable:"Variable",
             field:"Field Name",
             default_value:"Default Value",
-            action:'Action'
+            action:'Action',
+            select_geo_category:'Select Geo',
+            main_info:'Main content',
+            your_amazon_email:"Your Amazon Email Address",
+            department:'Department',
+            your_department: 'Your department',
+            geo:'Geo',
+            select_compat_models:'Compatible Models',
+            is_migration:'Is GPT Migration',
+            variables_config:"Variables",
+            model_hub:'Model Hub',
+            if_is_gpt_migrate_desc:'Click if it is migrated from GPT Prompt',
+            gpt_prompt_content_desc:'Put the Original GPT Prompt Here'
         }
       },
       zh:{
@@ -337,7 +350,8 @@ i18n
             close:'关闭',
             clear:'清空',
             system_role:'系统角色名',
-            system_role_prompt:'系统角色提示词',
+            system_role_prompt:'系统提示词',
+            prompt_content:"提示词内容",
             delete:'删除',
             delete_doc_index:'删除文档索引',
             prompt_template:'提示词模板',
@@ -399,8 +413,19 @@ i18n
             field:"变量名",
             default_value:"默认值",
             prompt_category: 'Prompt分类',
-            action:'动作'
-
+            action:'动作',
+            select_geo_category:'选择地区',
+            main_info:'模板内容',
+            your_amazon_email:"您的Amazon Email",
+            department:'部门',
+            your_department: '您的部门',
+            geo:'区域',
+            select_compat_models:'适用模型',
+            is_migration:'是否从GPT Migrate',
+            variables_config:"变量设置",
+            model_hub:"模型中心",
+            if_is_gpt_migrate_desc:'如果是从GPT移植过来请点击这里',
+            gpt_prompt_content_desc:'原始的GPT提示词'
         }
       }
     }

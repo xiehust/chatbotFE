@@ -283,7 +283,7 @@ const SignIn = ({setSession,setSignType,username,setUsername,password,setPasswor
   const isAuthenticated = auth.user && auth.user.isAuthorized;
   useEffect(()=>{
         if(isAuthenticated){
-            navigate('/chat');
+            navigate('/prompt_hub');
         }
     },[navigate,isAuthenticated]);
 

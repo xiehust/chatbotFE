@@ -96,7 +96,7 @@ exports.handler = async (event) => {
   const username = event.queryStringParameters.username??'anonymous';
   const company = event.queryStringParameters.company??'default';
 
-  const prefix = mimeType === "image/jpeg" || mimeType === "image/png" ? `images/${username}/` : process.env.UPLOAD_OBJ_PREFIX+company+'/'+username+'/';
+  const prefix = mimeType === "image/jpeg" || mimeType === "image/png" ? `images/${company}/${username}/` : process.env.UPLOAD_OBJ_PREFIX+company+'/'+username+'/';
   const s3ParamsA = {
     Bucket: bucket,
     Key: prefix + filename,

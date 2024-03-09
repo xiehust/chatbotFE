@@ -9,6 +9,7 @@ export const API_http = process.env.REACT_APP_API_http.slice(-1) === '/'?
                         process.env.REACT_APP_API_http.slice(0,-1):
                         process.env.REACT_APP_API_http;
 export const API_socket = process.env.REACT_APP_API_socket;
+export const API_http_modelhub = process.env.REACT_APP_MODEL_HUB_API_http
 
 export const API_login = 'login';
 export const API_users = 'users';

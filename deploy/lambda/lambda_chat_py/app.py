@@ -258,7 +258,7 @@ def handler(event,lambda_context):
         data = json.dumps({ 'msgid':msgid, 'role': "AI", 'text': {'content':'[DONE]'} ,'connectionId':connectionId})
         postMessage(wsclient,data,connectionId)
     else:
-        session_id = f'web_chat_{user_id}'
+        session_id = f'web_chat_{user_id}_{connectionId}'
         payload = {
                 "OPENAI_API_KEY":openai_apikey,
                 "ws_endpoint":ws_endpoint,
