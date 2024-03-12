@@ -203,20 +203,20 @@ export const FullPageHeader = ({
             onClick={props.refreshAction}
             iconName="refresh"
           />
-          <Button
+          {/* <Button
             disabled={
-              // usergroup !== "admin" ||
+              usergroup !== "admin" ||
               !isOnlyOneSelected ||
               props.selectedItems[0].action === "injected"
-            } /*disable the button when status is injected*/
+            } //disable the button when status is injected
             name="inject"
             loading={injectLoading}
             onClick={handleInject}
           >
             {t("inject")}
-          </Button>
+          </Button> */}
           <Button disabled={
-              // usergroup !== "admin" ||
+              usergroup !== "admin" ||
               !isOnlyOneSelected 
               // ||props.selectedItems[0].action === "injected"
           } name="delete"

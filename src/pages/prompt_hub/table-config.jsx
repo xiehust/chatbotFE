@@ -36,9 +36,13 @@ export const COMPAT_MODELS = [
 
 export const PROMPT_CATS = [
   { label: "Translation", value: "translation" },
+  { label: "Rewrite/Write", value: "Rewrite/Write" },
+  { label: "Summary", value: "Summary" },
+  { label: "Vision", value: "Vision" },
   { label: "RAG", value: "rag" },
   { label: "Roleplay", value: "roleplay" },
   { label: "Function Call", value: "function call" },
+  { label: "Code Generation", value: "Code Generation"},
   { label: "other", value: "other" },
 ]
 

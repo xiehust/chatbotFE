@@ -24,7 +24,10 @@ import { blue, deepPurple } from '@mui/material/colors';
 import StepLabel from '@mui/material/StepLabel';
 import Step from '@mui/material/Step';
 import Stepper from '@mui/material/Stepper';
+import { useTranslation } from "react-i18next";
 
+const DEFAULT_USERNAME = 'guest';
+const DEFAULT_PASSWORD = 'guest';
 
 
 function Copyright(props) {
@@ -32,7 +35,7 @@ function Copyright(props) {
     <Typography variant="body2" color="text.secondary" align="center" {...props}>
       {'Copyright © '}
       <Link color="inherit" href="">
-        Chatbot WebUI
+        {'GCR GenAI Juggle Hub'}
       </Link>{' '}
       {new Date().getFullYear()}
       {'.'}
@@ -66,11 +69,11 @@ const SignUpSteps = ({activeStep}) =>{
 const LoginPage = ()=>{
   const [session, setSession] = useState();
   const [signType, setSignType] = useState('signin');
-  const [username, setUsername] = useState();
-  const [password, setPassword] = useState();
+  const [username, setUsername] = useState(DEFAULT_USERNAME);
+  const [password, setPassword] = useState(DEFAULT_PASSWORD);
   return (
     // signType === 'signin'?
-    <SignIn setSession={setSession} setSignType={setSignType} username={username} setUsername={setUsername} password={password} setPassword={setPassword}/>
+    <SignIn setSession={setSession} signType={signType} setSignType={setSignType} username={username} setUsername={setUsername} password={password} setPassword={setPassword}/>
     // :<SignUp setSession={setSession} setSignType={setSignType} username={username} setUsername={setUsername} password={password} setPassword={setPassword}/>
   )
 }
@@ -270,8 +273,9 @@ const SignUp = ({setSignType,username,setUsername,password,setPassword}) =>{
   );
 }
 
-const SignIn = ({setSession,setSignType,username,setUsername,password,setPassword}) => {
+const SignIn = ({setSession,signType,setSignType,username,setUsername,password,setPassword}) => {
   const auth = useAuth();
+  const {t} = useTranslation();
   const [checked, setChecked] = useState(false);
   const [local_stored_crediential,setLocalStoredCred] = useLocalStorage('chatbot-local-credentials',null)
   const [errorstate, setErrorState] = useState(false);
@@ -294,22 +298,20 @@ const SignIn = ({setSession,setSignType,username,setUsername,password,setPasswor
       setPassword(local_stored_crediential.password);
     }
   },[]);
-  // useEffect(()=>{
-  //   if (local_stored_crediential) {
-  //       setChecked(local_stored_crediential.checked);
-  //       if (local_stored_crediential.checked) {
-  //         setUsername(local_stored_crediential.username);
-  //         setPassword(local_stored_crediential.password);
-  //       }
-  //   }
-  // },[checked,local_stored_crediential]);
   const handleSubmit = (event) => {
     event.preventDefault();
     setLoading(true);
     setErrorState(false);
     setErrMsg('');
     const formdata = new FormData(event.currentTarget);
-    auth.signin(formdata.get('username'),formdata.get('password'))
+    let username = DEFAULT_USERNAME;
+    let password = DEFAULT_PASSWORD;
+
+    if (signType !== 'anonymous_signin'){
+      username = formdata.get('username');
+      password = formdata.get('password')
+    }
+    auth.signin(username,password)
     .then((data)=>{
       setLocalStoredCred({username:formdata.get('username'),
                     password:formdata.get('password'),
@@ -393,9 +395,20 @@ const SignIn = ({setSession,setSignType,username,setUsername,password,setPasswor
               variant="contained"
               sx={{ mt: 3, mb: 2}}
             >
-              {"Sign In"}
+              {t('signin')}
             </LoadingButton>
-            <Button
+            <LoadingButton
+              type="submit"
+              color = "secondary"
+              loading = {loading}
+              onClick={()=>setSignType('anonymous_signin')}
+              fullWidth
+              variant="contained"
+              sx={{ mt: 3, mb: 2}}
+            >
+             {t('anonymous_signin')}
+            </LoadingButton>
+            {/* <Button
              fullWidth
               variant="contained"
               sx={{ mt: 0.5, mb: 0.5}}
@@ -403,19 +416,19 @@ const SignIn = ({setSession,setSignType,username,setUsername,password,setPasswor
               onClick={()=>setSignType('signup')}
               >
               {"Sign Up"}
-            </Button>
-            <Grid container>
+            </Button> */}
+            {/* <Grid container>
               <Grid item xs>
                 <Link href="#" variant="body2">
                   Forgot password?
                 </Link>
               </Grid>
-              {/* <Grid item>
+              <Grid item>
                 <Link href="#" variant="body2" onClick={()=>setSignType('signup')}>
                   {"Don't have an account? Sign Up"}
                 </Link>
-              </Grid> */}
-            </Grid>
+              </Grid>
+            </Grid> */}
             </FormControl>
           </Box>
 

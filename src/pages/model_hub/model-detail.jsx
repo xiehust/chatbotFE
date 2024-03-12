@@ -11,10 +11,10 @@ import {
   Box,
   Button
 } from "@cloudscape-design/components";
-import { BreadcrumbsDynmic ,generateId,DetailPanel,addTemplateFormCtx,useTemplateFormCtx} from "./common-components";
+import { BreadcrumbsDynmic ,generateId,DetailPanel,addModelFormCtx,useModelFormCtx} from "./common-components";
 import { CustomAppLayout, Navigation } from "../commons/common-components";
 import { useAuthorizedHeader, useAuthUserInfo } from "../commons/use-auth";
-import {getPrompts,addPrompt} from '../commons/api-gateway';
+import {getModelCards,addModelCard} from '../commons/api-gateway';
 import {params_local_storage_key} from "../chatbot/common-components";
 import { useLocalStorage } from '../../common/localStorage';
 import { useTranslation } from "react-i18next";
@@ -23,12 +23,13 @@ import { useNavigate } from "react-router-dom";
 
 
 
+
 function validateForm(props) {
   if (
-    !props.template_name?.length ||
-    !props.template?.length ||
-    !props.email?.length ||
-    !props.prompt_category 
+    !props.model_name?.length ||
+    !props.model_size  ||
+    !props.model_type  ||
+    !props.code_repo 
   ) {
     return false;
   } else return true;
@@ -36,7 +37,7 @@ function validateForm(props) {
 
 function BaseFormContent({ content,setReadOnly, errorText = null }) {
   const {t} = useTranslation();
-  const { formData ,setInvalid} = useTemplateFormCtx();
+  const { formData ,setInvalid} = useModelFormCtx();
   const { setNotificationItems } = useSimpleNotifications();
   const headers = useAuthorizedHeader();
   const userInfo = useAuthUserInfo();
@@ -55,8 +56,8 @@ function BaseFormContent({ content,setReadOnly, errorText = null }) {
   return (
     <form
       onSubmit={(event) => {
+        console.log(formData)
         event.preventDefault();
-        console.log(formData);
         if (!validateForm(formData)) {
           setInvalid(true);
           return "";
@@ -71,15 +72,15 @@ function BaseFormContent({ content,setReadOnly, errorText = null }) {
         company:company
          };
 
-        return addPrompt(headers, body)
+        return addModelCard(headers, body)
           .then((data) => {
             setSubLoading(false);
             setNotificationItems((item) => [
               ...item,
               {
-                header: `Success to save template`,
+                header: `Success to save model card`,
                 type: "success",
-                content: <Box>{'View:'}<Link href={`/prompt_hub/${formData?.id}`}>{`${formData?.template_name}`}</Link></Box>,
+                content: <Box>{'View:'}<Link href={`/model_hub/${formData?.id}`}>{`${formData?.template_name}`}</Link></Box>,
                 dismissible: true,
                 dismissLabel: "Dismiss message",
                 onDismiss: () =>
@@ -89,7 +90,7 @@ function BaseFormContent({ content,setReadOnly, errorText = null }) {
                 id: msgid,
               },
             ]);
-            navigate("/prompt_hub");
+            navigate("/model_hub");
           })
           .catch((error) => {
             console.log(error);
@@ -119,7 +120,7 @@ function BaseFormContent({ content,setReadOnly, errorText = null }) {
           <SpaceBetween direction="horizontal" size="xs">
             <Button variant="link" onClick={(event)=>{
               event.preventDefault();
-              navigate('/prompt_hub')}} >
+              navigate('/model_hub')}} >
             {t('cancel')}
             </Button>
 
@@ -150,8 +151,8 @@ function BaseFormContent({ content,setReadOnly, errorText = null }) {
 
 
 
-export default function PromptDetail() {
-  const { templateId } = useParams();
+export default function ModelCardDetail() {
+  const { Id } = useParams();
   const [details, setDetail] = useState(null);
   const headers = useAuthorizedHeader();
   const [toolsOpen, setToolsOpen] = useState(false);
@@ -169,8 +170,8 @@ export default function PromptDetail() {
   const [formData, setFormData] = useState({
   });
   useEffect(() => {
-    getPrompts(headers,{
-      id:templateId,
+    getModelCards(headers,{
+      id:Id,
       main_fun_arn:main_fun_arn,
       apigateway_endpoint:apigateway_endpoint,
       company:company,
@@ -194,11 +195,11 @@ export default function PromptDetail() {
   return (
     <CustomAppLayout
       ref={appLayout}
-      navigation={<Navigation activeHref="/prompt_hub" />}
-      breadcrumbs={<BreadcrumbsDynmic id={templateId} />}
+      navigation={<Navigation activeHref="/model_hub" />}
+      breadcrumbs={<BreadcrumbsDynmic id={Id} />}
       content={
         details ? (
-          <addTemplateFormCtx.Provider value={{ formData, setFormData,inValid,setInvalid }}>
+          <addModelFormCtx.Provider value={{ formData, setFormData,inValid,setInvalid }}>
             <BaseFormContent 
 
             setReadOnly={setReadOnly}
@@ -209,7 +210,7 @@ export default function PromptDetail() {
           }
 
             />
-            </addTemplateFormCtx.Provider>
+            </addModelFormCtx.Provider>
         ) : (
           <Spinner size="large"/>
         )

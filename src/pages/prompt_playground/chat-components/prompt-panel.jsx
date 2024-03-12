@@ -47,7 +47,7 @@ export const defaultModelParams = {
   // template_opt: { label: "sso-chatbot-1102", value: "1698905450793-bcfab8" },
   hide_ref: false,
   use_stream: true,
-  use_trace: false,
+  use_trace: true,
 };
 
 
@@ -200,7 +200,7 @@ const ImageUploadComp = ({ id }) => {
   const company = userinfo?.company || "default";
   const filesMetaRef = useRef();
   const [localStoredMsgItems, setLocalStoredMsgItems] = useLocalStorage(
-    params_local_storage_key + `-msgitems-` + id,
+    params_local_storage_key + userinfo.username+`-msgitems-` + id,
     []
   );
   const [uploadErrtxt, setUploadErr] = useState();
@@ -257,17 +257,6 @@ const ImageUploadComp = ({ id }) => {
       .then(async () => {
         setStopFlag(false);
         const msgid = `image-${generateId()}`;
-        setMsgItems(
-          (prev) => [
-            ...prev,
-            {
-              id: msgid,
-              who: userinfo.username,
-              text: 'images',
-              images: imageFiles,
-            },
-          ] //创建一个新的item
-        );
         //转成二进制string存入到local storage中
         const images_base64 = await Promise.all(imageFiles.map(async file => {
           const reader = new FileReader();
@@ -279,6 +268,18 @@ const ImageUploadComp = ({ id }) => {
           return base64Data;
         }));
 
+        setMsgItems(
+          (prev) => [
+            ...prev,
+            {
+              id: msgid,
+              who: userinfo.username,
+              text: 'images',
+              // images: imageFiles,
+              images_base64: images_base64
+            },
+          ] //创建一个新的item
+        );
         // console.log('images_base64:',images_base64);
         setLocalStoredMsgItems([
           ...msgItems,
@@ -412,7 +413,7 @@ const PromptPanel = ({ sendMessage, id }) => {
   );
 
   const [localStoredMsgItems, setLocalStoredMsgItems] = useLocalStorage(
-    params_local_storage_key + '-msgitems-' + id,
+    params_local_storage_key + userinfo.username+'-msgitems-' + id,
     []
   );
 
@@ -451,7 +452,7 @@ const PromptPanel = ({ sendMessage, id }) => {
     ]);
 
     //save the messages to localstorage
-    // console.log(msgItems);
+    console.log(msgItems);
     setLocalStoredMsgItems([
       ...msgItems,
       { id: respid, who: userinfo.username, text: prompt },
@@ -527,9 +528,9 @@ const PromptPanel = ({ sendMessage, id }) => {
               </Button>
             </SpaceBetween>
           </Grid>
-          <SpaceBetween size="l" >
+          {/* <SpaceBetween size="l" >
             <VariablesComp id={id} />
-          </SpaceBetween>
+          </SpaceBetween> */}
           <SpaceBetween size="xl" direction="horizontal">
             <FormField >
               <Toggle
@@ -565,6 +566,7 @@ const PromptPanel = ({ sendMessage, id }) => {
             </FormField>
 
           </SpaceBetween>
+          <VariablesComp id={id} />
         </SpaceBetween>
 
       </FormField>

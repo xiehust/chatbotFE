@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: MIT-0
 import React, { useRef, useState,createContext } from 'react';
 import { Breadcrumbs, ToolsContent } from './common-components';
-import FormContent from './prompt-form';
+import FormContent from './model-form';
 import {
   CustomAppLayout,
   Navigation,
@@ -11,7 +11,7 @@ import {
 import { Flashbar } from '@cloudscape-design/components';
 import {useSimpleNotifications} from '../commons/use-notifications';
 
-export default function CreatePromptApp() {
+export default function CreateModelApp() {
   const appLayout = useRef();
   const {notificationitems} = useSimpleNotifications();
   const [toolsOpen, setToolsOpen] = useState(false);
@@ -19,7 +19,7 @@ export default function CreatePromptApp() {
   return (
     <CustomAppLayout
       ref={appLayout}
-      navigation={<Navigation activeHref="/prompt_hub" />}
+      navigation={<Navigation activeHref="/model_hub" />}
       notifications={<Flashbar items={notificationitems} />}
       breadcrumbs={<Breadcrumbs />}
       content={<FormContent/>}

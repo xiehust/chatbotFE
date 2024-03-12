@@ -29,6 +29,9 @@ import PromptHubTable from "./pages/prompt_hub/prompt.index";
 import CreatePromptApp from "./pages/prompt_hub/create-prompt";
 import PromptDetail from "./pages/prompt_hub/prompt-detail";
 import PromptChat from "./pages/prompt_playground";
+import ModelHubTable from "./pages/model_hub/model.index";
+import CreateModelApp from "./pages/model_hub/create-model";
+import ModelCardDetail from "./pages/model_hub/model-detail";
 // import PromptHubCards from "./pages/prompt_hub/prompthub.cards.index";
 
 export default function App() {
@@ -51,9 +54,9 @@ export default function App() {
           <Route path="/prompt_hub/:templateId" element={<RequireAuth redirectPath="/login"><PromptDetail/></RequireAuth>}/>
           <Route path="/prompt_playground/:id" element={<RequireAuth redirectPath="/login"><PromptChat/></RequireAuth>}/>
 
-          {/* <Route path="/model_hub" element={<RequireAuth redirectPath="/login"><PromptHubTable/></RequireAuth>}/>
-          <Route path="/model_hub/create" element={<RequireAuth redirectPath="/login"><CreatePromptApp/></RequireAuth>}/>
-          <Route path="/model_hub/:Id" element={<RequireAuth redirectPath="/login"><PromptDetail/></RequireAuth>}/> */}
+          <Route path="/model_hub" element={<RequireAuth redirectPath="/login"><ModelHubTable/></RequireAuth>}/>
+          <Route path="/model_hub/create" element={<RequireAuth redirectPath="/login"><CreateModelApp/></RequireAuth>}/>
+          <Route path="/model_hub/:Id" element={<RequireAuth redirectPath="/login"><ModelCardDetail/></RequireAuth>}/> 
 
           {/* <Route path="/docs" element={<RequireAuth redirectPath="/login"><DocsTable/></RequireAuth>}/> */}
           {/* <Route path="/examples" element={<RequireAuth redirectPath="/login"><ExamplesTable/></RequireAuth>}/> */}

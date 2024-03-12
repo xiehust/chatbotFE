@@ -9,11 +9,11 @@ import {
   Link,
   Header,
 } from "@cloudscape-design/components";
-import { generateId,DetailPanel,useTemplateFormCtx,addTemplateFormCtx} from "./common-components";
+import { generateId,DetailPanel,useModelFormCtx,addModelFormCtx} from "./common-components";
 import { useAuthorizedHeader,useAuthUserInfo } from "../commons/use-auth";
 import { useNavigate } from "react-router-dom";
 import { useSimpleNotifications } from "../commons/use-notifications";
-import {  addPrompt } from "../commons/api-gateway";
+import {  addModelCard } from "../commons/api-gateway";
 import { useTranslation } from 'react-i18next';
 import {params_local_storage_key} from "../chatbot/common-components";
 import { useLocalStorage } from '../../common/localStorage';
@@ -21,8 +21,10 @@ import { useLocalStorage } from '../../common/localStorage';
 
 function validateForm(props) {
   if (
-    !props.template_name ||
-    !props.prompt_category||
+    !props.model_name ||
+    !props.model_type||
+    !props.model_size||
+    !props.code_repo||
     !props.geo||
     !props.email
       ) {
@@ -33,7 +35,7 @@ function validateForm(props) {
 
 function BaseFormContent({ content, onCancelClick, errorText = null }) {
   const {t} = useTranslation();
-  const { formData ,setInvalid} = useTemplateFormCtx();
+  const { formData ,setInvalid} = useModelFormCtx();
   const { setNotificationItems } = useSimpleNotifications();
   const headers = useAuthorizedHeader();
   const userInfo = useAuthUserInfo();
@@ -53,6 +55,7 @@ function BaseFormContent({ content, onCancelClick, errorText = null }) {
     <form
       onSubmit={(event) => {
         event.preventDefault();
+        console.log(formData)
         if (!validateForm(formData)) {
           setInvalid(true);
           return "";
@@ -68,7 +71,7 @@ function BaseFormContent({ content, onCancelClick, errorText = null }) {
         company:company
        };
 
-        return addPrompt(headers, body)
+        return addModelCard(headers, body)
           .then((data) => {
             setSubLoading(false);
             setNotificationItems((item) => [
@@ -86,7 +89,7 @@ function BaseFormContent({ content, onCancelClick, errorText = null }) {
                 id: msgid,
               },
             ]);
-            navigate("/prompt_hub");
+            navigate("/model_hub");
           })
           .catch((error) => {
             console.log(error);
@@ -109,14 +112,14 @@ function BaseFormContent({ content, onCancelClick, errorText = null }) {
           <Header
             variant="h1"
           >
-            {t('add_template')}
+            {t('add_model')}
           </Header>
         }
         actions={
           <SpaceBetween direction="horizontal" size="xs">
             <Button variant="link" onClick={(event)=>{
               event.preventDefault();
-              navigate('/prompt_hub')}} >
+              navigate('/model_hub')}} >
             {t('cancel')}
             </Button>
             <Button loading={sumbitloading} variant="primary">
@@ -144,7 +147,7 @@ export default function FormContent() {
   const [formData, setFormData] = useState({
   });
   return (
-    <addTemplateFormCtx.Provider value={{ formData, setFormData,inValid,setInvalid }}>
+    <addModelFormCtx.Provider value={{ formData, setFormData,inValid,setInvalid }}>
       <BaseFormContent
         content={
           <SpaceBetween size="l">
@@ -152,6 +155,6 @@ export default function FormContent() {
           </SpaceBetween>
         }
       />
-    </addTemplateFormCtx.Provider>
+    </addModelFormCtx.Provider>
   );
 }

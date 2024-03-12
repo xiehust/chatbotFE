@@ -7,7 +7,7 @@ import time
 logger = logging.getLogger()
 logger.setLevel(logging.INFO)
 dynamodb_resource = boto3.resource('dynamodb')
-PH_INDEX_TABLE= 'prompt_hub_table'
+PH_INDEX_TABLE= 'model_hub_table'
 table = dynamodb_resource.Table(PH_INDEX_TABLE)
 
 
@@ -46,9 +46,6 @@ def get_template(id, company,start_key=None) ->list:
                         Limit=limit
                     )
                 records = response.get('Items')
-                
-                 ##不返回template详情内容
-                records = [ {key: value for key, value in my_dict.items() if key != 'template'} for my_dict in records ]
                 last_evaluated_key = response.get('LastEvaluatedKey')
             except Exception as e:
                 logger.info(str(e))
@@ -91,19 +88,17 @@ def delete_template(id):
 def handler(event,lambda_context):
     http_method = event.get('httpMethod')
     resource = event.get('resource')
-    if http_method == 'GET' and resource == '/prompt_hub':
+    if http_method == 'GET' and resource == '/model_hub':
         query_params = event.get('queryStringParameters')
         print(query_params)
         if query_params:
-            # main_fun_arn = query_params['main_fun_arn'] if 'main_fun_arn' in query_params else os.environ.get('MAIN_FUN_ARN')
-            # apigateway_endpoint = query_params.get('apigateway_endpoint')
             id = query_params.get('id')
             company =  query_params.get('company', 'default')
             results = get_template(id,company)
             print(results)
             return {'statusCode': 200, 'headers': cors_headers,'body':json.dumps(results,ensure_ascii=False)}
     
-    elif http_method == 'POST' and resource == '/prompt_hub':
+    elif http_method == 'POST' and resource == '/model_hub':
         body = json.loads(event['body'])
         print(body)
         time_tuple = time.localtime( time.time())
@@ -116,7 +111,7 @@ def handler(event,lambda_context):
         result = add_template(item)
         return {'statusCode': 200 if result else 500,'headers': cors_headers, 'body':'' if result else 'Error'}
     
-    elif http_method == 'DELETE' and resource == '/prompt_hub':
+    elif http_method == 'DELETE' and resource == '/model_hub':
         body = json.loads(event['body'])
         print(body)
         delete_template(body.get('id'))

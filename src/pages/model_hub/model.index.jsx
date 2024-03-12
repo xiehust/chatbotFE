@@ -18,7 +18,7 @@ import { useColumnWidths } from '../commons/use-column-widths';
 import { useLocalStorage } from '../../common/localStorage';
 import {useSimpleNotifications} from '../commons/use-notifications';
 import {useAuthUserInfo, useAuthorizedHeader} from "../commons/use-auth";
-import {getPrompts} from '../commons/api-gateway';
+import {getModelCards} from '../commons/api-gateway';
 import { useTranslation } from 'react-i18next';
 import {params_local_storage_key} from "../chatbot/common-components";
 import ModelSettings from "../commons/chat-settings";
@@ -33,8 +33,8 @@ function TableContent({
   buttonName,
   buttonHref,
  }) {
-  const [preferences, setPreferences] = useLocalStorage('PE-Hub-Table-Preferences', DEFAULT_PREFERENCES);
-  const [columnDefinitions, saveWidths] = useColumnWidths('PE-Hub-Table-Widths', COLUMN_DEFINITIONS);
+  const [preferences, setPreferences] = useLocalStorage('Model_hub-Docs-Table-Preferences', DEFAULT_PREFERENCES);
+  const [columnDefinitions, saveWidths] = useColumnWidths('Model_hub-Docs-Table-Widths', COLUMN_DEFINITIONS);
   const {t} = useTranslation();
 
   const { items, actions, filteredItemsCount, collectionProps, filterProps, paginationProps } = useCollection(
@@ -52,7 +52,7 @@ function TableContent({
 
   return (
     <div>
-        <ModelSettings href={'/prompt_hub'}/>
+        <ModelSettings href={'/model_hub'}/>
     <Table
      {...collectionProps}
       columnDefinitions={columnDefinitions}
@@ -92,7 +92,7 @@ function TableContent({
   );
 }
 
-export default function PromptHubTable () {
+export default function ModelHubTable () {
   const appLayout = useRef();
   const {notificationitems} = useSimpleNotifications();
   const [toolsOpen, setToolsOpen] = useState(false);
@@ -120,9 +120,9 @@ export default function PromptHubTable () {
   }
   useEffect(()=>{
     setLoadingState(true);
-    getPrompts(headers,queryParams)
+    getModelCards(headers,queryParams)
     .then(data =>{
-      // console.log(data);
+      console.log(data);
       const items = data.map( it =>(it))
       setDocsItems(items);
         setLoadingState(false);
@@ -139,11 +139,11 @@ export default function PromptHubTable () {
 
     <CustomAppLayout
       ref={appLayout}
-      navigation={<Navigation activeHref={'/prompt_hub'} />}
+      navigation={<Navigation activeHref={'/model_hub'} />}
       notifications={<Flashbar items={notificationitems} stackItems/>}
       breadcrumbs={<Breadcrumbs />}
       content={<TableContent 
-                resourceName={t('prompt_hub')}
+                resourceName={t('model_hub')}
                 distributions = {docitems}
                 loadingState={loadingState}
                 refreshAction={refreshAction}

@@ -250,6 +250,37 @@ export const getPrompts = async(headers,queryParams={}) =>{
     }
 }
 
+export const addModelCard = async(headers,formdata) =>{
+    try {
+        const resp = await axios.post(`${API_http}/model_hub`,JSON.stringify(formdata), {headers});
+        return resp.data;
+    } catch (err) {
+        throw err;
+    }
+}
+
+export const deleteModelCard = async(headers,formdata) =>{
+    try {
+        const resp = await axios.delete(`${API_http}/model_hub`,{headers,data:JSON.stringify(formdata)});
+        return resp.data;
+    } catch (err) {
+        throw err;
+    }
+}
+
+export const getModelCards = async(headers,queryParams={}) =>{
+    // Build the query string parameters
+    const queryString = Object.keys(queryParams)
+    .map(key => `${encodeURIComponent(key)}=${encodeURIComponent(queryParams[key])}`)
+    .join('&');
+    try {
+        const resp = await axios.get(`${API_http}/model_hub?${queryString}`, {headers});
+        return resp.data;
+    } catch (err) {
+        throw err;
+    }
+}
+
 
 export const addAgent = async(headers,formdata) =>{
     try {

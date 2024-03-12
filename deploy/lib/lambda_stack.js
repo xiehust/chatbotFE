@@ -49,6 +49,7 @@ export class LambdaStack extends NestedStack {
     const user_table = props.user_table;
     const agents_table = props.agents_table;
     const prompt_hub_table = props.prompt_hub_table;
+    const model_hub_table = props.model_hub_table;
     this.handlersMap = new Map();
 
     const createNodeJsLambdaFn = (scope, path, index_fname, api, envProps) => {
@@ -226,6 +227,19 @@ export class LambdaStack extends NestedStack {
     })
     prompt_hub_table.grantReadWriteData(this.lambda_prompt_hub);
 
+    // model hub 管理函数
+    this.lambda_model_hub = new lambda.Function(this, 'lambda_modelhub',{
+      code: lambda.Code.fromAsset('lambda/lambda_modelhub'),
+      handler: 'app.handler',
+      runtime: lambda.Runtime.PYTHON_3_10,
+      timeout: Duration.minutes(3),
+      environment: {
+      },
+      memorySize: 256,
+    })
+    model_hub_table.grantReadWriteData(this.lambda_model_hub);
+
+
     // doc_index_table.grantReadWriteData(this.lambda_list_idx )
     const bucket = s3.Bucket.fromBucketName(this, 'DocUploadBucket',process.env.UPLOAD_BUCKET);
     bucket.grantReadWrite(this.lambda_handle_upload);
@@ -315,7 +329,13 @@ export class LambdaStack extends NestedStack {
     prompt_hub.addMethod('GET',promptHubIntegration,{authorizer});
     prompt_hub.addResource("{id}").addMethod("GET",promptHubIntegration,{authorizer});
 
-
+     // model hub api
+     const modelHubIntegration = new LambdaIntegration(this.lambda_model_hub );
+     const model_hub = api.root.addResource('model_hub');
+     model_hub.addMethod('POST',modelHubIntegration,{authorizer});
+     model_hub.addMethod('DELETE',modelHubIntegration,{authorizer});
+     model_hub.addMethod('GET',modelHubIntegration,{authorizer});
+     model_hub.addResource("{id}").addMethod("GET",modelHubIntegration,{authorizer});
 
     const loginIntegration = new LambdaIntegration(this.login_fn);
     const login = api.root.addResource("login");

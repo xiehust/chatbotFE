@@ -42,7 +42,7 @@ export default function Content({id}){
     null
   );
   const [localStoredMsgItems, setLocalStoredMsgItems] = useLocalStorage(
-    params_local_storage_key + '-msgitems-'+id,
+    params_local_storage_key + username+'-msgitems-'+id,
     []
   );
   const [msgItems, setMsgItems] = useState(localStoredMsgItems);
@@ -143,7 +143,7 @@ export default function Content({id}){
     >
       <ModelSettings href={'/prompt_hub'}/>
       {ready?
-      <ContentLayout header={<Header variant="h1">{t("chatbot")+" "+agentInfo.template_name}</Header>}>
+      <ContentLayout header={<Header variant="h1">{t("start_chat")+" ["+agentInfo.template_name+ "]"}</Header>}>
         <SpaceBetween size="l">
           {alertopen && (
             <Alert statusIconAriaLabel="Error" dismissible type="error">

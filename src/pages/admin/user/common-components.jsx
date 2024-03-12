@@ -37,7 +37,7 @@ export const FullPageHeader = ({
         <SpaceBetween size="xs" direction="horizontal">
           {/* <Button disabled={!isOnlyOneSelected} name="view" >View details</Button> */}
           {/* <Button disabled={!isOnlyOneSelected} name="edit" >Edit</Button> */}
-          <Button disabled={props.selectedItems.length === 0} name="delete" >Delete</Button>
+          {/* <Button disabled={props.selectedItems.length === 0} name="delete" >Delete</Button> */}
           <Button iconName="add-plus" variant="primary" href={props.href}>{createButtonText} </Button>
         </SpaceBetween>
       }

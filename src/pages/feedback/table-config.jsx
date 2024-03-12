@@ -64,7 +64,7 @@ export const COLUMN_DEFINITIONS = addColumnSortLabels( [
 
 export const DEFAULT_PREFERENCES = {
   pageSize: 30,
-  visibleContent: ['question','feedback', 'action','timestamp'],
+  visibleContent: ['question','answer', 'action','timestamp'],
   wrapLines: false,
 };
 

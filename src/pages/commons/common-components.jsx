@@ -105,17 +105,17 @@ const navItems = [
       { type: 'link', text: i18n.t('model_hub'), href: '/model_hub' },
     ],
   }, 
-  {
-    type: 'section',
-    text: i18n.t('admin'),
-    items: [
-      // { type: 'link', text: i18n.t('docs'), href: '/docs' },
-      // { type: 'link', text: i18n.t('prompt_template'), href: '/template' },
-      { type: 'link', text: i18n.t('feedback_management'), href: '/feedback' },
-      // { type: 'link', text: i18n.t('examples_management'), href: '/examples' },
+  // {
+  //   type: 'section',
+  //   text: i18n.t('admin'),
+  //   items: [
+  //     { type: 'link', text: i18n.t('docs'), href: '/docs' },
+  //     { type: 'link', text: i18n.t('prompt_template'), href: '/template' },
+  //     { type: 'link', text: i18n.t('feedback_management'), href: '/feedback' },
+  //     { type: 'link', text: i18n.t('examples_management'), href: '/examples' },
 
-    ],
-  },
+  //   ],
+  // },
 ];
 
 

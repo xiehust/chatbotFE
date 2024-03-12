@@ -114,6 +114,7 @@ const ImageUrlItems = ({images})=>{
 
 return (
   <ImageList
+  key ={generateUniqueId()}
   sx={{ width: 1024, height: "auto", objectFit: "contain" }}
   cols={Math.max( 4)}
   // rowHeight={256}
@@ -123,7 +124,7 @@ return (
       try {
         const url = URL.createObjectURL(image);
         // const url = image;
-        return (<ImageListItem key={image.name}>
+        return (<ImageListItem key={generateUniqueId()}>
           <img
             src={url}
             alt={image.name}
@@ -133,7 +134,7 @@ return (
             }}
           />
           <ImageListItemBar
-            title={image.name}
+            // title={image.name}
             subtitle={
               <span>size: {(image.size / 1024).toFixed(1)}KB</span>
             }
@@ -174,7 +175,7 @@ const MsgItem = ({ who, text, images_base64,images, msgid, connectionId }) => {
         <ListItem >
           <Stack direction="row" spacing={2} sx={{ alignItems: "top" }}>
           <Avatar src={userlogo}  alt={"User"}/>
-          <ImageUrlItems images={imagesObj}/>
+          <ImageUrlItems key={generateUniqueId()} images={imagesObj}/>
           </Stack>
         </ListItem>
       )
@@ -188,7 +189,7 @@ const MsgItem = ({ who, text, images_base64,images, msgid, connectionId }) => {
         <ListItem >
           <Stack direction="row" spacing={2} sx={{ alignItems: "top" }}>
           <Avatar src={userlogo}  alt={"User"}/>
-          <ImageUrlItems images={images}/>
+          <ImageUrlItems key={generateUniqueId()}  images={images}/>
           </Stack>
         </ListItem>
       )
@@ -264,8 +265,8 @@ const ThumbButtons = ({ msgid, sessionId }) => {
   );
   useEffect(() => {}, []);
 
-  const main_fun_arn = localStoredParams.main_fun_arn;
-  const apigateway_endpoint = localStoredParams.apigateway_endpoint;
+  const main_fun_arn = localStoredParams?.main_fun_arn;
+  const apigateway_endpoint = localStoredParams?.apigateway_endpoint;
 
   const handleClickDown = async () => {
     const body = {
@@ -398,14 +399,40 @@ const TextItem = (props) => {
 const MemoizedMsgItem = memo(MsgItem);
 
 const ChatBox = ({ msgItems, loading }) => {
-  const [loadingtext, setLoaderTxt] = useState(".");
+  const [loadingtext, setLoaderTxt] = useState("Loading.");
+  const intervalRef = useRef(0);
+  function handleStartTick() {
+    
+    let textContent = "";
+    const intervalId = setInterval(() => {
+      setLoaderTxt((v) => v + ".");
+      textContent += ".";
+      if (textContent.length > 6) {
+        setLoaderTxt('Loading.');
+        textContent = "";
+      }
+    }, 500);
+    intervalRef.current = intervalId;
+  }
+
+  function handleStopClick() {
+    const intervalId = intervalRef.current;
+    if (intervalId) clearInterval(intervalId);
+  }
+
+  useEffect(() =>{
+    return ()=>{
+      handleStopClick();
+    }
+  },[])
+
   useEffect(() => {
     if (loading) {
-      setLoaderTxt("Waiting......");
-      // handleStartTick();
+      setLoaderTxt("Loading.");
+      handleStartTick();
     } else {
       setLoaderTxt("");
-      // handleStopClick();
+      handleStopClick();
     }
   }, [loading]);
 
@@ -472,7 +499,7 @@ const ConversationsPanel = ({id}) => {
   const authtoken = useAuthToken();
   const userinfo = useAuthUserInfo();
   const [localStoredMsgItems, setLocalStoredMsgItems] = useLocalStorage(
-    params_local_storage_key + "-msgitems-" + id,
+    params_local_storage_key + userinfo.username+ "-msgitems-" + id,
     []
   );
   useEffect(() => {

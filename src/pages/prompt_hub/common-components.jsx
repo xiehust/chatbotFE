@@ -73,7 +73,7 @@ export const TemplateEditor = (props) => {
       .then(ace => setAce(ace))
       .finally(() => setLoading(false));
   }, []);
-  return (props.readOnly ? <Textarea readOnly value={props.value} /> : <CodeEditor
+  return (props.readOnly ? <Textarea readOnly value={props.value} rows={24} /> : <CodeEditor
     {...props}
     preferences={preferences}
     onPreferencesChange={e => setPreferences(e.detail)}
@@ -142,8 +142,8 @@ export const DeleteConfirmModal = ({ selectItem, visible, setVisible, refreshAct
     null
   );
   const msgid = `msg-${Math.random().toString(8)}`;
-  const main_fun_arn = localStoredParams.main_fun_arn;
-  const apigateway_endpoint = localStoredParams.apigateway_endpoint;
+  const main_fun_arn = localStoredParams?.main_fun_arn;
+  const apigateway_endpoint = localStoredParams?.apigateway_endpoint;
   const deleteAction = () => {
     setLoading(true);
     const payload = {
@@ -228,7 +228,7 @@ export const FullPageHeader = ({
     setVisible(true);
   };
   const selectItem = isOnlyOneSelected ? props.selectedItems[0] : undefined;
-  console.log(selectItem);
+  // console.log(selectItem);
   return (
     <div>
       <DeleteConfirmModal visible={visible} setVisible={setVisible} selectItem={selectItem} refreshAction={props.refreshAction} />
@@ -313,7 +313,7 @@ export const DetailPanel = ({ readOnlyWithErrors = false, readOnly = false }) =>
           <FormField label={t("select_geo_category")}>
             <GeoSelect readOnly={readOnly} />
           </FormField>
-          <FormField label={t("email")} description={t("your_amazon_email")}>
+          <FormField label={t("uploader_email")} description={t("your_amazon_email")}>
             <Input
               invalid={inValid && !formData.email}
               placeholder="Required"
@@ -381,7 +381,7 @@ export const DetailPanel = ({ readOnlyWithErrors = false, readOnly = false }) =>
           </FormField>
           <FormField label={t("system_role_prompt")}>
             <Input
-              placeholder="Optional"
+              placeholder="(Optional)"
               readOnly={readOnly}
               value={formData.system_role_prompt}
               onChange={(event) =>
@@ -426,7 +426,7 @@ export const PreviewBox = ({formData})=>{
   // </Box>
   <Textarea
       value={previewTemplate(formData)}
-      rows={12}
+      rows={24}
       readOnly
     />
   )
