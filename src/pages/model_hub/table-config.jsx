@@ -64,6 +64,7 @@ export const HW_LIST = [
   { label: "P3.12xlarge", value: "P3.12xlarge" },
   { label: "P4d.24xlarge", value: "P4d.24xlarge" },
   { label: "P4de.24xlarge", value: "P4de.24xlarge" },
+  { label: "CPU instance", value: "CPU instance" },
   { label: "other", value: "other" },
 ]
 

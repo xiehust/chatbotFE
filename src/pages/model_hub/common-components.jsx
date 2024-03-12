@@ -351,6 +351,7 @@ export const DetailPanel = ({ readOnlyWithErrors = false, readOnly = false }) =>
                   setFormData((prev) => ({ ...prev, code_repo: event.detail.value }));
                   
                   if (isGitHubNotebookURL(event.detail.value)){
+                    setCodeRepoInvalid(false);
                     setInvalid(false);
                   }else{
                     setCodeRepoInvalid(true);
