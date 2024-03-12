@@ -472,7 +472,7 @@ const PromptPanel = ({ sendMessage, id }) => {
 
   return (
     //formData&&<PromptTemplateFormCtx.Provider  value = {{formData, setFormData}}>
-    formData && <Container footer={<ExpandableSettingPanel id={id} />}>
+    formData && <Container>
       <FormField
         stretch={true}
       >
@@ -566,6 +566,7 @@ const PromptPanel = ({ sendMessage, id }) => {
             </FormField>
 
           </SpaceBetween>
+          <ExpandableSettingPanel id={id} />
           <VariablesComp id={id} />
         </SpaceBetween>
 

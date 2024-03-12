@@ -304,17 +304,17 @@ const SignIn = ({setSession,signType,setSignType,username,setUsername,password,s
     setErrorState(false);
     setErrMsg('');
     const formdata = new FormData(event.currentTarget);
-    let username = DEFAULT_USERNAME;
-    let password = DEFAULT_PASSWORD;
+    let username_d = DEFAULT_USERNAME;
+    let password_d = DEFAULT_PASSWORD;
 
     if (signType !== 'anonymous_signin'){
-      username = formdata.get('username');
-      password = formdata.get('password')
+      username_d = formdata.get('username');
+      password_d = formdata.get('password')
     }
-    auth.signin(username,password)
+    auth.signin(username_d,password_d)
     .then((data)=>{
-      setLocalStoredCred({username:formdata.get('username'),
-                    password:formdata.get('password'),
+      setLocalStoredCred({username:username_d,
+                    password:password_d,
                    checked:checked});
         console.log(data);
         if (!(data?data.isAuthorized:false)){

@@ -67,7 +67,7 @@ export const Breadcrumbs = () => {
   const breadcrumbs = [
     {
       text: t("awschatportal"),
-      href: "/",
+      href: "/model_hub",
     },
     {
       text: t("model_hub"),

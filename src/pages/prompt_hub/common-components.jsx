@@ -89,7 +89,7 @@ export const Breadcrumbs = () => {
   const breadcrumbs = [
     {
       text: t("awschatportal"),
-      href: "/",
+      href: "/prompt_hub",
     },
     {
       text: t("prompt_hub"),
@@ -111,7 +111,7 @@ export const BreadcrumbsDynmic = ({ id }) => {
       items={[
         {
           text: t("awschatportal"),
-          href: "/home",
+          href: "/prompt_hub",
         },
         {
           text: t("prompt_hub"),
