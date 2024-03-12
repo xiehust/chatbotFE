@@ -77,9 +77,9 @@ function BaseFormContent({ content, onCancelClick, errorText = null }) {
             setNotificationItems((item) => [
               ...item,
               {
-                header: `Success to create prompt`,
+                header: `Success!`,
                 type: "success",
-                content: <Box>{'Created new prompt template:'}<Link href={`/prompt_hub/${formData?.id}`}>{`${formData?.template_name}`}</Link></Box>,
+                content: <Box>{'Created new model card:'}<Link href={`/model_hub/${formData?.id}`}>{`${formData?.model_name}`}</Link></Box>,
                 dismissible: true,
                 dismissLabel: "Dismiss message",
                 onDismiss: () =>
