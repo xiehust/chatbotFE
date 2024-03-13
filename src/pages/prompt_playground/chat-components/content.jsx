@@ -19,6 +19,7 @@ import { useAuthUserInfo,useAuthorizedHeader } from "../../commons/use-auth";
 import { defaultModelParams } from "./prompt-panel";
 import {useSettingCtx} from "../../commons/common-components";
 import { getPrompts } from "../../commons/api-gateway";
+import { generateId } from "../../prompt_hub/common-components";
 
 export default function Content({id}){
   
@@ -67,12 +68,25 @@ export default function Content({id}){
       id:id
   }
 
+  function formatHistoryMesssages (history_messages){
+    const msg_eles = Object.keys(history_messages).map(key => history_messages[key]);
+    return msg_eles.map( (it)=>({id:'id'+generateId(),
+                      who:it.role === 'assistant'?'AI':'user',
+                    text:it.content}))
+  }
+
   useEffect(()=>{
     setLoadingState(true);
     getPrompts(headers,queryParams)
     .then(data =>{
       // console.log(data);
       setAgentInfo(data);
+      setFormData(data);
+
+      //如果历史消息为空，则使用预制消息
+      if (msgItems.length === 0 && data.history_messages){
+        setMsgItems(formatHistoryMesssages(data.history_messages));
+      }
       setLoadingState(false);
       setReady(true);
       setModelParams(prev =>({
@@ -143,7 +157,7 @@ export default function Content({id}){
     >
       <ModelSettings href={'/prompt_hub'}/>
       {ready?
-      <ContentLayout header={<Header variant="h1">{t("start_chat")+" ["+agentInfo.template_name+ "]"}</Header>}>
+      <ContentLayout header={<Header variant="h1">{t("start_chat")+" ["+formData.template_name+ "]"}</Header>}>
         <SpaceBetween size="l">
           {alertopen && (
             <Alert statusIconAriaLabel="Error" dismissible type="error">

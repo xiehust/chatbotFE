@@ -16,6 +16,7 @@ import {
   Multiselect,
   Header,
   Toggle,
+  Grid,
   RadioGroup,
 } from "@cloudscape-design/components";
 import { TableHeader } from "../commons/common-components";
@@ -251,7 +252,7 @@ export const FullPageHeader = ({
             </Button>
             <Button
               disabled={!isOnlyOneSelected}
-              href={'/prompt_playground/'+selectItem?.id}
+              href={'/prompt_playground/' + selectItem?.id}
               variant="primary"
             >{t('start_chat')}
             </Button>
@@ -299,13 +300,13 @@ export const DetailPanel = ({ readOnlyWithErrors = false, readOnly = false }) =>
     <SpaceBetween size="l">
       <Container
         header={
-          <Header variant="h3" 
-          actions={<Button
-            disabled={!readOnly}
-            href={'/prompt_playground/'+formData?.id}
-            variant="primary"
-          >{t('start_chat')}
-          </Button>}>
+          <Header variant="h3"
+            actions={<Button
+              disabled={!readOnly}
+              href={'/prompt_playground/' + formData?.id}
+              variant="primary"
+            >{t('start_chat')}
+            </Button>}>
             {t('basic_info')}
           </Header>}
       >
@@ -342,7 +343,7 @@ export const DetailPanel = ({ readOnlyWithErrors = false, readOnly = false }) =>
       <Container
         header={
           <Header variant="h3" >
-            {t('main_info')}
+            {t('template_info')}
           </Header>}
       >
         <SpaceBetween size="l">
@@ -369,7 +370,7 @@ export const DetailPanel = ({ readOnlyWithErrors = false, readOnly = false }) =>
             />
           </FormField>
           <FormField label={t("description")}>
-            <Input
+            <Textarea
               placeholder="Optional"
               readOnly={readOnly}
               value={formData.description}
@@ -379,52 +380,55 @@ export const DetailPanel = ({ readOnlyWithErrors = false, readOnly = false }) =>
               }
             />
           </FormField>
-          <FormField label={t("system_role_prompt")}>
-            <Input
-              placeholder="(Optional)"
-              readOnly={readOnly}
-              value={formData.system_role_prompt}
-              onChange={(event) =>
-                !readOnlyWithErrors &&
-                setFormData((prev) => ({ ...prev, system_role_prompt: event.detail.value }))
-              }
-            />
-          </FormField>
-          <FormField label={t("prompt_content")}>
-            <TemplateEditor
-              readOnly={readOnly}
-              invalid={inValid}
-              value={formData.template}
-              onChange={(event) => {
-                setFormData((prev) => ({ ...prev, template: event.detail.value }));
-                setInvalid(false);
-                }
-              }
-            />
-          </FormField>
-          <FormField>
-            <AddMigrationComp readOnly={readOnly} />
-          </FormField>
-          <FormField stretch={true}>
-            <AddVariablesComp formData={formData} setFormData={setFormData} readOnly={readOnly} />
-          </FormField>
-          <FormField
-            label={t("preview")}
-          >
-            <PreviewBox formData={formData}/>
-          </FormField>
+
         </SpaceBetween>
+      </Container>
+      <Container
+        header={
+          <Header variant="h3" >
+            {t('main_info')}
+          </Header>}
+      >
+        <SpaceBetween size="l">
+        <OpeningQuesionsComp formData={formData} setFormData={setFormData} readOnly={readOnly} />
+        <FormField label={t("prompt_content")}>
+          <TemplateEditor
+            readOnly={readOnly}
+            invalid={inValid}
+            value={formData.template}
+            onChange={(event) => {
+              setFormData((prev) => ({ ...prev, template: event.detail.value }));
+              setInvalid(false);
+            }
+            }
+          />
+        </FormField>
+        <FormField>
+          <AddMigrationComp readOnly={readOnly} />
+        </FormField>
+        <FormField stretch={true}>
+          <AddVariablesComp formData={formData} setFormData={setFormData} readOnly={readOnly} />
+        </FormField>
+        </SpaceBetween>
+      </Container>
+      <Container>
+        <FormField
+          label={t("preview")}
+        >
+          <PreviewBox formData={formData} />
+        </FormField>
+
       </Container>
     </SpaceBetween>
   );
 }
 
-export const PreviewBox = ({formData})=>{
+export const PreviewBox = ({ formData }) => {
   return (
-  //   <Box variant="code">
-  //   {formatHtmlLines(previewTemplate(formData))}
-  // </Box>
-  <Textarea
+    //   <Box variant="code">
+    //   {formatHtmlLines(previewTemplate(formData))}
+    // </Box>
+    <Textarea
       value={previewTemplate(formData)}
       rows={24}
       readOnly
@@ -560,30 +564,30 @@ const AddMigrationComp = ({ readOnly }) => {
   const [checked, setChecked] = useState(formData.is_migration ?? false);
   return (
     <SpaceBetween size="l">
-      <Toggle 
-       description={t('if_is_gpt_migrate_desc')}
-       disabled={readOnly} checked={checked} onChange={(event) => {
-        setChecked(event.detail.checked);
-        setFormData((prev) => ({ ...prev, is_migration: event.detail.checked }))
-      }}>
+      <Toggle
+        description={t('if_is_gpt_migrate_desc')}
+        disabled={readOnly} checked={checked} onChange={(event) => {
+          setChecked(event.detail.checked);
+          setFormData((prev) => ({ ...prev, is_migration: event.detail.checked }))
+        }}>
         {t('is_migration')}
       </Toggle>
       {checked &&
-         <FormField  description={t('gpt_prompt_content_desc')}>
-        <TemplateEditor
-          readOnly={readOnly}
-          invalid={inValid}
-          value={formData.gpt_template}
-          onChange={(event) => {
-            setFormData((prev) => ({
-              ...prev,
-              gpt_template: event.detail.value
-            }));
-            setInvalid(false);
-          }
-          }
-        />
-         </FormField>
+        <FormField description={t('gpt_prompt_content_desc')}>
+          <TemplateEditor
+            readOnly={readOnly}
+            invalid={inValid}
+            value={formData.gpt_template}
+            onChange={(event) => {
+              setFormData((prev) => ({
+                ...prev,
+                gpt_template: event.detail.value
+              }));
+              setInvalid(false);
+            }
+            }
+          />
+        </FormField>
       }
     </SpaceBetween>
   )
@@ -624,6 +628,140 @@ export const AddVariablesComp = ({ formData, setFormData, readOnly }) => {
             }} />
         </SpaceBetween>
       </SpaceBetween>
+  )
+}
+
+
+const OpeningQuesionInputComp = ({ sn, formData, setFormData, readOnly }) => {
+  const roles = [{ label: "Assistant", value: "assistant", iconName: "contact" },
+  { label: "User", value: "user", iconName: "user-profile" },
+  { label: "System", value: "system", iconName: "suggestions" },
+  ]
+  const { t } = useTranslation();
+  const roleName = sn > 0?roles[sn % 2].value :'system';
+  // console.log(formData);
+  const [inputVal, setInputVal] = useState(
+    formData.history_messages ? 
+    (formData.history_messages.hasOwnProperty(sn)&& formData.history_messages[sn].role === roleName ?formData.history_messages[sn].content: ''):''
+  )
+  const [selectedOption, setSelectedOption] = useState(sn>0?roles[sn % 2]:roles[2]);
+
+  return (
+    <FormField
+      label={selectedOption.value === 'system'?t("system_role_prompt"):(t("prefilling_message") + ' ' + sn)}
+      stretch={true}
+      constraintText={`${inputVal.length}/1000`}
+    >
+      <Grid gridDefinition={[{ colspan: 2 }, { colspan: 6 }]}>
+        <FormField stretch={true}>
+          <Select
+            selectedOption={selectedOption}
+            onChange={({ detail }) =>
+              setSelectedOption(detail.selectedOption)
+            }
+            disabled={readOnly}
+            options={roles}
+          />
+        </FormField>
+        <FormField stretch={true}>
+          <Textarea
+            rows={1}
+            placeholder="Optional"
+            readOnly={readOnly}
+            value={inputVal}
+            onChange={({ detail }) => {
+              setInputVal(detail.value);
+              setFormData((prev) => ({ ...prev, history_messages:{...prev.history_messages,[sn]:{role:selectedOption.value,content:detail.value}}  }));
+              if (selectedOption.value === 'assistant') { //sn 预留给system用,后续改成message api之后，这个字段不需要了
+                setFormData((prev) => ({ ...prev, system_role_prompt: detail.value}));
+              }
+            }
+            }
+          />
+        </FormField>
+      </Grid>
+
+    </FormField>
+  )
+}
+
+const SystemInputComp = ({ sn, formData, setFormData, readOnly }) => {
+  const roles = [{ label: "System", value: "system", iconName: "suggestions" }]
+  const { t } = useTranslation();
+  const [inputVal, setInputVal] = useState(
+    formData.history_messages ? 
+    (formData.history_messages.hasOwnProperty(sn)&& formData.history_messages[sn].role === 'system'?formData.history_messages[sn].content: ''):
+    ''
+  )
+  // const [inputVal, setInputVal] = useState(
+  //   formData.system_role_prompt??''); //sn starts from 1
+  const [selectedOption, setSelectedOption] = useState(roles[sn % 2]);
+  return (
+    <FormField
+      label={t("system_role_prompt")}
+      stretch={true}
+      constraintText={`${inputVal.length}/1000`}
+    >
+      <Grid gridDefinition={[{ colspan: 2 }, { colspan: 6 }]}>
+        <FormField stretch={true}>
+          <Select
+            selectedOption={selectedOption}
+            onChange={({ detail }) =>
+              setSelectedOption(detail.selectedOption)
+            }
+            disabled={readOnly}
+            options={roles}
+          />
+        </FormField>
+        <FormField stretch={true}>
+          <Textarea
+            rows={1}
+            placeholder="Optional"
+            readOnly={readOnly}
+            value={formData.system_role_prompt}
+            onChange={({ detail }) => {
+              setInputVal(detail.value);
+              setFormData((prev) => ({ ...prev, system_role_prompt: detail.value,history_messages:{...prev.history_messages,[sn]:{role:'system',content:detail.value}} }));
+            }
+            }
+          />
+        </FormField>
+      </Grid>
+
+    </FormField>
+  )
+}
+
+
+const initArray = (n) => Array.from({ length: n }, (_, i) => i + 1);
+
+export const OpeningQuesionsComp = ({ readOnly,formData, setFormData  }) => {
+  const { t } = useTranslation();
+  const [cnts,setCnts] = useState(
+    formData.history_messages
+    ?Object.keys(formData.history_messages).map(key => Number(key))
+    :[0]);
+
+
+  return (
+    <SpaceBetween size='s'>
+      {/* <SystemInputComp sn={0} formData={formData} setFormData={setFormData} readOnly={readOnly}/> */}
+      {cnts.map(sn => <OpeningQuesionInputComp key={sn} sn={sn} formData={formData} setFormData={setFormData} readOnly={readOnly} />)}
+      <SpaceBetween size='xs' direction="horizontal">
+        <Button iconName="add-plus" variant="icon"
+          disabled={cnts.length >= 10 || readOnly}
+          onClick={(event) => {
+            event.preventDefault();
+            setCnts(prev => [...prev, prev[prev.length - 1] + 1])
+          }} />
+        <Button iconName="remove" variant="icon"
+          disabled={cnts.length <= 1 || readOnly}
+          onClick={(event) => {
+            event.preventDefault();
+            setCnts((prev) => prev.slice(0, prev.length - 1))
+          }} />
+      </SpaceBetween>
+    </SpaceBetween>
   )
 }
 

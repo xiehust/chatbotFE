@@ -233,7 +233,9 @@ i18n
             model_published_date:'Model Published Date',
             model_tags:'Model Tags',
             delete_model:'Delete Model',
-            add_model:'Add Model'
+            add_model:'Add Model',
+            prefilling_message:'Prefill History',
+            template_info:'PE Template Information'
         }
       },
       zh:{
@@ -453,7 +455,9 @@ i18n
             model_published_date:'模型发布时间',
             model_tags:'模型标签',
             delete_model:'删除Model',
-            add_model:'新增Model'
+            add_model:'新增Model',
+            prefilling_message:'预置历史消息',
+            template_info:'PE模板信息'
         }
       }
     }

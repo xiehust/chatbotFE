@@ -25,7 +25,7 @@ import { models } from "../../../common/shared";
 import { useLocalStorage } from "../../../common/localStorage";
 import { getPrompts, uploadS3, uploadFile } from "../../commons/api-gateway";
 import { params_local_storage_key } from "./common-components";
-import { AddVariablesComp, PreviewBox, TemplateEditor, previewTemplate } from "../../prompt_hub/common-components";
+import { AddVariablesComp, OpeningQuesionsComp, TemplateEditor, previewTemplate } from "../../prompt_hub/common-components";
 
 
 const default_bucket = process.env.REACT_APP_DEFAULT_UPLOAD_BUCKET;
@@ -352,11 +352,12 @@ const VariablesComp = ({ id }) => {
       headerText={t('variables_config')}
     >
       {formData &&
-        <Grid gridDefinition={[{ colspan: 5 }, { colspan: 5 }]}>
+        <Grid gridDefinition={[{ colspan: 5 }, { colspan: 7 }]}>
           <AddVariablesComp formData={formData} setFormData={setFormData} />
           <SpaceBetween size="l">
-            <FormField label={t("system_role_prompt")}>
-              <Input
+            {/* <FormField label={t("system_role_prompt")}> */}
+              <OpeningQuesionsComp  formData={formData} setFormData={setFormData}/>
+              {/* <Input
                 placeholder="Optional"
                 value={formData.system_role_prompt}
                 onChange={(event) => {
@@ -367,8 +368,8 @@ const VariablesComp = ({ id }) => {
                   }));
                 }
                 }
-              />
-            </FormField>
+              /> */}
+            {/* </FormField> */}
             <FormField label={t("prompt_content")} >
               <TemplateEditor value={formData.template}
                 onChange={(event) => {
@@ -405,8 +406,9 @@ const PromptPanel = ({ sendMessage, id }) => {
     newChatLoading,
     setNewChatLoading,
     formData,
-    setFormData
+    setFormData,
   } = useChatData();
+
   const [localStoredParams, setLocalStoredParams] = useLocalStorage(
     params_local_storage_key + userinfo.username,
     null
@@ -429,20 +431,19 @@ const PromptPanel = ({ sendMessage, id }) => {
       : defaultModelParams.use_stream
   );
 
-  useEffect(() => {
-    getPrompts(headers, { id: id }).then(data => {
-      setFormData(data);
-      console.log(data);
-    }).catch(err => {
-      console.log(err);
-    })
-  }, []);
+  // useEffect(() => {
+  //   getPrompts(headers, { id: id }).then(data => {
+  //     setFormData(data);
+  //   }).catch(err => {
+  //     console.log(err);
+  //   })
+  // }, []);
 
   const onSubmit = (values, imgUrl = null) => {
     setStopFlag(true);
-    // console.log(values);
     const prompt = values.trimEnd();
     if (prompt === "") {
+      setStopFlag(false);
       return;
     }
     const respid = generateUniqueId();
@@ -461,7 +462,8 @@ const PromptPanel = ({ sendMessage, id }) => {
     setConversations((prev) => [...prev, { role: "user", content: prompt }]);
     const messages = [...conversations, { role: "user", content: prompt }];
     setLoading(true);
-    const params = { ...modelParams, imgurl: img2txtUrl }
+    console.log("formData modelParams:", formData);
+    const params = { ...modelParams, imgurl: img2txtUrl, 'history_messsages':formData.history_messsages }
     sendMessage({
       action: "sendprompt",
       payload: { msgid: respid, messages: messages, params: params },
