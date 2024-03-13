@@ -542,8 +542,8 @@ const VariableComp = ({ sn, formData, setFormData, readOnly }) => {
           rows={1}
           value={defaultValue}
           onChange={({ detail }) => {
-            detail.value?.length > 1000 ? setInvalid2(true) : setInvalid2(false);
-            const restrict_val = detail.value.slice(0, 1000);
+            detail.value?.length > 10000 ? setInvalid2(true) : setInvalid2(false);
+            const restrict_val = detail.value.slice(0, 10000);
             setDefaultValue(restrict_val);
             setFormData((prev) => ({ ...prev, variable_values: { ...prev.variable_values, [sn]: restrict_val } }));
           }
