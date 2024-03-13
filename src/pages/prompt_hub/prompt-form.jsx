@@ -58,7 +58,7 @@ function BaseFormContent({ content, onCancelClick, errorText = null }) {
           return "";
         }
         setSubLoading(true);
-        console.log(JSON.stringify(formData));
+        // console.log(JSON.stringify(formData));
         const id = msgid;
         const body = { ...formData, 
         id: id, 
@@ -76,7 +76,7 @@ function BaseFormContent({ content, onCancelClick, errorText = null }) {
               {
                 header: `Success to create prompt`,
                 type: "success",
-                content: <Box>{'Created new prompt template:'}<Link href={`/prompt_hub/${formData?.id}`}>{`${formData?.template_name}`}</Link></Box>,
+                content: <Box>{'Created new prompt template:'}<Link href={`/prompt_hub/${id}`}>{`${formData?.template_name}`}</Link></Box>,
                 dismissible: true,
                 dismissLabel: "Dismiss message",
                 onDismiss: () =>
