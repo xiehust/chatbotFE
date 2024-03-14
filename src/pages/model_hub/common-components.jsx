@@ -338,7 +338,7 @@ export const DetailPanel = ({ readOnlyWithErrors = false, readOnly = false }) =>
           </FormField>
           <FormField
             label={t("code_repo")}
-            constraintText="only allows url endswith.ipynb"
+            constraintText="put your code link or repo link here"
           >
             <Input
               // invalid={inValid && !formData.code_repo}
@@ -349,14 +349,14 @@ export const DetailPanel = ({ readOnlyWithErrors = false, readOnly = false }) =>
               onChange={(event) => {
                 !readOnlyWithErrors &&
                   setFormData((prev) => ({ ...prev, code_repo: event.detail.value }));
-                  
-                  if (isGitHubNotebookURL(event.detail.value)){
-                    setCodeRepoInvalid(false);
-                    setInvalid(false);
-                  }else{
-                    setCodeRepoInvalid(true);
-                    setInvalid(false);
-                  }       
+                  setInvalid(false);
+                  // if (isGitHubNotebookURL(event.detail.value)){
+                  //   setCodeRepoInvalid(false);
+                  //   setInvalid(false);
+                  // }else{
+                  //   setCodeRepoInvalid(true);
+                  //   setInvalid(false);
+                  // }       
               }
               }
             />
