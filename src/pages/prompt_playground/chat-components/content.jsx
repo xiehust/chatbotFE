@@ -61,7 +61,7 @@ export default function Content({id}){
   const [formData, setFormData] = useState();
 
   const headers = useAuthorizedHeader();
-  const [agentInfo,setAgentInfo] = useState({});
+  // const [agentInfo,setAgentInfo] = useState({});
   const [ready,setReady] = useState(false);
   const company = userinfo?.company || 'default';
   const queryParams = {
@@ -80,7 +80,7 @@ export default function Content({id}){
     getPrompts(headers,queryParams)
     .then(data =>{
       // console.log(data);
-      setAgentInfo(data);
+      // setAgentInfo(data);
       setFormData(data);
 
       //如果历史消息为空，则使用预制消息
@@ -152,7 +152,7 @@ export default function Content({id}){
         // setUseTrace,
         // enableSearch,
         // setEnableSearch,
-        agentInfo
+        // agentInfo
       }}
     >
       <ModelSettings href={'/prompt_hub'}/>

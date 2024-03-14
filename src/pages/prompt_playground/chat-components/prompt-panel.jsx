@@ -36,26 +36,16 @@ export const defaultModelParams = {
   model_name_opt: models[0],
   use_qa: false,
   multi_rounds: true,
-  // embedding_model_name: embeddings[0].value,
-  // embedding_model_name_opt: embeddings[0],
   obj_prefix: "ai-content/",
   system_role: "",
   system_role_prompt: "",
   template_id: "empty",
   template_opt: { label: "default", value: "default" },
-  // template_id: "1698905450793-bcfab8",
-  // template_opt: { label: "sso-chatbot-1102", value: "1698905450793-bcfab8" },
   hide_ref: false,
   use_stream: true,
   use_trace: true,
 };
 
-
-// const PromptTemplateFormCtx = createContext();
-
-// const useTemplateFormCtx = () => {
-//   return useContext(PromptTemplateFormCtx);
-// }
 
 
 function generateId() {
@@ -66,7 +56,7 @@ function generateId() {
 
 const ExpandableSettingPanel = ({ id }) => {
   const { t } = useTranslation();
-  const { agentInfo } = useChatData();
+  const { formData } = useChatData();
   const userinfo = useAuthUserInfo();
   const username = userinfo?.username || "default";
   const [localStoredParams, setLocalStoredParams] = useLocalStorage(
@@ -122,13 +112,14 @@ const ExpandableSettingPanel = ({ id }) => {
         localStoredParams?.model_name || defaultModelParams.model_name,
       system_role:
         localStoredParams?.system_role || defaultModelParams.system_role,
-      system_role_prompt: agentInfo.system_role_prompt,
+      system_role_prompt: formData.system_role_prompt,
       template_id: defaultModelParams.template_id,
       username: userinfo?.username,
       company: userinfo?.company || "default",
+      history_messages:Object.keys(formData.history_messages).map(key => formData.history_messages[key]),
       feedback: null,
     });
-  }, []);
+  }, [formData]);
 
   return (
     <ExpandableSection headerText={t("addtional_settings")} variant="footer">
@@ -453,7 +444,7 @@ const PromptPanel = ({ sendMessage, id }) => {
     ]);
 
     //save the messages to localstorage
-    console.log(msgItems);
+    // console.log(msgItems);
     setLocalStoredMsgItems([
       ...msgItems,
       { id: respid, who: userinfo.username, text: prompt },
@@ -462,13 +453,13 @@ const PromptPanel = ({ sendMessage, id }) => {
     setConversations((prev) => [...prev, { role: "user", content: prompt }]);
     const messages = [...conversations, { role: "user", content: prompt }];
     setLoading(true);
-    console.log("formData modelParams:", formData);
-    const params = { ...modelParams, imgurl: img2txtUrl, 'history_messsages':formData.history_messsages }
+    const params = { ...modelParams, imgurl: img2txtUrl };
+    console.log("PromptPanel modelParams:", params);
+
     sendMessage({
       action: "sendprompt",
       payload: { msgid: respid, messages: messages, params: params },
     });
-    console.log("PromptPanel modelParams:", params);
     setPromptValue("");
   };
 

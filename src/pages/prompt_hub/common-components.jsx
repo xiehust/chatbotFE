@@ -657,7 +657,14 @@ const OpeningQuesionInputComp = ({ sn, formData, setFormData, readOnly }) => {
           <Select
             selectedOption={selectedOption}
             onChange={({ detail }) =>
-              setSelectedOption(detail.selectedOption)
+            {
+              setSelectedOption(detail.selectedOption);
+              setFormData((prev) => ({ ...prev, history_messages:{...prev.history_messages,[sn]:{role:detail.selectedOption.value,
+                content:prev.history_messages&&prev.history_messages[sn].content}}  }));
+              if (detail.selectedOption.value === 'system') { //sn 预留给system用,后续改成message api之后，这个字段不需要了
+                setFormData((prev) => ({ ...prev, system_role_prompt: prev.history_messages&&prev.history_messages[sn].content}));
+              }
+            }
             }
             disabled={readOnly}
             options={roles}
@@ -672,7 +679,7 @@ const OpeningQuesionInputComp = ({ sn, formData, setFormData, readOnly }) => {
             onChange={({ detail }) => {
               setInputVal(detail.value);
               setFormData((prev) => ({ ...prev, history_messages:{...prev.history_messages,[sn]:{role:selectedOption.value,content:detail.value}}  }));
-              if (selectedOption.value === 'assistant') { //sn 预留给system用,后续改成message api之后，这个字段不需要了
+              if (selectedOption.value === 'system') { //sn 预留给system用,后续改成message api之后，这个字段不需要了
                 setFormData((prev) => ({ ...prev, system_role_prompt: detail.value}));
               }
             }
@@ -685,55 +692,8 @@ const OpeningQuesionInputComp = ({ sn, formData, setFormData, readOnly }) => {
   )
 }
 
-const SystemInputComp = ({ sn, formData, setFormData, readOnly }) => {
-  const roles = [{ label: "System", value: "system", iconName: "suggestions" }]
-  const { t } = useTranslation();
-  const [inputVal, setInputVal] = useState(
-    formData.history_messages ? 
-    (formData.history_messages.hasOwnProperty(sn)&& formData.history_messages[sn].role === 'system'?formData.history_messages[sn].content: ''):
-    ''
-  )
-  // const [inputVal, setInputVal] = useState(
-  //   formData.system_role_prompt??''); //sn starts from 1
-  const [selectedOption, setSelectedOption] = useState(roles[sn % 2]);
-  return (
-    <FormField
-      label={t("system_role_prompt")}
-      stretch={true}
-      constraintText={`${inputVal.length}/1000`}
-    >
-      <Grid gridDefinition={[{ colspan: 2 }, { colspan: 6 }]}>
-        <FormField stretch={true}>
-          <Select
-            selectedOption={selectedOption}
-            onChange={({ detail }) =>
-              setSelectedOption(detail.selectedOption)
-            }
-            disabled={readOnly}
-            options={roles}
-          />
-        </FormField>
-        <FormField stretch={true}>
-          <Textarea
-            rows={1}
-            placeholder="Optional"
-            readOnly={readOnly}
-            value={formData.system_role_prompt}
-            onChange={({ detail }) => {
-              setInputVal(detail.value);
-              setFormData((prev) => ({ ...prev, system_role_prompt: detail.value,history_messages:{...prev.history_messages,[sn]:{role:'system',content:detail.value}} }));
-            }
-            }
-          />
-        </FormField>
-      </Grid>
 
-    </FormField>
-  )
-}
-
-
-const initArray = (n) => Array.from({ length: n }, (_, i) => i + 1);
+// const initArray = (n) => Array.from({ length: n }, (_, i) => i + 1);
 
 export const OpeningQuesionsComp = ({ readOnly,formData, setFormData  }) => {
   const { t } = useTranslation();
@@ -758,7 +718,11 @@ export const OpeningQuesionsComp = ({ readOnly,formData, setFormData  }) => {
           disabled={cnts.length <= 1 || readOnly}
           onClick={(event) => {
             event.preventDefault();
-            setCnts((prev) => prev.slice(0, prev.length - 1))
+            setCnts((prev) => prev.slice(0, prev.length - 1));
+            setFormData( prev => {
+              let t = prev.history_messages
+              delete t[cnts.length-1];
+              return {...prev,history_messages:{...t}}})
           }} />
       </SpaceBetween>
     </SpaceBetween>
