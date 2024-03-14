@@ -231,11 +231,15 @@ i18n
             mini_hardware:'Required Hardware',
             support_hardware:'Supported Hardware',
             model_published_date:'Model Published Date',
-            model_tags:'Model Tags',
+            model_tags:'Other Features',
             delete_model:'Delete Model',
             add_model:'Add Model',
             prefilling_message:'Prefill History',
-            template_info:'PE Template Information'
+            template_info:'PE Template Information',
+            code_type:'Code Type',
+            frame_work:'Framework',
+            deploy_mode:'Deploy Mode',
+            quant_method:'Quantization Method'
         }
       },
       zh:{
@@ -453,11 +457,15 @@ i18n
             mini_hardware:'最低需求机型',
             support_hardware:'支持需求机型',
             model_published_date:'模型发布时间',
-            model_tags:'模型标签',
+            model_tags:'其他特性标签',
             delete_model:'删除Model',
             add_model:'新增Model',
             prefilling_message:'预置历史消息',
-            template_info:'PE模板信息'
+            template_info:'PE模板信息',
+            code_type:'代码类型',
+            frame_work:'框架',
+            deploy_mode:'部署方式',
+            quant_method:'量化方法'
         }
       }
     }

@@ -15,7 +15,9 @@ const VISIBLE_CONTENT_OPTIONS = [
       { id: 'model_size', label: i18n.t('model_size') },
       { id: 'model_type', label:  i18n.t('model_type'), },
       { id: 'description', label: i18n.t('description')},
-      { id: 'code_repo', label: i18n.t('code_repo')},
+      { id: 'code_type', label: i18n.t('code_type')},
+      { id: 'framework_type', label: i18n.t('framework_type')},
+      { id: 'quant_method', label: i18n.t('quant_method')},
       { id: 'mini_hardware', label: i18n.t('mini_hardware')},
       { id: 'model_published_date', label: i18n.t('model_published_date')},
       { id: 'model_tags', label: i18n.t('model_tags')},
@@ -31,40 +33,67 @@ const VISIBLE_CONTENT_OPTIONS = [
 export const MODEL_TYPE_LIST = [
   { label: "LLM", value: "LLM" },
   { label: "Mutil-Modal", value: "Mutil-Modal" },
-  { label: "Eembedding", value: "Eembedding" },
-  { label: "Rerank", value: "Rerank" },
-  { label: "Diffusion", value: "Diffusion" },
+  { label: "Embedding", value: "Embedding" },
+  // { label: "Rerank", value: "Rerank" },
+  // { label: "Diffusion", value: "Diffusion" },
   { label: "Others", value: "Others" },
 ]
 
 export const MODEL_SIZE_LIST = [
   { label: "<6B", value: "<6B" },
-  { label: "6~7B", value: "6~7B" },
-  { label: "13-14B", value: "13-14B" },
-  { label: "34B", value: "34B" },
-  { label: "70B", value: "70B" },
-  { label: ">70B", value: ">70B" },
-  { label: "Others", value: "Others" },
+  { label: "6~10B", value: "6~10B" },
+  { label: "10~20B", value: "10~20B" },
+  { label: "20~40B", value: "20~40B" },
+  { label: "40~100B", value: "40~100B" },
+  { label: ">100B", value: ">100B" },
 ]
 
 export const MODEL_TAG_LIST = [
   { label: "Rolling Batch Support", value: "rolling_batch_support" },
   { label: "Batch Support", value: "batch_support" },
-  { label: "VLLM support", value: "vllm_support" },
+]
 
+export const QUANT_METHOD = [
+  { label: "BitAndBytes", value: "BitAndBytes" },
+  { label: "GPTQ", value: "GPTQ" },
+  { label: "AWQ", value: "AWQ" },
+  { label: "SmoothQuant", value: "SmoothQuant" },
+  { label: "-", value: "-" },
 ]
 
 export const HW_LIST = [
-  { label: "G4dn.xlarge", value: "G4dn.xlarge" },
-  { label: "G4dn.2xlarge", value: "G4dn.2xlarge" },
-  { label: "G4dn.12xlarge", value: "G4dn.12xlarge" },
-  { label: "G5.2xlarge", value: "G5.2xlarge" },
-  { label: "G5.12xlarge", value: "G5.12xlarge" },
-  { label: "P3.2xlarge", value: "P3.2xlarge" },
-  { label: "P3.12xlarge", value: "P3.12xlarge" },
-  { label: "P4d.24xlarge", value: "P4d.24xlarge" },
-  { label: "P4de.24xlarge", value: "P4de.24xlarge" },
+  { label: "G4dn single-GPU", value: "G4dn.single-GPU" },
+  { label: "G4dn multi-GPU", value: "G4dn.multi-GPU" },
+  { label: "G5 single-GPU", value: "G5.single-GPU" },
+  { label: "G5 multi-GPU", value: "G5.multi-GPU" },
+  { label: "P3 single-GPU", value: "P3.single-GPU" },
+  { label: "P3 multi-GPU", value: "P3.multi-GPU" },
+  { label: "P4d", value: "P4d" },
+  { label: "P4de", value: "P4de" },
+  { label: "Trn1", value: "Trn1" },
+  { label: "Inf2", value: "Inf2" },
   { label: "CPU instance", value: "CPU instance" },
+  { label: "other", value: "other" },
+]
+
+export const CODE_TYPE_LIST = [
+  { label: "Inference", value: "inference" },
+  { label: "Training", value: "training" }
+]
+
+
+export const FRAMEWORK_TYPE_LIST = [
+  { label: "Deepspeed", value: "deepspeed" },
+  { label: "vLLM", value: "vllm" },
+  { label: "Tensor-RT", value: "tensor_rt" },
+  { label: "TGI", value: "tgi" },
+  { label: "other", value: "other" },
+]
+
+export const MODEL_DEPLOY_MODE_LIST = [
+  { label: "Sagemaker", value: "sagemaker" },
+  { label: "EC2", value: "EC2" },
+  { label: "EKS", value: "EKS" },
   { label: "other", value: "other" },
 ]
 
@@ -115,10 +144,28 @@ export const COLUMN_DEFINITIONS = addColumnSortLabels([
     sortingField: "model_published_date",
   },
   {
-    id: 'code_repo',
-    cell: item =>item.code_repo||'-',
-    header: i18n.t('code_repo'),
-    sortingField: "code_repo",
+    id: 'model_deploy_mode',
+    cell: item =>item.model_deploy_mode||'-',
+    header: i18n.t('deploy_mode'),
+    sortingField: "model_deploy_mode",
+  },
+  {
+    id: 'code_type',
+    cell: item =>item.code_type||'-',
+    header: i18n.t('code_type'),
+    sortingField: "code_type",
+  },
+  {
+    id: 'framework_type',
+    cell: item =>item.framework_type||'-',
+    header: i18n.t('frame_work'),
+    sortingField: "framework_type",
+  },
+  {
+    id: 'quant_method',
+    cell: item =>item.quant_method||'-',
+    header: i18n.t('quant_method'),
+    sortingField: "quant_method",
   },
   {
     id: 'mini_hardware',
@@ -132,12 +179,12 @@ export const COLUMN_DEFINITIONS = addColumnSortLabels([
     header: i18n.t('description'),
     sortingField: "description",
   },
-  {
-    id: 'model_tags',
-    cell: item =>item.model_tags||'-',
-    header: i18n.t('model_tags'),
-    sortingField: "model_tags",
-  },
+  // {
+  //   id: 'model_tags',
+  //   cell: item =>item.model_tags||'-',
+  //   header: i18n.t('model_tags'),
+  //   sortingField: "model_tags",
+  // },
   {
     id: 'email',
     cell: item =>item.email||'-',

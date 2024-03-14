@@ -642,7 +642,7 @@ const OpeningQuesionInputComp = ({ sn, formData, setFormData, readOnly }) => {
   // console.log(formData);
   const [inputVal, setInputVal] = useState(
     formData.history_messages ? 
-    (formData.history_messages.hasOwnProperty(sn)&& formData.history_messages[sn].role === roleName ?formData.history_messages[sn].content: ''):''
+    (formData.history_messages.hasOwnProperty(sn)&& formData.history_messages[sn].role === roleName ?formData.history_messages[sn].content??'': ''):''
   )
   const [selectedOption, setSelectedOption] = useState(sn>0?roles[sn % 2]:roles[2]);
 
