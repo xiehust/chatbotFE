@@ -116,7 +116,7 @@ const ExpandableSettingPanel = ({ id }) => {
       template_id: defaultModelParams.template_id,
       username: userinfo?.username,
       company: userinfo?.company || "default",
-      history_messages:Object.keys(formData.history_messages).map(key => formData.history_messages[key]),
+      history_messages:formData.history_messages&&Object.keys(formData.history_messages).map(key => formData.history_messages[key]),
       feedback: null,
     });
   }, [formData]);
