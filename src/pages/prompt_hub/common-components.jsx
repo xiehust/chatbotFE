@@ -721,7 +721,7 @@ export const OpeningQuesionsComp = ({ readOnly,formData, setFormData  }) => {
             setCnts((prev) => prev.slice(0, prev.length - 1));
             setFormData( prev => {
               let t = prev.history_messages
-              delete t[cnts.length-1];
+              t&& delete t[cnts.length-1];
               return {...prev,history_messages:{...t}}})
           }} />
       </SpaceBetween>
