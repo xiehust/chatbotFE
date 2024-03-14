@@ -660,7 +660,7 @@ const OpeningQuesionInputComp = ({ sn, formData, setFormData, readOnly }) => {
             {
               setSelectedOption(detail.selectedOption);
               setFormData((prev) => ({ ...prev, history_messages:{...prev.history_messages,[sn]:{role:detail.selectedOption.value,
-                content:prev.history_messages&&prev.history_messages[sn].content}}  }));
+                content:prev.history_messages&&prev.history_messages[sn]?.content}}  }));
               if (detail.selectedOption.value === 'system') { //sn 预留给system用,后续改成message api之后，这个字段不需要了
                 setFormData((prev) => ({ ...prev, system_role_prompt: prev.history_messages&&prev.history_messages[sn].content}));
               }
