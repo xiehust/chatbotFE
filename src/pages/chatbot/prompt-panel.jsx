@@ -583,7 +583,8 @@ const PromptPanel = ({ sendMessage }) => {
   };
 
   return (
-    <Container footer={<ExpandableSettingPanel />}>
+    // <Container footer={<ExpandableSettingPanel />}>
+    <Container>
       <FormField
         stretch={true}
         // label={t('prompt_label')}
