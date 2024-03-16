@@ -1,7 +1,7 @@
 export const models = [
   { label:'claude-v3-Sonnet',
   value:'claude-v3-sonnet'},
-  { label:'claude-v3-Haiku (Coming Soon)',
+  { label:'claude-v3-Haiku',
   value:'claude-v3-haiku'},
   { label:'claude-v3-Opus (Coming Soon)',
   value:'claude-v3-opus'},

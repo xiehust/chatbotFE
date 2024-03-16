@@ -20,7 +20,7 @@ import {useSimpleNotifications} from '../commons/use-notifications';
 import {useAuthUserInfo, useAuthorizedHeader} from "../commons/use-auth";
 import {getPrompts} from '../commons/api-gateway';
 import { useTranslation } from 'react-i18next';
-import {params_local_storage_key} from "../chatbot/common-components";
+import {params_local_storage_key} from "./common-components";
 import ModelSettings from "../commons/chat-settings";
 
 

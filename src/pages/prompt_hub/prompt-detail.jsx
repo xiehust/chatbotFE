@@ -15,7 +15,7 @@ import { BreadcrumbsDynmic ,generateId,DetailPanel,addTemplateFormCtx,useTemplat
 import { CustomAppLayout, Navigation } from "../commons/common-components";
 import { useAuthorizedHeader, useAuthUserInfo } from "../commons/use-auth";
 import {getPrompts,addPrompt} from '../commons/api-gateway';
-import {params_local_storage_key} from "../chatbot/common-components";
+import {params_local_storage_key} from "./common-components";
 import { useLocalStorage } from '../../common/localStorage';
 import { useTranslation } from "react-i18next";
 import { useSimpleNotifications } from "../commons/use-notifications";
@@ -26,7 +26,6 @@ import { useNavigate } from "react-router-dom";
 function validateForm(props) {
   if (
     !props.template_name?.length ||
-    !props.template?.length ||
     !props.email?.length ||
     !props.prompt_category 
   ) {
@@ -58,6 +57,7 @@ function BaseFormContent({ content,setReadOnly, errorText = null }) {
         event.preventDefault();
         console.log(formData);
         if (!validateForm(formData)) {
+          console.log('invalid form')
           setInvalid(true);
           return "";
         }

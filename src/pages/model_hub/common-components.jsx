@@ -16,6 +16,7 @@ import {
   Multiselect,
   Header,
   Toggle,
+  Checkbox,
   DatePicker,
   RadioGroup,
 } from "@cloudscape-design/components";
@@ -26,7 +27,8 @@ import { params_local_storage_key } from "../chatbot/common-components";
 import { deleteModelCard } from "../commons/api-gateway";
 import { useAuthorizedHeader, useAuthUserInfo } from "../commons/use-auth";
 import { useSimpleNotifications } from '../commons/use-notifications';
-import { MODEL_TYPE_LIST, GEO_CATS, MODEL_SIZE_LIST,HW_LIST,MODEL_TAG_LIST } from './table-config';
+import { MODEL_TYPE_LIST, GEO_CATS, MODEL_SIZE_LIST,HW_LIST,QUANT_METHOD ,MODEL_DEPLOY_MODE_LIST,
+  CODE_TYPE_LIST,FRAMEWORK_TYPE_LIST} from './table-config';
 import 'ace-builds/css/ace.css';
 import 'ace-builds/css/theme/dawn.css';
 import 'ace-builds/css/theme/tomorrow_night_bright.css';
@@ -309,7 +311,7 @@ export const DetailPanel = ({ readOnlyWithErrors = false, readOnly = false }) =>
           </FormField>
           <FormField
             label={t("model_name")}
-            constraintText="Format e.g,{brand_name}-{size}-{quantization_method}"
+            constraintText="Format e.g,{model_name}-{size}-{quantization_method}-{quant-bits}"
           >
             <Input
               invalid={inValid && !formData.model_name}
@@ -324,6 +326,10 @@ export const DetailPanel = ({ readOnlyWithErrors = false, readOnly = false }) =>
               }
             />
           </FormField>
+          <FormField label={t("quant_method")}>
+            <QuantMethodSelect readOnly={readOnly} />
+          </FormField>
+
           <FormField label={t("description")} description="Introduction/Scenario/Pros and Cons, etc">
             <Textarea
               placeholder="Introduction/Scenario/Pros and Cons, etc"
@@ -336,9 +342,19 @@ export const DetailPanel = ({ readOnlyWithErrors = false, readOnly = false }) =>
               }
             />
           </FormField>
+
+          <FormField label={t("frame_work")}>
+            <FrameworkTypeSelect readOnly={readOnly} />
+          </FormField>
+          <FormField label={t("deploy_mode")}>
+            <DeployModeSelect readOnly={readOnly} />
+          </FormField>
+          <FormField label={t("code_type")}>
+            <RepoCodeTypeSelect readOnly={readOnly} />
+          </FormField>
           <FormField
             label={t("code_repo")}
-            constraintText="only allows url endswith.ipynb"
+            constraintText="put your code link or repo link here"
           >
             <Input
               // invalid={inValid && !formData.code_repo}
@@ -349,23 +365,20 @@ export const DetailPanel = ({ readOnlyWithErrors = false, readOnly = false }) =>
               onChange={(event) => {
                 !readOnlyWithErrors &&
                   setFormData((prev) => ({ ...prev, code_repo: event.detail.value }));
-                  
-                  if (isGitHubNotebookURL(event.detail.value)){
-                    setCodeRepoInvalid(false);
-                    setInvalid(false);
-                  }else{
-                    setCodeRepoInvalid(true);
-                    setInvalid(false);
-                  }       
+                  setInvalid(false);
+                  // if (isGitHubNotebookURL(event.detail.value)){
+                  //   setCodeRepoInvalid(false);
+                  //   setInvalid(false);
+                  // }else{
+                  //   setCodeRepoInvalid(true);
+                  //   setInvalid(false);
+                  // }       
               }
               }
             />
           </FormField>
           <FormField label={t("mini_hardware")}>
             <HwSelect readOnly={readOnly} />
-          </FormField>
-          <FormField label={t("model_tags")}>
-            <ModelTagsSelect readOnly={readOnly} />
           </FormField>
           <FormField
             label={t("model_published_date")}
@@ -426,22 +439,82 @@ const HwSelect = ({ readOnly }) => {
   )
 }
 
-const ModelTagsSelect = ({ readOnly }) => {
+const RepoCodeTypeSelect = ({ readOnly }) => {
   const { inValid, formData, setFormData } = useContext(addModelFormCtx);
-  const [selectedOptions, setSelectedOptions] = useState(formData.model_tags);
+  const [selectedOptions, setSelectedOptions] = useState(formData.code_type);
   return (
     <Multiselect
-      invalid={inValid && !formData.model_tags}
       disabled={readOnly}
       selectedOptions={selectedOptions}
       onChange={({ detail }) => {
         setSelectedOptions(detail.selectedOptions);
         setFormData((prev) => ({
           ...prev,
-          model_tags: detail.selectedOptions,
+          code_type: detail.selectedOptions,
         }));
       }}
-      options={MODEL_TAG_LIST}
+      options={CODE_TYPE_LIST}
+    />
+  )
+}
+
+
+const DeployModeSelect = ({ readOnly }) => {
+  const { inValid, formData, setFormData } = useContext(addModelFormCtx);
+  const [selectedOptions, setSelectedOptions] = useState(formData.model_deploy_mode);
+  return (
+    <Multiselect
+      disabled={readOnly}
+      selectedOptions={selectedOptions}
+      onChange={({ detail }) => {
+        setSelectedOptions(detail.selectedOptions);
+        setFormData((prev) => ({
+          ...prev,
+          model_deploy_mode: detail.selectedOptions,
+        }));
+      }}
+      options={MODEL_DEPLOY_MODE_LIST}
+    />
+  )
+}
+
+
+// const ModelTagsSelect = ({ readOnly }) => {
+//   const { inValid, formData, setFormData } = useContext(addModelFormCtx);
+//   const [selectedOptions, setSelectedOptions] = useState(formData.model_tags);
+//   return (
+//     <Multiselect
+//       disabled={readOnly}
+//       selectedOptions={selectedOptions}
+//       onChange={({ detail }) => {
+//         setSelectedOptions(detail.selectedOptions);
+//         setFormData((prev) => ({
+//           ...prev,
+//           model_tags: detail.selectedOptions,
+//         }));
+//       }}
+//       options={MODEL_TAG_LIST}
+//     />
+//   )
+// }
+
+const QuantMethodSelect = ({ readOnly }) => {
+  const {  formData, setFormData } = useContext(addModelFormCtx);
+  const [selectedOption, setSelectedOption] = useState(formData.quant_method);
+  return (
+    <Select
+      // invalid={inValid && !formData.model_size}
+      disabled={readOnly}
+      selectedOption={selectedOption}
+      onChange={({ detail }) => {
+        setSelectedOption(detail.selectedOption);
+        setFormData((prev) => ({
+          ...prev,
+          quant_method: detail.selectedOption,
+        }));
+      }}
+      options={QUANT_METHOD}
+      selectedAriaLabel="Selected"
     />
   )
 }
@@ -487,6 +560,27 @@ const ModelTypeSelect = ({ readOnly }) => {
     />
   )
 }
+
+const FrameworkTypeSelect = ({ readOnly }) => {
+  const { formData, setFormData } = useContext(addModelFormCtx);
+  const [selectedOption, setSelectedOption] = useState(formData.framework_type);
+  return (
+    <Select
+      disabled={readOnly}
+      selectedOption={selectedOption}
+      onChange={({ detail }) => {
+        setSelectedOption(detail.selectedOption);
+        setFormData((prev) => ({
+          ...prev,
+          framework_type: detail.selectedOption,
+        }));
+      }}
+      options={FRAMEWORK_TYPE_LIST}
+      selectedAriaLabel="Selected"
+    />
+  )
+}
+
 
 const GeoSelect = ({ readOnly }) => {
   const { formData, setFormData } = useContext(addModelFormCtx);

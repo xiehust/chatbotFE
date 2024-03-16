@@ -25,7 +25,7 @@ import { models } from "../../../common/shared";
 import { useLocalStorage } from "../../../common/localStorage";
 import { getPrompts, uploadS3, uploadFile } from "../../commons/api-gateway";
 import { params_local_storage_key } from "./common-components";
-import { AddVariablesComp, PreviewBox, TemplateEditor, previewTemplate } from "../../prompt_hub/common-components";
+import { AddVariablesComp, OpeningQuesionsComp, TemplateEditor, previewTemplate,ImageReadOnlyPreviewComp } from "../../prompt_hub/common-components";
 
 
 const default_bucket = process.env.REACT_APP_DEFAULT_UPLOAD_BUCKET;
@@ -36,26 +36,16 @@ export const defaultModelParams = {
   model_name_opt: models[0],
   use_qa: false,
   multi_rounds: true,
-  // embedding_model_name: embeddings[0].value,
-  // embedding_model_name_opt: embeddings[0],
   obj_prefix: "ai-content/",
   system_role: "",
   system_role_prompt: "",
   template_id: "empty",
   template_opt: { label: "default", value: "default" },
-  // template_id: "1698905450793-bcfab8",
-  // template_opt: { label: "sso-chatbot-1102", value: "1698905450793-bcfab8" },
   hide_ref: false,
   use_stream: true,
   use_trace: true,
 };
 
-
-// const PromptTemplateFormCtx = createContext();
-
-// const useTemplateFormCtx = () => {
-//   return useContext(PromptTemplateFormCtx);
-// }
 
 
 function generateId() {
@@ -66,7 +56,7 @@ function generateId() {
 
 const ExpandableSettingPanel = ({ id }) => {
   const { t } = useTranslation();
-  const { agentInfo } = useChatData();
+  const { formData } = useChatData();
   const userinfo = useAuthUserInfo();
   const username = userinfo?.username || "default";
   const [localStoredParams, setLocalStoredParams] = useLocalStorage(
@@ -122,13 +112,14 @@ const ExpandableSettingPanel = ({ id }) => {
         localStoredParams?.model_name || defaultModelParams.model_name,
       system_role:
         localStoredParams?.system_role || defaultModelParams.system_role,
-      system_role_prompt: agentInfo.system_role_prompt,
+      system_role_prompt: formData.system_role_prompt,
       template_id: defaultModelParams.template_id,
       username: userinfo?.username,
       company: userinfo?.company || "default",
+      history_messages:formData.history_messages&&Object.keys(formData.history_messages).map(key => formData.history_messages[key]),
       feedback: null,
     });
-  }, []);
+  }, [formData]);
 
   return (
     <ExpandableSection headerText={t("addtional_settings")} variant="footer">
@@ -275,19 +266,19 @@ const ImageUploadComp = ({ id }) => {
               id: msgid,
               who: userinfo.username,
               text: 'images',
-              // images: imageFiles,
-              images_base64: images_base64
+              images: imageFiles,
+              // images_base64: images_base64
             },
           ] //创建一个新的item
         );
-        // console.log('images_base64:',images_base64);
+        // console.log('msgItems:',msgItems);
         setLocalStoredMsgItems([
           ...msgItems,
           {
             id: msgid,
             who: userinfo.username,
             text: 'images',
-            images_base64: images_base64
+            // images_base64: images_base64 //exceed the localstorage quota
           },
         ]);
       })
@@ -349,26 +340,13 @@ const VariablesComp = ({ id }) => {
   return (
     <ExpandableSection
       defaultExpanded
-      headerText={t('variables_config')}
+      headerText={t('pe_config')}
     >
       {formData &&
-        <Grid gridDefinition={[{ colspan: 5 }, { colspan: 5 }]}>
+        <Grid gridDefinition={[{ colspan: 5 }, { colspan: 7 }]}>
           <AddVariablesComp formData={formData} setFormData={setFormData} />
           <SpaceBetween size="l">
-            <FormField label={t("system_role_prompt")}>
-              <Input
-                placeholder="Optional"
-                value={formData.system_role_prompt}
-                onChange={(event) => {
-                  setFormData((prev) => ({ ...prev, system_role_prompt: event.detail.value }));
-                  setModelParams((prev) => ({
-                    ...prev,
-                    system_role_prompt: event.detail.value,
-                  }));
-                }
-                }
-              />
-            </FormField>
+              <OpeningQuesionsComp  formData={formData} setFormData={setFormData}/>
             <FormField label={t("prompt_content")} >
               <TemplateEditor value={formData.template}
                 onChange={(event) => {
@@ -376,6 +354,7 @@ const VariablesComp = ({ id }) => {
                 }
                 } />
             </FormField>
+            <ImageReadOnlyPreviewComp formData={formData} setFormData={setFormData}/>
           </SpaceBetween>
         </Grid>}
     </ExpandableSection>
@@ -405,8 +384,9 @@ const PromptPanel = ({ sendMessage, id }) => {
     newChatLoading,
     setNewChatLoading,
     formData,
-    setFormData
+    setFormData,
   } = useChatData();
+
   const [localStoredParams, setLocalStoredParams] = useLocalStorage(
     params_local_storage_key + userinfo.username,
     null
@@ -429,20 +409,19 @@ const PromptPanel = ({ sendMessage, id }) => {
       : defaultModelParams.use_stream
   );
 
-  useEffect(() => {
-    getPrompts(headers, { id: id }).then(data => {
-      setFormData(data);
-      console.log(data);
-    }).catch(err => {
-      console.log(err);
-    })
-  }, []);
+  // useEffect(() => {
+  //   getPrompts(headers, { id: id }).then(data => {
+  //     setFormData(data);
+  //   }).catch(err => {
+  //     console.log(err);
+  //   })
+  // }, []);
 
   const onSubmit = (values, imgUrl = null) => {
     setStopFlag(true);
-    // console.log(values);
     const prompt = values.trimEnd();
     if (prompt === "") {
+      setStopFlag(false);
       return;
     }
     const respid = generateUniqueId();
@@ -452,7 +431,7 @@ const PromptPanel = ({ sendMessage, id }) => {
     ]);
 
     //save the messages to localstorage
-    console.log(msgItems);
+    // console.log(msgItems);
     setLocalStoredMsgItems([
       ...msgItems,
       { id: respid, who: userinfo.username, text: prompt },
@@ -461,12 +440,13 @@ const PromptPanel = ({ sendMessage, id }) => {
     setConversations((prev) => [...prev, { role: "user", content: prompt }]);
     const messages = [...conversations, { role: "user", content: prompt }];
     setLoading(true);
-    const params = { ...modelParams, imgurl: img2txtUrl }
+    const params = { ...modelParams, imgurl: img2txtUrl };
+    console.log("PromptPanel modelParams:", params);
+
     sendMessage({
       action: "sendprompt",
       payload: { msgid: respid, messages: messages, params: params },
     });
-    console.log("PromptPanel modelParams:", params);
     setPromptValue("");
   };
 
@@ -528,9 +508,6 @@ const PromptPanel = ({ sendMessage, id }) => {
               </Button>
             </SpaceBetween>
           </Grid>
-          {/* <SpaceBetween size="l" >
-            <VariablesComp id={id} />
-          </SpaceBetween> */}
           <SpaceBetween size="xl" direction="horizontal">
             <FormField >
               <Toggle

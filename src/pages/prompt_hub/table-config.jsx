@@ -43,7 +43,9 @@ export const PROMPT_CATS = [
   { label: "Roleplay", value: "roleplay" },
   { label: "Function Call", value: "function call" },
   { label: "Code Generation", value: "Code Generation"},
+  { label: "Anthropic Official", value: "anthropic" },
   { label: "other", value: "other" },
+  
 ]
 
 export const GEO_CATS = [
