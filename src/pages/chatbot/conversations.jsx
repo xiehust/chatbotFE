@@ -184,8 +184,7 @@ const MsgItem = ({ who, text, images_base64,images, msgid, connectionId }) => {
   //restore image file from localstorage
   if (images_base64){
     
-    let key = 0;
-    const imagesObj = images_base64.map( base64Data =>{
+    const imagesObj = images_base64.map( (base64Data,key) =>{
       const binaryString = window.atob(base64Data); // 将 base64 字符串解码为二进制字符串
       const bytes = new Uint8Array(binaryString.length);
       
@@ -193,7 +192,6 @@ const MsgItem = ({ who, text, images_base64,images, msgid, connectionId }) => {
         bytes[i] = binaryString.charCodeAt(i);
       }
       const blob = new Blob([bytes], { type: 'image/png' }); 
-       key ++;
         // Create a new File object from the Blob
         return new File([blob], `image_${key}.png`, { type: 'image/png' });
     });
@@ -468,7 +466,7 @@ const ChatBox = ({ msgItems, loading }) => {
       key={msg.id}
       who={msg.who}
       text={msg.text}
-      image={msg.image}
+      images={msg.images}
       images_base64 = {msg.images_base64}
       msgid={msg.id}
       connectionId={msg.connectionId}

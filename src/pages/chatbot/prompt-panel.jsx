@@ -293,45 +293,6 @@ const ExpandableSettingPanel = () => {
     });
   }, []);
 
-  useEffect(() => {
-    setModelParams({
-      ...localStoredParams,
-      obj_prefix:
-        localStoredParams?.obj_prefix || defaultModelParams.obj_prefix,
-      max_tokens:
-        localStoredParams?.max_tokens || defaultModelParams.max_tokens,
-      temperature:
-        localStoredParams?.temperature || defaultModelParams.temperature,
-      use_qa:
-        localStoredParams?.use_qa !== undefined
-          ? localStoredParams?.use_qa
-          : defaultModelParams.use_qa,
-      multi_rounds:
-          localStoredParams?.multi_rounds !== undefined
-            ? localStoredParams?.multi_rounds
-            : defaultModelParams.multi_rounds,
-      use_stream:
-          localStoredParams?.use_stream !== undefined
-            ? localStoredParams?.use_stream
-            : defaultModelParams.use_stream,
-      use_trace:
-          localStoredParams?.use_trace !== undefined
-            ? localStoredParams?.use_trace
-            : defaultModelParams.use_trace,
-      model_name:
-        localStoredParams?.model_name || defaultModelParams.model_name,
-      system_role:
-        localStoredParams?.system_role || defaultModelParams.system_role,
-      system_role_prompt:
-        localStoredParams?.system_role_prompt ||
-        defaultModelParams.system_role_prompt,
-      template_id:
-        localStoredParams?.template_id || defaultModelParams.template_id,
-      username: userinfo?.username,
-      company:userinfo?.company || "default",
-      feedback:null,
-    });
-  }, []);
   // console.log('modelParams:',modelParams);
 
   return (
@@ -550,6 +511,47 @@ const PromptPanel = ({ sendMessage }) => {
       : defaultModelParams.use_stream
   );
 
+  useEffect(() => {
+    setModelParams({
+      ...localStoredParams,
+      obj_prefix:
+        localStoredParams?.obj_prefix || defaultModelParams.obj_prefix,
+      max_tokens:
+        localStoredParams?.max_tokens || defaultModelParams.max_tokens,
+      temperature:
+        localStoredParams?.temperature || defaultModelParams.temperature,
+      use_qa:
+        localStoredParams?.use_qa !== undefined
+          ? localStoredParams?.use_qa
+          : defaultModelParams.use_qa,
+      multi_rounds:
+          localStoredParams?.multi_rounds !== undefined
+            ? localStoredParams?.multi_rounds
+            : defaultModelParams.multi_rounds,
+      use_stream:
+          localStoredParams?.use_stream !== undefined
+            ? localStoredParams?.use_stream
+            : defaultModelParams.use_stream,
+      use_trace:
+          localStoredParams?.use_trace !== undefined
+            ? localStoredParams?.use_trace
+            : defaultModelParams.use_trace,
+      model_name:
+        localStoredParams?.model_name || defaultModelParams.model_name,
+      system_role:
+        localStoredParams?.system_role || defaultModelParams.system_role,
+      system_role_prompt:
+        localStoredParams?.system_role_prompt ||
+        defaultModelParams.system_role_prompt,
+      template_id:
+        localStoredParams?.template_id || defaultModelParams.template_id,
+      username: userinfo?.username,
+      company:userinfo?.company || "default",
+      feedback:null,
+    });
+  }, []);
+
+
   const [autoSuggest, setAutoSuggest] = useState(false);
   const onSubmit = (values,imgUrl=null) => {
     setStopFlag(true);
@@ -584,6 +586,7 @@ const PromptPanel = ({ sendMessage }) => {
 
   return (
     <Container footer={<ExpandableSettingPanel />}>
+     {/* <Container> */}
       <FormField
         stretch={true}
         // label={t('prompt_label')}
@@ -846,8 +849,8 @@ const ImageUploadComp = ({ id }) => {
               id: msgid,
               who: userinfo.username,
               text: 'images',
-              // images: imageFiles,
-              images_base64: images_base64
+              images: imageFiles,
+              // images_base64: images_base64
             },
           ] //创建一个新的item
         );
@@ -858,7 +861,7 @@ const ImageUploadComp = ({ id }) => {
             id: msgid,
             who: userinfo.username,
             text: 'images',
-            images_base64: images_base64
+            // images_base64: images_base64
           },
         ]);
       })
