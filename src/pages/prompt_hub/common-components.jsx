@@ -737,17 +737,18 @@ export const ImageUploader = ({readOnly,formData, setFormData}) =>{
   const [uploadComplete, setUploadComplete] = useState(false);
   const [loading, setLoading] = useState(false);
   const token = useAuthToken();
-  const [imagesBase64, setImagesBase64] = useState([]);
+  const [imagesBase64, setImagesBase64] = useState(formData.images_base64??[]);
+  // const [imgurl,setImgUrl] = useState(formData.imgurl??[]);
 
 
-  useEffect(()=>{
-    !formData.imgS3Urls&&
-    setFormData(prev => ({
-      ...prev,
-      sample_imgs_base64:[],
-      imgurl:[]
-    }));
-  },[])
+  // useEffect(()=>{
+  //   !formData.imgS3Urls&&
+  //   setFormData(prev => ({
+  //     ...prev,
+  //     images_base64:[],
+  //     imgurl:[]
+  //   }));
+  // },[])
 
   const handleImageUpload = (imageFiles) => {
     const promises = imageFiles.map(file => {
@@ -847,7 +848,7 @@ export const ImageUploader = ({readOnly,formData, setFormData}) =>{
           }}
         />
       </SpaceBetween>
-      {formData?.sample_imgs_base64&&
+      {formData?.images_base64&&
       <ImagePreview 
       readOnly={readOnly}
       formData={formData}
