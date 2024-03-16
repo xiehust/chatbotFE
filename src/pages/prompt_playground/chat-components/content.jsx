@@ -71,7 +71,7 @@ export default function Content({id}){
   function formatHistoryMesssages (history_messages){
     const msg_eles = Object.keys(history_messages).map(key => history_messages[key]);
     return msg_eles.map( (it)=>({id:'id'+generateId(),
-                      who:it.role === 'assistant'?'AI':'user',
+                      who:it.role === 'assistant'?'AI':(it.role === 'assistant'?'user':''),
                     text:it.content}))
   }
 
