@@ -135,7 +135,7 @@ i18n
             chatspace:'Playground',
             qa:'QA space',
             chat:'Chat',
-            addtional_settings:'Additional settings',
+            addtional_settings:'Model Settings',
             conversations:'Conversations',
             awschatportal:'GCR GenAI Juggle Hub',
             embedding_endpoint:'Embedding model endpoint',
@@ -161,7 +161,7 @@ i18n
             preview:'Preview',
             readme:'README',
             hide_ref_doc:'Hide Ref Doc',
-            upload_image:'Upload Image',
+            upload_image:'Image',
             multi_rounds:'Multi-rounds',
             use_stream:'Stream',
             correct_answer:'Correct',
@@ -239,7 +239,8 @@ i18n
             code_type:'Code Type',
             frame_work:'Framework',
             deploy_mode:'Deploy Mode',
-            quant_method:'Quantization Method'
+            quant_method:'Quantization Method',
+            pe_config:'PE Config'
         }
       },
       zh:{
@@ -359,7 +360,7 @@ i18n
             max_tokens:'最大Token数量',
             temperature:'Temperature',
             embedding_model_name:'Embedding模型',
-            addtional_settings:'更多设置',
+            addtional_settings:'模型设置',
             conversations:'对话',
             embedding_endpoint:'Embedding模型端点名称',
             index_name:'索引名',
@@ -387,7 +388,7 @@ i18n
             preview:'预览',
             readme:'使用说明',
             hide_ref_doc:'隐藏引用',
-            upload_image:'上传图片',
+            upload_image:'添加图片',
             multi_rounds:'多轮会话',
             use_stream:'Stream',
             correct_answer:'纠正',
@@ -465,7 +466,8 @@ i18n
             code_type:'代码类型',
             frame_work:'框架',
             deploy_mode:'部署方式',
-            quant_method:'量化方法'
+            quant_method:'量化方法',
+            pe_config:'PE设置'
         }
       }
     }

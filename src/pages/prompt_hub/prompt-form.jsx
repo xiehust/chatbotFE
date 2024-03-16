@@ -15,7 +15,7 @@ import { useNavigate } from "react-router-dom";
 import { useSimpleNotifications } from "../commons/use-notifications";
 import {  addPrompt } from "../commons/api-gateway";
 import { useTranslation } from 'react-i18next';
-import {params_local_storage_key} from "../chatbot/common-components";
+import {params_local_storage_key} from "./common-components";
 import { useLocalStorage } from '../../common/localStorage';
 
 
@@ -58,7 +58,7 @@ function BaseFormContent({ content, onCancelClick, errorText = null }) {
           return "";
         }
         setSubLoading(true);
-        console.log(JSON.stringify(formData));
+        // console.log(JSON.stringify(formData));
         const id = msgid;
         const body = { ...formData, 
         id: id, 
@@ -142,6 +142,7 @@ function BaseFormContent({ content, onCancelClick, errorText = null }) {
 export default function FormContent() {
   const [inValid,setInvalid] = useState(false);
   const [formData, setFormData] = useState({
+    template:''
   });
   return (
     <addTemplateFormCtx.Provider value={{ formData, setFormData,inValid,setInvalid }}>

@@ -79,7 +79,7 @@ export default function Content({id}){
     setLoadingState(true);
     getPrompts(headers,queryParams)
     .then(data =>{
-      // console.log(data);
+      console.log(data);
       // setAgentInfo(data);
       setFormData(data);
 
@@ -89,6 +89,7 @@ export default function Content({id}){
       }
       setLoadingState(false);
       setReady(true);
+      setImg2txtUrl(data.imgurl);
       setModelParams(prev =>({
         ...prev,
         feature_config:data.web_search?'default':'search_disabled',

@@ -5,8 +5,8 @@ import {
   BreadcrumbGroup,
   SpaceBetween,
   Button,
-  Modal,
   Box,
+  Modal,
   Container,
   FormField,
   CodeEditor,
@@ -17,22 +17,26 @@ import {
   Header,
   Toggle,
   Grid,
+  FileUpload,
   RadioGroup,
 } from "@cloudscape-design/components";
 import { TableHeader } from "../commons/common-components";
 import { useTranslation, Trans } from "react-i18next";
 import { useLocalStorage } from "../../common/localStorage";
-import { params_local_storage_key } from "../chatbot/common-components";
-import { deletePrompt } from "../commons/api-gateway";
-import { useAuthorizedHeader, useAuthUserInfo } from "../commons/use-auth";
+// import { params_local_storage_key } from "../chatbot/common-components";
+import { deletePrompt,uploadFile } from "../commons/api-gateway";
+import { useAuthorizedHeader, useAuthUserInfo,useAuthToken } from "../commons/use-auth";
 import { useSimpleNotifications } from '../commons/use-notifications';
 import { PROMPT_CATS, GEO_CATS, COMPAT_MODELS } from './table-config';
 import 'ace-builds/css/ace.css';
 import 'ace-builds/css/theme/dawn.css';
 import 'ace-builds/css/theme/tomorrow_night_bright.css';
 
+export const params_local_storage_key = 'pehub-localstorage';
 // const ace = await import('ace-builds');
 // ace.config.set('useStrictCSP', true);
+const default_bucket = process.env.REACT_APP_DEFAULT_UPLOAD_BUCKET;
+
 export const addTemplateFormCtx = createContext();
 
 export const useTemplateFormCtx = () => {
@@ -270,7 +274,7 @@ export const FullPageHeader = ({
 };
 
 export function previewTemplate(formData) {
-  let rawText = formData.template;
+  let rawText = formData.template??'';
   formData.variable_names &&
     Object.keys(formData.variable_names).map(key => {
       const name = formData.variable_names && formData.variable_names[key];
@@ -285,17 +289,6 @@ export const DetailPanel = ({ readOnlyWithErrors = false, readOnly = false }) =>
 
   const { t } = useTranslation();
   const { formData, setFormData, inValid, setInvalid } = useContext(addTemplateFormCtx);
-
-  const userinfo = useAuthUserInfo();
-  const username = userinfo?.username || 'default';
-  const [localStoredParams] = useLocalStorage(
-    params_local_storage_key + username,
-    null
-  );
-  const getErrorText = (errorMessage) => {
-    return readOnlyWithErrors ? errorMessage : undefined;
-  };
-
   return (
     <SpaceBetween size="l">
       <Container
@@ -409,6 +402,10 @@ export const DetailPanel = ({ readOnlyWithErrors = false, readOnly = false }) =>
         <FormField stretch={true}>
           <AddVariablesComp formData={formData} setFormData={setFormData} readOnly={readOnly} />
         </FormField>
+        <FormField stretch={true}>
+            <ImageUploader formData={formData} setFormData={setFormData} readOnly={readOnly}/>
+        </FormField>
+
         </SpaceBetween>
       </Container>
       <Container>
@@ -601,7 +598,7 @@ export const AddVariablesComp = ({ formData, setFormData, readOnly }) => {
     ? Object.keys(formData.variable_names).map(key => Number(key))
     : [1]);
   return (
-    (!addVariable && !readOnly) ?
+    (!addVariable) ?
       <Button variant="normal" onClick={(event) => {
         event.preventDefault();
         setAddVariable(true);
@@ -729,3 +726,262 @@ export const OpeningQuesionsComp = ({ readOnly,formData, setFormData  }) => {
   )
 }
 
+export const ImageUploader = ({readOnly,formData, setFormData}) =>{
+  const { t } = useTranslation();
+  const userinfo = useAuthUserInfo();
+  const username = userinfo?.username || "default";
+  const company = userinfo?.company || "default";
+  const [uploadErrtxt, setUploadErr] = useState();
+  const [files, setFiles] = useState([]);
+  const [helperMsg, setHelperMsg] = useState('');
+  const [uploadComplete, setUploadComplete] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const token = useAuthToken();
+  const [imagesBase64, setImagesBase64] = useState([]);
+
+
+  useEffect(()=>{
+    !formData.imgS3Urls&&
+    setFormData(prev => ({
+      ...prev,
+      sample_imgs_base64:[],
+      imgurl:[]
+    }));
+  },[])
+
+  const handleImageUpload = (imageFiles) => {
+    const promises = imageFiles.map(file => {
+      setLoading(true);
+      const headers = {
+        'Authorization': token.token,
+        'Content-Type': file.type,
+        'Accept': file.type
+      };
+      const read = new FileReader();
+      read.readAsBinaryString(file);
+      read.onloadend = () => {
+        const bits = read.result;
+        const body = {
+          filename: file.name,
+          mimeType: file.type,
+          fileSizeBytes: file.size,
+          lastModified: file.lastModified,
+          buf: bits
+        };
+
+        uploadFile(username, company, body, headers)
+          .then((response) => {
+            setLoading(false);
+            setUploadComplete(true);
+            setFormData(prev => ({
+              ...prev,
+              imgurl:[...prev.imgurl,`${default_bucket}/images/${company}/${username}/${file.name}`]
+            }));
+
+            setFiles([]);
+          })
+          .catch((error) => {
+            console.log(error);
+            setLoading(false);
+            setUploadErr(`Upload ${file.name} error`);
+            setFiles([]);
+          });
+      }
+    });
+    Promise.all(promises)
+      .then(async () => {
+        const images_base64 = await Promise.all(imageFiles.map(async file => {
+          const reader = new FileReader();
+          const base64Data = await new Promise((resolve, reject) => {
+            reader.onload = () => resolve(reader.result.split(',')[1]);
+            reader.onerror = reject;
+            reader.readAsDataURL(file);
+          });
+          return base64Data;
+        }));
+
+        //保存base64 数据
+        // setFormData(prev => ({
+        //   ...prev,
+        //   sample_imgs_base64:[...prev.sample_imgs_base64,...images_base64]
+        // }));
+        setImagesBase64(prev =>([...prev,...images_base64]))
+      })
+      .catch((error) => {
+        console.error('Error uploading files:', error);
+      });
+  }
+
+  return (
+    <SpaceBetween size="s">
+      <SpaceBetween size="s" direction="horizontal">
+        <FileUpload
+          onChange={({ detail }) => {
+            if(!readOnly){
+              setHelperMsg("");
+              setFiles(detail.value);
+              handleImageUpload(detail.value);
+              setUploadErr(null);
+              setUploadComplete(false);
+            }
+          }}
+          disabled={readOnly}
+          multiple
+          value={files}
+          accept=".png,.jpg,.jpeg"
+          constraintText={helperMsg}
+          showFileLastModified
+          showFileSize
+          showFileThumbnail
+          tokenLimit={3}
+          errorText={uploadErrtxt}
+          i18nStrings={{
+            uploadButtonText: (e) =>
+              e ? t('upload_image') : t('upload_image'),
+            dropzoneText: (e) =>
+              e ? "Drop files to upload" : "Drop file to upload",
+            removeFileAriaLabel: (e) => `Remove file ${e + 1}`,
+            limitShowFewer: "Show fewer files",
+            limitShowMore: "Show more files",
+            errorIconAriaLabel: "Error",
+          }}
+        />
+      </SpaceBetween>
+      {formData?.sample_imgs_base64&&
+      <ImagePreview 
+      readOnly={readOnly}
+      formData={formData}
+       setFormData={setFormData}
+       imagesBase64={imagesBase64}
+       setImagesBase64={setImagesBase64}
+      alt="image preview" 
+       loading={loading}
+        setLoading={setLoading}
+      />}
+    </SpaceBetween>
+  )
+}
+
+
+const ImageEnlargeComp =({...props})=>{
+  const [visible, setVisible] = useState(false);
+  const [isEnlarged, setIsEnlarged] = useState(false);
+  const userinfo = useAuthUserInfo();
+  const company = userinfo?.company || "default";
+  const [localStoredImagesData, setLocalStoredImagesData] = useLocalStorage(
+    params_local_storage_key + company + userinfo.username+`-images-`,
+    null
+  );
+  const handleLoad = () => {
+    props.setLoading(false);
+  };
+  const handleEnlarge = () => {
+    setIsEnlarged(!isEnlarged);
+    setVisible(!visible);
+  };
+  const handleDelete = () => {
+    // console.log(props.index);
+    props.setImagesBase64(prev => prev.filter((item, index)=>index!==props.index));
+    props.setFormData(prev => ({
+      ...prev,
+      imgurl:prev.imgurl.filter((item,index)=>index!==props.index)
+    }));
+  }
+  return (
+      props.loading ? (
+          <Box variant="p">{'Loading...'}</Box>
+        ):
+         <Box textAlign="left">
+          <div style={ {borderStyle:"solid",borderRadius:'5px', borderColor:'#0972d3'}}>
+          <img src={props.src} alt={props.alt} 
+          style={{
+            maxWidth: '256px',
+            cursor: 'pointer',
+          }}
+          onClick={handleEnlarge}
+          onLoad={handleLoad} /> 
+          </div>
+          {
+            isEnlarged&&
+            <Modal
+            size="large"
+            onDismiss={() => 
+              { setVisible(false);
+                setIsEnlarged(false);
+              }}
+            visible={visible}
+          >
+           <img src={props.src} alt={props.alt} 
+            style={{
+              maxWidth: '100%',
+            }}
+           />
+          </Modal>
+        }
+        <Button disabled={props.readOnly} variant="icon" iconName="close" onClick={handleDelete} />
+        </Box>
+  );
+
+}
+
+const  base64toFiles =(images_base64) =>{
+  return images_base64.map( (base64Data,key) =>{
+    const binaryString = window.atob(base64Data); // 将 base64 字符串解码为二进制字符串
+    const bytes = new Uint8Array(binaryString.length);
+    
+    for (let i = 0; i < binaryString.length; i++) {
+      bytes[i] = binaryString.charCodeAt(i);
+    }
+    const blob = new Blob([bytes], { type: 'image/png' }); 
+      // Create a new File object from the Blob
+      return new File([blob], `image_${key}.png`, { type: 'image/png' });
+  });
+}
+
+
+const ImagePreview = ({ formData, setFormData,alt,imagesBase64,setImagesBase64, loading, setLoading,readOnly}) => {
+  const sample_imgs_base64 = base64toFiles(imagesBase64);
+  const srcs = sample_imgs_base64.map(image => URL.createObjectURL(image))
+  return (
+    <SpaceBetween size="m" direction="horizontal">
+      {srcs.map((src,key) => (
+        <Box key={key} textAlign="left">
+         <ImageEnlargeComp readOnly={readOnly} 
+         src={src} 
+         index={key} 
+         loading={loading} 
+         alt={alt} 
+         setLoading={setLoading} 
+         setImagesBase64={setImagesBase64}
+         setFormData={setFormData}/>
+        </Box>
+      ))}
+    </SpaceBetween>
+  );
+};
+
+export const ImageReadOnlyPreviewComp = ({ formData,setFormData}) => {
+  const [imagesBase64, setImagesBase64] = useState(formData.images_base64??[]);
+  const [loading,setLoading ] = useState(false);
+
+  const sample_imgs_base64 = base64toFiles(imagesBase64);
+  const srcs = sample_imgs_base64.map(image => URL.createObjectURL(image))
+  return (
+    <SpaceBetween size="m" direction="horizontal">
+      {srcs.map((src,key) => (
+        <Box key={key} textAlign="left">
+         <ImageEnlargeComp 
+         src={src} 
+         index={key} 
+         loading={loading}
+         setLoading={setLoading} 
+         alt={'alt'} 
+         setImagesBase64={setImagesBase64}
+         setFormData={setFormData}/>
+        </Box>
+      ))}
+    </SpaceBetween>
+  );
+
+
+}

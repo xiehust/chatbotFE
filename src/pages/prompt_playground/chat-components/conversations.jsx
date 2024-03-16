@@ -8,6 +8,7 @@ import {
   Header,
   SpaceBetween,
   Button,
+  Modal,
 } from "@cloudscape-design/components";
 import SyntaxHighlighter from "react-syntax-highlighter";
 import { a11yDark } from "react-syntax-highlighter/dist/esm/styles/hljs";
@@ -125,14 +126,15 @@ return (
         const url = URL.createObjectURL(image);
         // const url = image;
         return (<ImageListItem key={generateUniqueId()}>
-          <img
+          {/* <img
             src={url}
             alt={image.name}
             loading="lazy"
             sx={{
               objectFit: "contain",
             }}
-          />
+          /> */}
+          <EnlargableImage src={url} alt={image.name} />
           <ImageListItemBar
             // title={image.name}
             subtitle={
@@ -148,8 +150,49 @@ return (
   )}
 </ImageList>
 )
+}
+
+const EnlargableImage = ({...props})=>{
+  const [visible, setVisible] = useState(false);
+  const [isEnlarged, setIsEnlarged] = useState(false);
+  const handleEnlarge = () => {
+    setIsEnlarged(!isEnlarged);
+    setVisible(!visible);
+  };
+  return (
+    <Box textAlign="left">
+      <div style={ {borderStyle:"solid",borderRadius:'5px', borderColor:'#0972d3'}}>
+       <img src={props.src} alt={props.alt} 
+          style={{
+            maxWidth: '256px',
+            cursor: 'pointer',
+          }}
+          onClick={handleEnlarge}
+       /> 
+          </div>
+          {
+            isEnlarged&&
+            <Modal
+            size="large"
+            onDismiss={() => 
+              { setVisible(false);
+                setIsEnlarged(false);
+              }}
+            visible={visible}
+          >
+           <img src={props.src} alt={props.alt} 
+            style={{
+              maxWidth: '100%',
+            }}
+           />
+          </Modal>
+        }
+        </Box>
+  )
 
 }
+
+
 const MsgItem = ({ who, text, images_base64,images, msgid, connectionId }) => {
   const userInfo = useAuthUserInfo();
   const sessionId = `web_chat_${userInfo.username}_${connectionId}`
@@ -157,8 +200,7 @@ const MsgItem = ({ who, text, images_base64,images, msgid, connectionId }) => {
   //restore image file from localstorage
   if (images_base64){
     
-    let key = 0;
-    const imagesObj = images_base64.map( base64Data =>{
+    const imagesObj = images_base64.map( (base64Data,key) =>{
       const binaryString = window.atob(base64Data); // 将 base64 字符串解码为二进制字符串
       const bytes = new Uint8Array(binaryString.length);
       

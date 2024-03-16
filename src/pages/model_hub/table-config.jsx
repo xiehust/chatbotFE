@@ -16,7 +16,7 @@ const VISIBLE_CONTENT_OPTIONS = [
       { id: 'model_type', label:  i18n.t('model_type'), },
       { id: 'description', label: i18n.t('description')},
       { id: 'code_type', label: i18n.t('code_type')},
-      { id: 'framework_type', label: i18n.t('framework')},
+      { id: 'framework_type', label: i18n.t('frame_work')},
       { id: 'quant_method', label: i18n.t('quant_method')},
       { id: 'mini_hardware', label: i18n.t('mini_hardware')},
       { id: 'model_published_date', label: i18n.t('model_published_date')},

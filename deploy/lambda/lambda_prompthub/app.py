@@ -1,6 +1,7 @@
 
 import os
 import boto3
+import base64
 import json
 import logging
 import time
@@ -17,7 +18,20 @@ cors_headers = {
   "Access-Control-Allow-Methods": "*"
 }
 
-
+def get_s3_image_base64(bucket_name, key):
+    # Create an S3 client
+    s3 = boto3.client('s3')
+    # Get the object from S3
+    try:
+        response = s3.get_object(Bucket=bucket_name, Key=key)
+        image_data = response['Body'].read()
+        # Encode the image data as base64
+        base64_image = base64.b64encode(image_data).decode('utf-8')
+        return base64_image
+    except Exception as e:
+        print(f"Error getting object from S3: {e}")
+        return None
+    
 
 def get_template(id, company,start_key=None) ->list:
     
@@ -100,7 +114,17 @@ def handler(event,lambda_context):
             id = query_params.get('id')
             company =  query_params.get('company', 'default')
             results = get_template(id,company)
-            print(results)
+            images_base64 = []
+            if id:
+                # result = results[0]
+                print(results)
+                imgurls = results.get('imgurl',[])
+                for imgurl in imgurls:
+                    bucket,imgobj = imgurl.split('/',1)
+                    image_base64 = get_s3_image_base64(bucket,imgobj)
+                    images_base64.append(image_base64)
+                results = {**results,"images_base64":images_base64}
+            # print(results)
             return {'statusCode': 200, 'headers': cors_headers,'body':json.dumps(results,ensure_ascii=False)}
     
     elif http_method == 'POST' and resource == '/prompt_hub':

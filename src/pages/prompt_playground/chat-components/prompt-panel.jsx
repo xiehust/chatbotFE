@@ -25,7 +25,7 @@ import { models } from "../../../common/shared";
 import { useLocalStorage } from "../../../common/localStorage";
 import { getPrompts, uploadS3, uploadFile } from "../../commons/api-gateway";
 import { params_local_storage_key } from "./common-components";
-import { AddVariablesComp, OpeningQuesionsComp, TemplateEditor, previewTemplate } from "../../prompt_hub/common-components";
+import { AddVariablesComp, OpeningQuesionsComp, TemplateEditor, previewTemplate,ImageReadOnlyPreviewComp } from "../../prompt_hub/common-components";
 
 
 const default_bucket = process.env.REACT_APP_DEFAULT_UPLOAD_BUCKET;
@@ -266,19 +266,19 @@ const ImageUploadComp = ({ id }) => {
               id: msgid,
               who: userinfo.username,
               text: 'images',
-              // images: imageFiles,
-              images_base64: images_base64
+              images: imageFiles,
+              // images_base64: images_base64
             },
           ] //创建一个新的item
         );
-        // console.log('images_base64:',images_base64);
+        // console.log('msgItems:',msgItems);
         setLocalStoredMsgItems([
           ...msgItems,
           {
             id: msgid,
             who: userinfo.username,
             text: 'images',
-            images_base64: images_base64
+            // images_base64: images_base64 //exceed the localstorage quota
           },
         ]);
       })
@@ -340,27 +340,13 @@ const VariablesComp = ({ id }) => {
   return (
     <ExpandableSection
       defaultExpanded
-      headerText={t('variables_config')}
+      headerText={t('pe_config')}
     >
       {formData &&
         <Grid gridDefinition={[{ colspan: 5 }, { colspan: 7 }]}>
           <AddVariablesComp formData={formData} setFormData={setFormData} />
           <SpaceBetween size="l">
-            {/* <FormField label={t("system_role_prompt")}> */}
               <OpeningQuesionsComp  formData={formData} setFormData={setFormData}/>
-              {/* <Input
-                placeholder="Optional"
-                value={formData.system_role_prompt}
-                onChange={(event) => {
-                  setFormData((prev) => ({ ...prev, system_role_prompt: event.detail.value }));
-                  setModelParams((prev) => ({
-                    ...prev,
-                    system_role_prompt: event.detail.value,
-                  }));
-                }
-                }
-              /> */}
-            {/* </FormField> */}
             <FormField label={t("prompt_content")} >
               <TemplateEditor value={formData.template}
                 onChange={(event) => {
@@ -368,6 +354,7 @@ const VariablesComp = ({ id }) => {
                 }
                 } />
             </FormField>
+            <ImageReadOnlyPreviewComp formData={formData} setFormData={setFormData}/>
           </SpaceBetween>
         </Grid>}
     </ExpandableSection>
@@ -521,9 +508,6 @@ const PromptPanel = ({ sendMessage, id }) => {
               </Button>
             </SpaceBetween>
           </Grid>
-          {/* <SpaceBetween size="l" >
-            <VariablesComp id={id} />
-          </SpaceBetween> */}
           <SpaceBetween size="xl" direction="horizontal">
             <FormField >
               <Toggle
