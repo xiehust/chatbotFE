@@ -776,7 +776,7 @@ export const ImageUploader = ({readOnly,formData, setFormData}) =>{
             setUploadComplete(true);
             setFormData(prev => ({
               ...prev,
-              imgurl:[...prev.imgurl,`${default_bucket}/images/${company}/${username}/${file.name}`]
+              imgurl:[...prev.imgurl??[],`${default_bucket}/images/${company}/${username}/${file.name}`]
             }));
 
             setFiles([]);
