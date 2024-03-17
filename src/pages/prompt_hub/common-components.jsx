@@ -618,21 +618,22 @@ export const AddVariablesComp = ({ formData, setFormData, readOnly }) => {
             disabled={cnts.length <= 0 || readOnly}
             onClick={(event) => {
               event.preventDefault();
+              console.log('cnts.length:',cnts.length);
               //重新显示AddVariable button
               if (cnts.length <= 1){
                 setAddVariable(false);
-              }
-              else {
-                  setCnts((prev) => prev.slice(0, prev.length - 1));
-                  setFormData( prev => {
-                      let t = prev.variable_names
-                      t&& delete t[cnts.length]; 
-                      let t_val = prev.variable_values
-                      t_val&& delete t_val[cnts.length];
-                      console.log('t:',t);
-                      console.log('t_val:',t_val);
-                      return {...prev,variable_names:{...t},variable_values:{...t_val}}
-                    });
+              }{
+
+                cnts.length > 1&& setCnts((prev) => prev.slice(0, prev.length - 1));
+                setFormData( prev => {
+                    let t = prev.variable_names
+                    t&& delete t[cnts.length]; 
+                    let t_val = prev.variable_values
+                    t_val&& delete t_val[cnts.length];
+                    console.log('t:',t);
+                    console.log('t_val:',t_val);
+                    return {...prev,variable_names:{...t},variable_values:{...t_val}}
+                  });
               }
             }} 
           />
@@ -817,7 +818,7 @@ export const ImageUploader = ({readOnly,formData, setFormData}) =>{
         //保存base64 数据
         // setFormData(prev => ({
         //   ...prev,
-        //   sample_imgs_base64:[...prev.sample_imgs_base64,...images_base64]
+        //   images_base64:[...prev.images_base64??[],...images_base64]
         // }));
         setImagesBase64(prev =>([...prev,...images_base64]))
       })
@@ -861,7 +862,7 @@ export const ImageUploader = ({readOnly,formData, setFormData}) =>{
           }}
         />
       </SpaceBetween>
-      {formData?.images_base64&&
+      {(formData?.images_base64||imagesBase64)&&
       <ImagePreview 
       readOnly={readOnly}
       formData={formData}

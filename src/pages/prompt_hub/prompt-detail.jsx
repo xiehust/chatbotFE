@@ -66,8 +66,6 @@ function BaseFormContent({ content,setReadOnly, errorText = null }) {
         const body = { ...formData, 
           images_base64:undefined,
         id: formData.id, 
-        // main_fun_arn:main_fun_arn,
-        // apigateway_endpoint:apigateway_endpoint,
         username:userInfo.username,
         company:company
          };
