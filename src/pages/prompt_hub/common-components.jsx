@@ -594,7 +594,7 @@ const AddMigrationComp = ({ readOnly }) => {
 export const AddVariablesComp = ({ formData, setFormData, readOnly }) => {
   const { t } = useTranslation();
   const [addVariable, setAddVariable] = useState(formData.variable_names ? true : false);
-  const [cnts, setCnts] = useState(formData.variable_names
+  const [cnts, setCnts] = useState(formData.variable_names && Object.keys(formData.variable_names).length > 0
     ? Object.keys(formData.variable_names).map(key => Number(key))
     : [1]);
   return (
@@ -619,10 +619,23 @@ export const AddVariablesComp = ({ formData, setFormData, readOnly }) => {
             onClick={(event) => {
               event.preventDefault();
               //重新显示AddVariable button
-              cnts.length <= 1
-                ? setAddVariable(false)
-                : setCnts((prev) => prev.slice(0, prev.length - 1))
-            }} />
+              if (cnts.length <= 1){
+                setAddVariable(false);
+              }
+              else {
+                  setCnts((prev) => prev.slice(0, prev.length - 1));
+                  setFormData( prev => {
+                      let t = prev.variable_names
+                      t&& delete t[cnts.length]; 
+                      let t_val = prev.variable_values
+                      t_val&& delete t_val[cnts.length];
+                      console.log('t:',t);
+                      console.log('t_val:',t_val);
+                      return {...prev,variable_names:{...t},variable_values:{...t_val}}
+                    });
+              }
+            }} 
+          />
         </SpaceBetween>
       </SpaceBetween>
   )
@@ -695,7 +708,7 @@ const OpeningQuesionInputComp = ({ sn, formData, setFormData, readOnly }) => {
 export const OpeningQuesionsComp = ({ readOnly,formData, setFormData  }) => {
   const { t } = useTranslation();
   const [cnts,setCnts] = useState(
-    formData.history_messages
+    formData.history_messages  && Object.keys(formData.history_messages).length > 0
     ?Object.keys(formData.history_messages).map(key => Number(key))
     :[0]);
 
@@ -719,7 +732,7 @@ export const OpeningQuesionsComp = ({ readOnly,formData, setFormData  }) => {
             setFormData( prev => {
               let t = prev.history_messages
               t&& delete t[cnts.length-1];
-              return {...prev,history_messages:{...t}}})
+              return {...prev,history_messages:{...t}}});
           }} />
       </SpaceBetween>
     </SpaceBetween>
