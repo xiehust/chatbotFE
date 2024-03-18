@@ -290,8 +290,8 @@ const ThumbButtons = ({ msgid, session_id }) => {
   );
   useEffect(() => {}, []);
 
-  const main_fun_arn = localStoredParams.main_fun_arn;
-  const apigateway_endpoint = localStoredParams.apigateway_endpoint;
+  const main_fun_arn = localStoredParams?.main_fun_arn;
+  const apigateway_endpoint = localStoredParams?.apigateway_endpoint;
 
   const handleClickDown = async () => {
     const body = {
