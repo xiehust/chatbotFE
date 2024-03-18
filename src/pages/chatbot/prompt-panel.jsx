@@ -409,47 +409,6 @@ const ExpandableSettingPanel = () => {
           />
         </FormField>
       </ColumnLayout>
-      <ColumnLayout borders="vertical" columns="2" variant="text-grid">
-        <FormField label={t("upload_image")}>
-          <SpaceBetween size="s" direction="horizontal">
-            <FileUpload
-              onChange={({ detail }) => {
-                setHelperMsg("");
-                setFile(detail.value);
-                setUploadErr(null);
-                setUploadComplete(false);
-                setImg2txtUrl(null); 
-              }}
-              value={file}
-              accept=".png,.jpg,.jpeg"
-              constraintText={helperMsg}
-              showFileLastModified
-              showFileSize
-              showFileThumbnail
-              tokenLimit={3}
-              errorText={uploadErrtxt}
-              i18nStrings={{
-                uploadButtonText: (e) =>
-                  e ? t("choose_files") : t("choose_file"),
-                dropzoneText: (e) =>
-                  e ? "Drop files to upload" : "Drop file to upload",
-                removeFileAriaLabel: (e) => `Remove file ${e + 1}`,
-                limitShowFewer: "Show fewer files",
-                limitShowMore: "Show more files",
-                errorIconAriaLabel: "Error",
-              }}
-            />
-            <Button
-              variant="primary"
-              loading={loading}
-              disabled={uploadComplete}
-              onClick={handleImageUpload}
-            >
-              {t("upload")}
-            </Button>
-          </SpaceBetween>
-        </FormField>
-      </ColumnLayout>
     </ExpandableSection>
   );
 };
