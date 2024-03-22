@@ -179,7 +179,7 @@ i18n
             examples_management:'Fewshot Examples',
             auto_suggestion:'AutoSuggestion',
             select_category:'Select Category',
-            enable_search:'Enable Websearch'
+            enable_search:'Email Mode'
         }
       },
       zh:{
@@ -345,7 +345,7 @@ i18n
             examples_management:'Few shot示例管理',
             auto_suggestion:'自动建议',
             select_category:'选择分类',
-            enable_search:'网页搜索'
+            enable_search:'邮件模式'
         }
       }
     }
