@@ -11,7 +11,7 @@ import {
   Box,
   Button
 } from "@cloudscape-design/components";
-import { BreadcrumbsDynmic ,generateId,DetailPanel,addModelFormCtx,useModelFormCtx} from "./common-components";
+import { BreadcrumbsDynmic ,generateId,DetailPanel,addModelFormCtx,useModelFormCtx,validateForm} from "./common-components";
 import { CustomAppLayout, Navigation } from "../commons/common-components";
 import { useAuthorizedHeader, useAuthUserInfo } from "../commons/use-auth";
 import {getModelCards,addModelCard} from '../commons/api-gateway';
@@ -23,17 +23,6 @@ import { useNavigate } from "react-router-dom";
 
 
 
-
-function validateForm(props) {
-  if (
-    !props.model_name?.length ||
-    !props.model_size  ||
-    !props.model_type  ||
-    !props.code_repo 
-  ) {
-    return false;
-  } else return true;
-}
 
 function BaseFormContent({ content,setReadOnly, errorText = null }) {
   const {t} = useTranslation();

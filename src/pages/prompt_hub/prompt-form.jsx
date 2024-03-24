@@ -9,7 +9,7 @@ import {
   Link,
   Header,
 } from "@cloudscape-design/components";
-import { generateId,DetailPanel,useTemplateFormCtx,addTemplateFormCtx} from "./common-components";
+import { generateId,DetailPanel,useTemplateFormCtx,addTemplateFormCtx,validateForm} from "./common-components";
 import { useAuthorizedHeader,useAuthUserInfo } from "../commons/use-auth";
 import { useNavigate } from "react-router-dom";
 import { useSimpleNotifications } from "../commons/use-notifications";
@@ -18,16 +18,6 @@ import { useTranslation } from 'react-i18next';
 import {params_local_storage_key} from "./common-components";
 import { useLocalStorage } from '../../common/localStorage';
 
-
-function validateForm(props) {
-  if (
-    !props.template_name?.length ||
-    !props.email?.length||
-    !props.prompt_category 
-  ) {
-    return false;
-  } else return true;
-}
 
 
 function CreatBaseFormContent({ content, onCancelClick, errorText = null }) {

@@ -10,7 +10,7 @@ const VISIBLE_CONTENT_OPTIONS = [
   {
     label: i18n.t('info_field'),
     options: [
-      { id: 'id', label: i18n.t('model_id') },
+      // { id: 'id', label: i18n.t('model_id') },
       { id: 'model_name', label: i18n.t('model_name') },
       { id: 'model_size', label: i18n.t('model_size') },
       { id: 'model_type', label:  i18n.t('model_type'), },
@@ -20,10 +20,10 @@ const VISIBLE_CONTENT_OPTIONS = [
       { id: 'quant_method', label: i18n.t('quant_method')},
       { id: 'mini_hardware', label: i18n.t('mini_hardware')},
       { id: 'model_published_date', label: i18n.t('model_published_date')},
-      { id: 'model_tags', label: i18n.t('model_tags')},
+      { id: 'code_repo', label: i18n.t('code_repo')},
       { id: 'email', label:  i18n.t('created_by'), },
       { id: 'createtime', label:  i18n.t('createtime'), },
-      { id: 'geo', label:  i18n.t('geo'), },
+      // { id: 'geo', label:  i18n.t('geo'), },
     ],
   },
 ];
@@ -108,7 +108,7 @@ export const GEO_CATS = [
 
 export const DEFAULT_PREFERENCES = {
   pageSize: 30,
-  visibleContent: ['id','model_name','model_published_date','geo','model_type','model_size','email','createtime',],
+  visibleContent: ['model_name','model_type','code_type','code_repo','model_size','email','createtime',],
   wrapLines: false,
 };
 
@@ -138,38 +138,38 @@ export const COLUMN_DEFINITIONS = addColumnSortLabels([
     sortingField: "model_type",
   },
   {
-    id: 'model_published_date',
-    cell: item =>item.model_published_date||'-',
-    header: i18n.t('model_published_date'),
-    sortingField: "model_published_date",
-  },
-  {
     id: 'model_deploy_mode',
-    cell: item =>item.model_deploy_mode||'-',
+    cell: item =>item.model_deploy_mode?.map(it => it.label).join('|')||'-',
     header: i18n.t('deploy_mode'),
     sortingField: "model_deploy_mode",
   },
   {
     id: 'code_type',
-    cell: item =>item.code_type||'-',
+    cell: item =>item.code_type?.map(it => it.label).join('|')||'-',
     header: i18n.t('code_type'),
     sortingField: "code_type",
   },
   {
+    id: 'code_repo',
+    header: i18n.t('code_repo'),
+    cell: item => <Link  external href={`${item?.code_repo}`} >{'link'}</Link>,
+    sortingField: "model_name",
+  },
+  {
     id: 'framework_type',
-    cell: item =>item.framework_type||'-',
+    cell: item =>item.framework_type?.lable||'-',
     header: i18n.t('frame_work'),
     sortingField: "framework_type",
   },
   {
     id: 'quant_method',
-    cell: item =>item.quant_method||'-',
+    cell: item =>item.quant_method?.label||'-',
     header: i18n.t('quant_method'),
     sortingField: "quant_method",
   },
   {
     id: 'mini_hardware',
-    cell: item =>item.mini_hardware||'-',
+    cell: item =>item.mini_hardware?.map(it => it.label).join('|')||'-',
     header: i18n.t('mini_hardware'),
     sortingField: "mini_hardware",
   },
@@ -179,24 +179,24 @@ export const COLUMN_DEFINITIONS = addColumnSortLabels([
     header: i18n.t('description'),
     sortingField: "description",
   },
-  // {
-  //   id: 'model_tags',
-  //   cell: item =>item.model_tags||'-',
-  //   header: i18n.t('model_tags'),
-  //   sortingField: "model_tags",
-  // },
+  {
+    id: 'model_published_date',
+    cell: item =>item.model_published_date||'-',
+    header: i18n.t('model_published_date'),
+    sortingField: "model_published_date",
+  },
   {
     id: 'email',
     cell: item =>item.email||'-',
     header: i18n.t('created_by'),
     sortingField: "email",
   },
-  {
-    id: 'geo',
-    cell: item =>item.geo||'-',
-    header: i18n.t('geo'),
-    sortingField: "geo",
-  },
+  // {
+  //   id: 'geo',
+  //   cell: item =>item.geo||'-',
+  //   header: i18n.t('geo'),
+  //   sortingField: "geo",
+  // },
   {
     id: 'createtime',
     cell: item =>item.createtime||'-',

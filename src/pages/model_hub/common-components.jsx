@@ -10,6 +10,7 @@ import {
   Container,
   FormField,
   CodeEditor,
+  Link,
   Input,
   Select,
   Textarea,
@@ -39,6 +40,25 @@ export const addModelFormCtx = createContext();
 
 export const useModelFormCtx = () => {
   return useContext(addModelFormCtx);
+}
+
+export function validateForm(props) {
+  if (
+    !props.model_name?.length ||
+    !props.model_type||
+    !props.model_size||
+    !isURL(props.code_repo??'')||
+    !props.code_type?.length||
+    !props.model_deploy_mode?.length||
+    !props.email?.length
+      ) {
+    return false;
+  } else return true;
+}
+
+function isURL(url) {
+  const startsWithGitHub = url.startsWith("https://");
+  return startsWithGitHub;
 }
 
 function isGitHubNotebookURL(url) {
@@ -267,9 +287,9 @@ export const DetailPanel = ({ readOnlyWithErrors = false, readOnly = false }) =>
           </Header>}
       >
         <SpaceBetween size="l">
-          <FormField label={t("select_geo_category")}>
+          {/* <FormField label={t("select_geo_category")}>
             <GeoSelect readOnly={readOnly} />
-          </FormField>
+          </FormField> */}
           <FormField label={t("uploader_email")} description={t("your_amazon_email")}>
             <Input
               invalid={inValid && !formData.email}
@@ -346,19 +366,21 @@ export const DetailPanel = ({ readOnlyWithErrors = false, readOnly = false }) =>
           <FormField label={t("frame_work")}>
             <FrameworkTypeSelect readOnly={readOnly} />
           </FormField>
-          <FormField label={t("deploy_mode")}>
+          <FormField label={t("deploy_mode")} description="(Required)">
             <DeployModeSelect readOnly={readOnly} />
           </FormField>
-          <FormField label={t("code_type")}>
+          <FormField label={t("code_type")} description="(Required)">
             <RepoCodeTypeSelect readOnly={readOnly} />
           </FormField>
           <FormField
             label={t("code_repo")}
-            constraintText="put your code link or repo link here"
+            description="must starts with https://...."
           >
+            {
+              !readOnly?
             <Input
               // invalid={inValid && !formData.code_repo}
-              invalid={inValid||codeRepoInValid}
+              invalid={codeRepoInValid || (inValid && !formData.code_repo)}
               readOnly={readOnly}
               placeholder="(Required)"
               value={formData.code_repo}
@@ -366,18 +388,21 @@ export const DetailPanel = ({ readOnlyWithErrors = false, readOnly = false }) =>
                 !readOnlyWithErrors &&
                   setFormData((prev) => ({ ...prev, code_repo: event.detail.value }));
                   setInvalid(false);
-                  // if (isGitHubNotebookURL(event.detail.value)){
-                  //   setCodeRepoInvalid(false);
-                  //   setInvalid(false);
-                  // }else{
-                  //   setCodeRepoInvalid(true);
-                  //   setInvalid(false);
-                  // }       
+                  if (isURL(event.detail.value)){
+                    setCodeRepoInvalid(false);
+                    setInvalid(false);
+                  }else{
+                    setCodeRepoInvalid(true);
+                    setInvalid(false);
+                  }       
               }
               }
             />
+            :
+            <Link  external href={`${formData?.code_repo}`} >{formData?.code_repo}</Link>
+          }
           </FormField>
-          <FormField label={t("mini_hardware")}>
+          <FormField label={t("mini_hardware")} description="(Required)">
             <HwSelect readOnly={readOnly} />
           </FormField>
           <FormField
@@ -424,7 +449,7 @@ const HwSelect = ({ readOnly }) => {
   const [selectedOptions, setSelectedOptions] = useState(formData.mini_hardware);
   return (
     <Multiselect
-      invalid={inValid && !formData.mini_hardware}
+      invalid={inValid && !formData.mini_hardware?.length}
       disabled={readOnly}
       selectedOptions={selectedOptions}
       onChange={({ detail }) => {
@@ -444,6 +469,7 @@ const RepoCodeTypeSelect = ({ readOnly }) => {
   const [selectedOptions, setSelectedOptions] = useState(formData.code_type);
   return (
     <Multiselect
+      invalid={inValid && !formData.code_type?.length}
       disabled={readOnly}
       selectedOptions={selectedOptions}
       onChange={({ detail }) => {
@@ -464,6 +490,7 @@ const DeployModeSelect = ({ readOnly }) => {
   const [selectedOptions, setSelectedOptions] = useState(formData.model_deploy_mode);
   return (
     <Multiselect
+     invalid={inValid && !formData.model_deploy_mode?.length}
       disabled={readOnly}
       selectedOptions={selectedOptions}
       onChange={({ detail }) => {

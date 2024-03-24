@@ -59,6 +59,17 @@ const formatHtmlLines = (text) => {
 }
 
 
+export function validateForm(props) {
+  if (
+    !props.template_name?.length ||
+    !props.email?.length||
+    !props.prompt_category 
+  ) {
+    return false;
+  } else return true;
+}
+
+
 export const TemplateEditor = (props) => {
   const [preferences, setPreferences] = useState(
     undefined
@@ -304,9 +315,9 @@ export const DetailPanel = ({ readOnlyWithErrors = false, readOnly = false }) =>
           </Header>}
       >
         <SpaceBetween size="l">
-          <FormField label={t("select_geo_category")}>
+          {/* <FormField label={t("select_geo_category")}>
             <GeoSelect readOnly={readOnly} />
-          </FormField>
+          </FormField> */}
           <FormField label={t("uploader_email")} description={t("your_amazon_email")}>
             <Input
               invalid={inValid && !formData.email}

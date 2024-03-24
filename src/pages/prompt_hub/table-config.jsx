@@ -10,13 +10,13 @@ const VISIBLE_CONTENT_OPTIONS = [
   {
     label: i18n.t('info_field'),
     options: [
-      { id: 'id', label: i18n.t('template_id') },
+      // { id: 'id', label: i18n.t('template_id') },
       { id: 'template_name', label: i18n.t('template_name') },
       { id: 'description', label: i18n.t('description'),},
       { id: 'email', label:  i18n.t('created_by'), },
       { id: 'createtime', label:  i18n.t('createtime'), },
       { id: 'prompt_category', label:  i18n.t('prompt_category'), },
-      { id: 'geo', label:  i18n.t('geo'), },
+      // { id: 'geo', label:  i18n.t('geo'), },
     ],
   },
 ];
@@ -59,7 +59,7 @@ export const GEO_CATS = [
 
 export const DEFAULT_PREFERENCES = {
   pageSize: 30,
-  visibleContent: ['id','template_name','geo','description','email','createtime','prompt_category',],
+  visibleContent: ['template_name','geo','description','email','createtime','prompt_category',],
   wrapLines: false,
 };
 
@@ -94,12 +94,12 @@ export const COLUMN_DEFINITIONS = addColumnSortLabels([
     header: i18n.t('created_by'),
     sortingField: "email",
   },
-  {
-    id: 'geo',
-    cell: item =>item.geo||'-',
-    header: i18n.t('geo'),
-    sortingField: "geo",
-  },
+  // {
+  //   id: 'geo',
+  //   cell: item =>item.geo||'-',
+  //   header: i18n.t('geo'),
+  //   sortingField: "geo",
+  // },
   {
     id: 'prompt_category',
     cell: item =>item.prompt_category?.label||'-',

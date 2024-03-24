@@ -45,7 +45,7 @@ function TableContent({
         noMatch: <TableNoMatchState onClearFilter={() => actions.setFiltering('')} />,
       },
       pagination: { pageSize: preferences.pageSize },
-      sorting: { defaultState: { sortingColumn: columnDefinitions[0] } },
+      sorting: {defaultState: {sortingDescending:true, sortingColumn: columnDefinitions[12], isDescending:true }},
       selection: {},
     }
   );

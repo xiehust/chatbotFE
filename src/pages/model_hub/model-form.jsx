@@ -9,7 +9,7 @@ import {
   Link,
   Header,
 } from "@cloudscape-design/components";
-import { generateId,DetailPanel,useModelFormCtx,addModelFormCtx} from "./common-components";
+import { generateId,DetailPanel,useModelFormCtx,addModelFormCtx,validateForm} from "./common-components";
 import { useAuthorizedHeader,useAuthUserInfo } from "../commons/use-auth";
 import { useNavigate } from "react-router-dom";
 import { useSimpleNotifications } from "../commons/use-notifications";
@@ -19,18 +19,6 @@ import {params_local_storage_key} from "../chatbot/common-components";
 import { useLocalStorage } from '../../common/localStorage';
 
 
-function validateForm(props) {
-  if (
-    !props.model_name ||
-    !props.model_type||
-    !props.model_size||
-    !props.code_repo||
-    !props.geo||
-    !props.email
-      ) {
-    return false;
-  } else return true;
-}
 
 
 function BaseFormContent({ content, onCancelClick, errorText = null }) {
