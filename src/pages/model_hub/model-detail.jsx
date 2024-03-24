@@ -69,7 +69,7 @@ function BaseFormContent({ content,setReadOnly, errorText = null }) {
               {
                 header: `Success to save model card`,
                 type: "success",
-                content: <Box>{'View:'}<Link href={`/model_hub/${formData?.id}`}>{`${formData?.template_name}`}</Link></Box>,
+                content: <Box>{'View:'}<Link href={`/model_hub/${formData?.id}`}>{`${formData?.model_name}`}</Link></Box>,
                 dismissible: true,
                 dismissLabel: "Dismiss message",
                 onDismiss: () =>

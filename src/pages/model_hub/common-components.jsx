@@ -228,7 +228,7 @@ export const FullPageHeader = ({
     setVisible(true);
   };
   const selectItem = isOnlyOneSelected ? props.selectedItems[0] : undefined;
-  console.log(selectItem);
+  // console.log(selectItem);
   return (
     <div>
       <DeleteConfirmModal visible={visible} setVisible={setVisible} selectItem={selectItem} refreshAction={props.refreshAction} />
