@@ -43,8 +43,8 @@ const EditPanel = ({ setVisible }) => {
   );
   const [answerValue, setAnswerValue] = useState("");
   const [questionValue, setQuestionValue] = useState("");
-  const main_fun_arn = localStoredParams.main_fun_arn;
-  const apigateway_endpoint = localStoredParams.apigateway_endpoint;
+  const main_fun_arn = localStoredParams?.main_fun_arn;
+  const apigateway_endpoint = localStoredParams?.apigateway_endpoint;
   const [loading, setLoading] = useState(false);
   const msgid = generateId();
   useEffect(() => {
