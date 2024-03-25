@@ -16,7 +16,7 @@ const VISIBLE_CONTENT_OPTIONS = [
       { id: 'email', label:  i18n.t('created_by'), },
       { id: 'createtime', label:  i18n.t('createtime'), },
       { id: 'prompt_category', label:  i18n.t('prompt_category'), },
-      // { id: 'geo', label:  i18n.t('geo'), },
+      { id: 'is_recommended', label:  i18n.t('recommend'), },
     ],
   },
 ];
@@ -59,7 +59,7 @@ export const GEO_CATS = [
 
 export const DEFAULT_PREFERENCES = {
   pageSize: 30,
-  visibleContent: ['template_name','geo','description','email','createtime','prompt_category',],
+  visibleContent: ['template_name','is_recommended','description','email','createtime','prompt_category',],
   wrapLines: false,
 };
 
@@ -89,10 +89,10 @@ export const COLUMN_DEFINITIONS = addColumnSortLabels([
     sortingField: "description",
   },
   {
-    id: 'email',
-    cell: item =>item.email||'-',
-    header: i18n.t('created_by'),
-    sortingField: "email",
+    id: 'is_recommended',
+    cell: item =>(item.is_recommended&&<Badge color="green">{i18n.t('is_recommended')}</Badge>),
+    header: i18n.t('recommend'),
+    sortingField: "is_recommended",
   },
   // {
   //   id: 'geo',
@@ -107,11 +107,17 @@ export const COLUMN_DEFINITIONS = addColumnSortLabels([
     sortingField: "prompt_category",
   },
   {
+    id: 'email',
+    cell: item =>item.email||'-',
+    header: i18n.t('created_by'),
+    sortingField: "email",
+  },
+  {
     id: 'createtime',
     cell: item =>item.createtime||'-',
     header: i18n.t('createtime'),
     sortingField: "createtime",
-  }
+  },
 ]);
 
 

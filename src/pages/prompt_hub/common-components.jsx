@@ -120,6 +120,27 @@ export const Breadcrumbs = () => {
   );
 };
 
+export const CardBreadcrumbs = () => {
+  const { t, i18n } = useTranslation();
+  const breadcrumbs = [
+    {
+      text: t("awschatportal"),
+      href: "/prompt_playground",
+    },
+    {
+      text: t("prompt_playground"),
+    },
+  ];
+  return (
+    <BreadcrumbGroup
+      items={breadcrumbs}
+      expandAriaLabel="Show path"
+      ariaLabel="Breadcrumbs"
+    />
+  );
+};
+
+
 export const BreadcrumbsDynmic = ({ id }) => {
   const { t } = useTranslation();
   return (
@@ -258,6 +279,8 @@ export const FullPageHeader = ({
               onClick={props.refreshAction}
               iconName="refresh"
             />
+            {
+              userinfo?.groupname === 'admin'&&
             <Button
               disabled={!isOnlyOneSelected || userinfo.groupname != 'admin'}
               name="delete"
@@ -265,6 +288,7 @@ export const FullPageHeader = ({
             >
               {t('delete')}
             </Button>
+          }
             <Button
               disabled={!isOnlyOneSelected}
               href={'/prompt_playground/' + selectItem?.id}
@@ -275,6 +299,47 @@ export const FullPageHeader = ({
               href={'/prompt_hub/create'}
               variant="primary"
             >{t('create')}
+            </Button>
+          </SpaceBetween>
+        }
+        {...props}
+      />
+    </div>
+  );
+};
+
+export const CardPageHeader = ({
+  resourceName,
+  createButtonText,
+  ...props
+}) => {
+  const { t } = useTranslation();
+  const userinfo = useAuthUserInfo();
+  const isOnlyOneSelected = props.selectedItems.length === 1;
+  const [visible, setVisible] = useState(false)
+  const deleteAction = () => {
+    setVisible(true);
+  };
+  const selectItem = isOnlyOneSelected ? props.selectedItems[0] : undefined;
+  // console.log(selectItem);
+  return (
+    <div>
+      <DeleteConfirmModal visible={visible} setVisible={setVisible} selectItem={selectItem} refreshAction={props.refreshAction} />
+      <TableHeader
+        variant="awsui-h1-sticky"
+        title={resourceName}
+        actionButtons={
+          <SpaceBetween size="xs" direction="horizontal">
+            <Button
+              name="refresh"
+              onClick={props.refreshAction}
+              iconName="refresh"
+            />
+            <Button
+              disabled={!isOnlyOneSelected}
+              href={'/prompt_playground/' + selectItem?.id}
+              variant="primary"
+            >{t('start_chat')}
             </Button>
           </SpaceBetween>
         }
@@ -383,7 +448,8 @@ export const DetailPanel = ({ readOnlyWithErrors = false, readOnly = false }) =>
                 setFormData((prev) => ({ ...prev, description: event.detail.value }))
               }
             />
-          </FormField>
+          </FormField >
+          <RecommendedPE readOnly={readOnly}/>
 
         </SpaceBetween>
       </Container>
@@ -517,6 +583,22 @@ const GeoSelect = ({ readOnly }) => {
   )
 }
 
+const RecommendedPE = ({ readOnly }) => {
+  const { t } = useTranslation();
+  const userInfo = useAuthUserInfo();
+  const { formData, setFormData } = useContext(addTemplateFormCtx);
+  const [checked, setChecked] = useState(formData.is_recommended ?? false);
+  return   (<Toggle
+  description={t('is_recommended_desc')}
+  disabled={readOnly || userInfo.groupname !== 'admin'} checked={checked} onChange={(event) => {
+    setChecked(event.detail.checked);
+    setFormData((prev) => ({ ...prev, is_recommended: event.detail.checked }))
+  }}>
+  {t('is_recommended')}
+</Toggle>
+)
+
+}
 
 const VariableComp = ({ sn, formData, setFormData, readOnly }) => {
   const { t } = useTranslation();

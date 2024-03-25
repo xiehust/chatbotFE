@@ -1,26 +1,21 @@
 import React from 'react';
 import { Link, CollectionPreferences, Badge, Button ,Box} from '@cloudscape-design/components';
 import i18n from '../../common/i18n';
-import toplogo from '../../resources/AWS logo.svg';
 
 
 export const CARD_DEFINITIONS = {
   header: item => (
     <div>
-      <Link fontSize="heading-m"  href={'/agents/'+item.id}>
-        {item.agent_name}
+      <Link fontSize="heading-m"  href={`/prompt_hub/${item?.id}`}>
+      {item?.template_name}
       </Link>
     </div>
   ),
   sections: [
     {
-      id: 'avatar',
-    //   header: 'avatar',
-      content: item => (
-        <Box>
-          <img src={toplogo} alt="avatar" />
-        </Box>
-      ),
+      id: 'prompt_category',
+      header: i18n.t('prompt_category'),
+      content: item => item.prompt_category?.label||'-',
     },
     {
       id: 'description',
@@ -28,20 +23,19 @@ export const CARD_DEFINITIONS = {
       content: item => item.description||"-",
     },
     {
-      id: 'createtime',
-      header: i18n.t('createtime'),
-      content: item => item.createtime,
+      id: 'is_recommended',
+      // header: i18n.t('recommend'),
+      content: item =>(item.is_recommended&&<Badge color="green">{i18n.t('is_recommended')}</Badge>),
     },
     {
-      id: 'username',
-      header: i18n.t('username'),
-      content: item => item.username
-      ,
+      id: 'createtime',
+      header: i18n.t('createtime'),
+      content: item => item.createtime||"-",
     },
     {
       id: 'buttonurl',
       content: item => (
-        <Box float="right"> <Button href={'agentschat/'+item.id}>{i18n.t('start_chat')}</Button></Box>
+        <Box float="right"> <Button href={'/prompt_playground/'+item.id}>{i18n.t('start_chat')}</Button></Box>
       ),
     },
   ],
@@ -51,11 +45,11 @@ export const VISIBLE_CONTENT_OPTIONS = [
     {
       label: 'Main properties',
       options: [
-        { id: 'avatar', label: 'Avatar' },
+        { id: 'template_name', label: 'template_name' },
         { id: 'createtime', label: i18n.t('createtime') },
         { id: 'description', label: i18n.t('description') },
         { id: 'buttonurl', label: 'Button' },
-        { id: 'username', label: i18n.t('username')},
+        { id: 'prompt_category', label: i18n.t('prompt_category')},
       ],
     },
   ];
@@ -72,7 +66,7 @@ export const VISIBLE_CONTENT_OPTIONS = [
   
   export const DEFAULT_PREFERENCES = {
     pageSize: 30,
-    visibleContent: ['avatar', 'createtime', 'description','username', 'buttonurl'],
+    visibleContent: ['template_name', 'createtime', 'description','prompt_category', 'buttonurl'],
   };
   
   export const Preferences = ({

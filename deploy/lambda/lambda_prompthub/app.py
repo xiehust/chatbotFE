@@ -5,6 +5,7 @@ import base64
 import json
 import logging
 import time
+from boto3.dynamodb.conditions import Attr
 logger = logging.getLogger()
 logger.setLevel(logging.INFO)
 dynamodb_resource = boto3.resource('dynamodb')
@@ -33,30 +34,32 @@ def get_s3_image_base64(bucket_name, key):
         return None
     
 
-def get_template(id, company,start_key=None) ->list:
+def get_template(id, company,is_recommended,start_key=None) ->list:
     
-    def get_template_sub(id, company, limit=25, start_key=None):
+    def get_template_sub(id, company,is_recommended, limit=1000, start_key=None):
         records = None
         last_evaluated_key = None
+        if is_recommended == 'true':
+            filter_expr = Attr('company').eq(company) & Attr('is_recommended').eq(True)
+        else:
+            filter_expr = Attr('company').eq(company)
         if id:
             try:
                 response = table.get_item(Key={'id': id})
-                records = response.get('Item')
+                records = [response.get('Item')]
             except Exception as e:
                 logger.info(str(e))
         else:
             try:
                 if start_key:
                     response = table.scan(
-                        FilterExpression='company = :val',
-                        ExpressionAttributeValues={':val': company},
+                        FilterExpression=filter_expr,
                         Limit=limit,
                         ExclusiveStartKey=start_key
                     )
                 else:
                     response = table.scan(
-                        FilterExpression='company = :val',
-                        ExpressionAttributeValues={':val': company},
+                        FilterExpression=filter_expr,
                         Limit=limit
                     )
                 records = response.get('Items')
@@ -71,12 +74,15 @@ def get_template(id, company,start_key=None) ->list:
     results = []
     last_evaluated_key = None
     while True:
-        records, last_evaluated_key = get_template_sub(id, company, limit=1000, start_key=last_evaluated_key)
+        records, last_evaluated_key = get_template_sub(id, company,is_recommended, limit=1000, start_key=last_evaluated_key)
         if not records:
             break
         results += records
         if not last_evaluated_key:
             break
+    #sort descending by createtime attri
+    if isinstance(results,list) :
+        results.sort(key=lambda x: x['createtime'], reverse=True)
     return records
         
 def add_template(data):
@@ -113,17 +119,18 @@ def handler(event,lambda_context):
             # apigateway_endpoint = query_params.get('apigateway_endpoint')
             id = query_params.get('id')
             company =  query_params.get('company', 'default')
-            results = get_template(id,company)
+            is_recommended = query_params.get('is_recommended')
+            results = get_template(id,company,is_recommended)
             images_base64 = []
             if id:
-                # result = results[0]
+                result = results[0]
                 print(results)
-                imgurls = results.get('imgurl',[])
+                imgurls = result.get('imgurl',[])
                 for imgurl in imgurls:
                     bucket,imgobj = imgurl.split('/',1)
                     image_base64 = get_s3_image_base64(bucket,imgobj)
                     images_base64.append(image_base64)
-                results = {**results,"images_base64":images_base64}
+                results = {**result,"images_base64":images_base64}
             # print(results)
             return {'statusCode': 200, 'headers': cors_headers,'body':json.dumps(results,ensure_ascii=False)}
     

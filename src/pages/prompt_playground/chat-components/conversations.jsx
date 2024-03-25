@@ -262,14 +262,17 @@ const MsgItem = ({ who, text, images_base64,images, msgid, connectionId }) => {
         <Stack direction="row" spacing={2} sx={{ alignItems: "top" }}>
           <Avatar src={botlogo} alt={"AIBot"} />
           <Grid container spacing={0.1}>
-            <Grid item xs={11}>
+            <TextItem>
+                <MarkdownToHtml text={newlines.join(" ")} />
+              </TextItem>
+            {/* <Grid item xs={11}>
               <TextItem>
                 <MarkdownToHtml text={newlines.join(" ")} />
               </TextItem>
             </Grid>
             <Grid item xs={11}>
               <ThumbButtons msgid={msgid} sessionId={sessionId} />
-            </Grid>
+            </Grid> */}
           </Grid>
         </Stack>
       </ListItem>
@@ -578,24 +581,29 @@ const ConversationsPanel = ({id}) => {
       if (chunck === "[DONE]") {
         setStopFlag(false);
         if (streamOutput.current !== "") {
-          setConversations((prev) => [
-            ...prev,
-            {
-              role: resp.role,
-              content: streamOutput.current,
-              connectionId: resp.connectionId,
-            },
-          ]);
-
-          setLocalStoredMsgItems([
-            ...msgItems.slice(0, -1),
-            {
-              id: resp.msgid,
-              who: BOTNAME,
-              text: streamOutput.current,
-              connectionId: resp.connectionId,
-            },
-          ]);
+          const targetItem = msgItems.filter((item) => item.id === resp.msgid);
+          
+          // console.log('targetItem length:',targetItem.length)
+          //如果存在则更新
+          if (targetItem.length) {
+            setConversations((prev) => [
+              ...prev,
+              {
+                role: resp.role,
+                content: streamOutput.current,
+                connectionId: resp.connectionId,
+              },
+            ]);
+            setLocalStoredMsgItems([
+              ...msgItems.slice(0, -1),
+              {
+                id: resp.msgid,
+                who: BOTNAME,
+                text: streamOutput.current,
+                connectionId: resp.connectionId,
+              },
+            ]);
+          }
           //如果是SD模型返回的url，则保存起来
           const [imgPaths, newtext] = extractImagTag(streamOutput.current);
           imgPaths.map((url) => setImg2txtUrl(url));

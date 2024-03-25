@@ -54,6 +54,7 @@ const navItems_admin = [
     text: i18n.t('prompt_hub'),
     items: [
       { type: 'link', text: i18n.t('prompt_hub'), href: '/prompt_hub' },
+      { type: 'link', text: i18n.t('prompt_playground'), href: '/prompt_playground' },
     ],
   }, 
   {
@@ -63,14 +64,17 @@ const navItems_admin = [
       { type: 'link', text: i18n.t('model_hub'), href: '/model_hub' },
     ],
   }, 
+  // {
+  //   type: 'section',
+  //   text: i18n.t('feedback_us'),
+  //   items: [
+  //     { type: 'link', text: i18n.t('feedback_management'), href: '/feedback' },
+  //   ],
+  // }, 
   {
     type: 'section',
     text: i18n.t('admin'),
     items: [
-      // { type: 'link', text: i18n.t('docs'), href: '/docs' },
-      // { type: 'link', text: i18n.t('prompt_template'), href: '/template' },
-      { type: 'link', text: i18n.t('feedback_management'), href: '/feedback' },
-      // { type: 'link', text: i18n.t('examples_management'), href: '/examples' },
       { type: 'link', text: i18n.t('user'), href: '/admin/user' },
     ],
   },
@@ -96,6 +100,7 @@ const navItems = [
     text: i18n.t('prompt_hub'),
     items: [
       { type: 'link', text: i18n.t('prompt_hub'), href: '/prompt_hub' },
+      { type: 'link', text: i18n.t('prompt_playground'), href: '/prompt_playground' },
     ],
   }, 
   {
@@ -105,6 +110,13 @@ const navItems = [
       { type: 'link', text: i18n.t('model_hub'), href: '/model_hub' },
     ],
   }, 
+  // {
+  //   type: 'section',
+  //   text: i18n.t('feedback_us'),
+  //   items: [
+  //     { type: 'link', text: i18n.t('feedback_management'), href: '/feedback' },
+  //   ],
+  // }, 
   // {
   //   type: 'section',
   //   text: i18n.t('admin'),

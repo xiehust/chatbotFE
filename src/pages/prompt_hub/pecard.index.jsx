@@ -2,30 +2,28 @@
 // SPDX-License-Identifier: MIT-0
 import React, { useEffect, useRef, useState } from 'react';
 import { useCollection } from '@cloudscape-design/collection-hooks';
-import { COLUMN_DEFINITIONS, DEFAULT_PREFERENCES, Preferences,} from './table-config';
-import { Flashbar, Pagination, Table, TextFilter } from '@cloudscape-design/components';
-import { FullPageHeader ,Breadcrumbs,DeleteConfirmModal} from './common-components';
+import { DEFAULT_PREFERENCES, Preferences,CARD_CONFIG,CARD_DEFINITIONS} from './cards-config';
+import { Flashbar, Pagination,   Cards, TextFilter } from '@cloudscape-design/components';
+import { CardPageHeader } from './common-components';
 import {
   CustomAppLayout,
   Navigation,
   TableNoMatchState,
   TableEmptyState,
-  ToolsContent,
 } from '../commons/common-components';
 import { paginationLabels,distributionSelectionLabels } from '../../common/labels';
 import { getFilterCounterText } from '../../common/tableCounterStrings';
-import { useColumnWidths } from '../commons/use-column-widths';
 import { useLocalStorage } from '../../common/localStorage';
 import {useSimpleNotifications} from '../commons/use-notifications';
 import {useAuthUserInfo, useAuthorizedHeader} from "../commons/use-auth";
 import {getPrompts} from '../commons/api-gateway';
 import { useTranslation } from 'react-i18next';
-import {params_local_storage_key} from "./common-components";
+import {params_local_storage_key,CardBreadcrumbs} from "./common-components";
 import ModelSettings from "../commons/chat-settings";
 
 
 
-function TableContent({ 
+function CardsContent({ 
   resourceName,
   distributions,
   loadingState,
@@ -34,7 +32,7 @@ function TableContent({
   buttonHref,
  }) {
   const [preferences, setPreferences] = useLocalStorage('PE-Hub-Table-Preferences', DEFAULT_PREFERENCES);
-  const [columnDefinitions, saveWidths] = useColumnWidths('PE-Hub-Table-Widths', COLUMN_DEFINITIONS);
+  // const [columnDefinitions, saveWidths] = useColumnWidths('PE-Hub-Table-Widths', COLUMN_DEFINITIONS);
   const {t} = useTranslation();
 
   const { items, actions, filteredItemsCount, collectionProps, filterProps, paginationProps } = useCollection(
@@ -45,27 +43,27 @@ function TableContent({
         noMatch: <TableNoMatchState onClearFilter={() => actions.setFiltering('')} />,
       },
       pagination: { pageSize: preferences.pageSize },
-      sorting: {defaultState: {sortingDescending:true, sortingColumn: columnDefinitions[6], isDescending:true }},
+      // sorting: {defaultState: {sortingDescending:true, sortingColumn: columnDefinitions[5], isDescending:true }},
       selection: {},
     }
   );
 
   return (
     <div>
-        <ModelSettings href={'/prompt_hub'}/>
-    <Table
+        <ModelSettings href={'/prompt_playground'}/>
+    <Cards
      {...collectionProps}
-      columnDefinitions={columnDefinitions}
-      visibleColumns={preferences.visibleContent}
+     cardDefinition={CARD_DEFINITIONS}
+     visibleColumns={preferences.visibleContent}
+      cardsPerRow={CARD_CONFIG}
+      entireCardClickable
       items={items}
       selectionType="single"
       loading = {loadingState}
       loadingText = {t("loading")}
       ariaLabels={distributionSelectionLabels}
       variant="full-page"
-      stickyHeader={true}
-      resizableColumns={true}
-      onColumnWidthsChange={saveWidths}
+      // onColumnWidthsChange={saveWidths}
       wrapLines={preferences.wrapLines}
       filter={
         <TextFilter
@@ -76,11 +74,10 @@ function TableContent({
         />
       }
       header={
-        <FullPageHeader
+        <CardPageHeader
           selectedItems={collectionProps.selectedItems}
           totalItems={distributions}
           resourceName={resourceName}
-          createButtonText={buttonName}
           refreshAction={refreshAction}
           href={buttonHref}
         />
@@ -92,7 +89,8 @@ function TableContent({
   );
 }
 
-export default function PromptHubTable () {
+
+export default function PEPlayCard () {
   const appLayout = useRef();
   const {notificationitems} = useSimpleNotifications();
   const [toolsOpen, setToolsOpen] = useState(false);
@@ -116,7 +114,8 @@ export default function PromptHubTable () {
   const queryParams = {
     main_fun_arn:main_fun_arn,
     apigateway_endpoint:apigateway_endpoint,
-    company:company
+    company:company,
+    is_recommended:true,
   }
   useEffect(()=>{
     setLoadingState(true);
@@ -139,19 +138,17 @@ export default function PromptHubTable () {
 
     <CustomAppLayout
       ref={appLayout}
-      navigation={<Navigation activeHref={'/prompt_hub'} />}
+      navigation={<Navigation activeHref={'/prompt_playground'} />}
       notifications={<Flashbar items={notificationitems} stackItems/>}
-      breadcrumbs={<Breadcrumbs />}
-      content={<TableContent 
-                resourceName={t('prompt_hub')}
+      breadcrumbs={<CardBreadcrumbs />}
+      content={<CardsContent 
+                resourceName={t('prompt_playground')}
                 distributions = {docitems}
                 loadingState={loadingState}
                 refreshAction={refreshAction}
             />}
       contentType="table"
       stickyNotifications
-      // tools={<ToolsContent />}
-      // toolsOpen={toolsOpen}
       onToolsChange={({ detail }) => setToolsOpen(detail.open)}
     />
 

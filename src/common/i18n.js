@@ -240,7 +240,12 @@ i18n
             frame_work:'Framework',
             deploy_mode:'Deploy Mode',
             quant_method:'Quantization Method',
-            pe_config:'PE Config'
+            pe_config:'PE Config',
+            feedback_us:"Feedback Us",
+            prompt_playground:"PE Playground",
+            is_recommended_desc:"It will show in PE Playground if it is recommended",
+            is_recommended:"Recommend",
+            recommend:"Comment"
         }
       },
       zh:{
@@ -467,7 +472,12 @@ i18n
             frame_work:'框架',
             deploy_mode:'部署方式',
             quant_method:'量化方法',
-            pe_config:'PE设置'
+            pe_config:'PE设置',
+            feedback_us:"反馈我们",
+            prompt_playground:"PE 试验场",
+            is_recommended_desc:"推荐试一试将会展示到PE试验场",
+            is_recommended:"推荐试一试",
+            recommend:"备注"
         }
       }
     }
