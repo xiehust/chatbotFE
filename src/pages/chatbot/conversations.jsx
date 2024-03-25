@@ -179,7 +179,8 @@ const ImageUrlItems = ({images})=>{
 
 const MsgItem = ({ who, text, images_base64,images, msgid, connectionId }) => {
   const userInfo = useAuthUserInfo();
-  const sessionId = `web_chat_${userInfo.username}_${connectionId}`
+  // const sessionId = `web_chat_${userInfo.username}_${connectionId}`
+  const sessionId = `web_chat_${userInfo.username}`
 
   //restore image file from localstorage
   if (images_base64){
@@ -551,27 +552,35 @@ const ConversationsPanel = () => {
     }
     if (resp.role) {
       // if stream stop, save the whole message
+      // console.log(chunck)
       if (chunck === "[DONE]") {
         setStopFlag(false);
         if (streamOutput.current !== "") {
-          setConversations((prev) => [
-            ...prev,
-            {
-              role: resp.role,
-              content: streamOutput.current,
-              connectionId: resp.connectionId,
-            },
-          ]);
 
-          setLocalStoredMsgItems([
-            ...msgItems.slice(0, -1),
-            {
-              id: resp.msgid,
-              who: BOTNAME,
-              text: streamOutput.current,
-              connectionId: resp.connectionId,
-            },
-          ]);
+          const targetItem = msgItems.filter((item) => item.id === resp.msgid);
+          
+          // console.log('targetItem length:',targetItem.length)
+          //如果存在则更新
+          if (targetItem.length) {
+            setConversations((prev) => [
+              ...prev,
+              {
+                role: resp.role,
+                content: streamOutput.current,
+                connectionId: resp.connectionId,
+              },
+            ]);
+            setLocalStoredMsgItems([
+              ...msgItems.slice(0, -1),
+              {
+                id: resp.msgid,
+                who: BOTNAME,
+                text: streamOutput.current,
+                connectionId: resp.connectionId,
+              },
+            ]);
+          }
+
           //如果是SD模型返回的url，则保存起来
           const [imgPaths, newtext] = extractImagTag(streamOutput.current);
           imgPaths.map((url) => setImg2txtUrl(url));
