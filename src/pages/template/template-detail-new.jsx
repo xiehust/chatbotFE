@@ -56,8 +56,8 @@ function BaseFormContent({ content, errorText = null }) {
     params_local_storage_key+userInfo.username,
     null
   );
-  const main_fun_arn = localStoredParams.main_fun_arn;
-  const apigateway_endpoint = localStoredParams.apigateway_endpoint;
+  const main_fun_arn = localStoredParams?.main_fun_arn;
+  const apigateway_endpoint = localStoredParams?.apigateway_endpoint;
 
   return (
     <form
