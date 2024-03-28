@@ -51,8 +51,8 @@ export const Breadcrumbs = () => {
             href: "/home",
           },
           {
-            text: t("prompt_hub"),
-            href: "/prompt_hub",
+            text: t("demo_hub"),
+            href: "/prompt_playground",
           },
           {
             text: id,
