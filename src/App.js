@@ -23,7 +23,7 @@ import PromptChat from "./pages/prompt_playground";
 import ModelHubTable from "./pages/model_hub/model.index";
 import CreateModelApp from "./pages/model_hub/create-model";
 import ModelCardDetail from "./pages/model_hub/model-detail";
-import PEPlayCard from "./pages/prompt_hub/pecard.index";
+import PEPlayCard from "./pages/demo_hub/pecard.index";
 
 export default function App() {
   return (

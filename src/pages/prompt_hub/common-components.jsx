@@ -128,7 +128,7 @@ export const CardBreadcrumbs = () => {
       href: "/prompt_playground",
     },
     {
-      text: t("prompt_playground"),
+      text: t("demo_hub"),
     },
   ];
   return (

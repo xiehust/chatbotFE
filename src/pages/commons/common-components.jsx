@@ -35,26 +35,18 @@ export const navHeader = { text: 'GCR GenAI Juggle Hub', href: '#/', logo: { alt
 
 
 const navItems_admin = [
-  // {
-  //   type: 'section',
-  //   text: i18n.t('chatspace'),
-  //   items: [
-  //     { type: 'link', text: i18n.t('chatbot'), href: '/chat' },
-  //   ],
-  // }, 
-  // {
-  //   type: 'section',
-  //   text: i18n.t('agents'),
-  //   items: [
-  //     { type: 'link', text: i18n.t('agents_store'), href: '/agents' },
-  //   ],
-  // }, 
   {
     type: 'section',
     text: i18n.t('prompt_hub'),
     items: [
       { type: 'link', text: i18n.t('prompt_hub'), href: '/prompt_hub' },
-      { type: 'link', text: i18n.t('prompt_playground'), href: '/prompt_playground' },
+    ],
+  }, 
+  {
+    type: 'section',
+    text: i18n.t('demo_hub'),
+    items: [
+      { type: 'link', text: i18n.t('demo_hub'), href: '/prompt_playground' },
     ],
   }, 
   {
@@ -81,26 +73,18 @@ const navItems_admin = [
 ];
 
 const navItems = [
-  // {
-  //   type: 'section',
-  //   text: i18n.t('chatspace'),
-  //   items: [
-  //     { type: 'link', text: i18n.t('chatbot'), href: '/chat' },
-  //   ],
-  // }, 
-  // {
-  //   type: 'section',
-  //   text: i18n.t('agents'),
-  //   items: [
-  //     { type: 'link', text: i18n.t('agents_store'), href: '/agents' },
-  //   ],
-  // }, 
   {
     type: 'section',
     text: i18n.t('prompt_hub'),
     items: [
       { type: 'link', text: i18n.t('prompt_hub'), href: '/prompt_hub' },
-      { type: 'link', text: i18n.t('prompt_playground'), href: '/prompt_playground' },
+    ],
+  }, 
+  {
+    type: 'section',
+    text: i18n.t('demo_hub'),
+    items: [
+      { type: 'link', text: i18n.t('demo_hub'), href: '/prompt_playground' },
     ],
   }, 
   {

@@ -243,9 +243,10 @@ i18n
             pe_config:'PE Config',
             feedback_us:"Feedback Us",
             prompt_playground:"PE Playground",
-            is_recommended_desc:"It will show in PE Playground if it is recommended",
+            is_recommended_desc:"It will show in Demo Hub if it is recommended",
             is_recommended:"Recommend",
-            recommend:"Comment"
+            recommend:"Comment",
+            demo_hub:'Demo Hub'
         }
       },
       zh:{
@@ -475,9 +476,10 @@ i18n
             pe_config:'PE设置',
             feedback_us:"反馈我们",
             prompt_playground:"PE 试验场",
-            is_recommended_desc:"推荐试一试将会展示到PE试验场",
+            is_recommended_desc:"推荐试一试将会展示到演示中心",
             is_recommended:"推荐试一试",
-            recommend:"备注"
+            recommend:"备注",
+            demo_hub:'演示中心'
         }
       }
     }
