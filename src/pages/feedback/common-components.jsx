@@ -92,10 +92,10 @@ export const FullPageHeader = ({
       msgid: msgid,
       session_id: sid,
       username: origin_username,
-      s3_bucket: localStoredParams.s3_bucket,
-      obj_prefix: localStoredParams.obj_prefix,
-      main_fun_arn: localStoredParams.main_fun_arn,
-      apigateway_endpoint: localStoredParams.apigateway_endpoint,
+      s3_bucket: localStoredParams?.s3_bucket,
+      obj_prefix: localStoredParams?.obj_prefix,
+      main_fun_arn: localStoredParams?.main_fun_arn,
+      apigateway_endpoint: localStoredParams?.apigateway_endpoint,
       action: "delete",
     };
     try {
@@ -144,10 +144,10 @@ export const FullPageHeader = ({
       session_id: sid,
       username: origin_username,
       company:company,
-      s3_bucket: localStoredParams.s3_bucket,
-      obj_prefix: localStoredParams.obj_prefix,
-      main_fun_arn: localStoredParams.main_fun_arn,
-      apigateway_endpoint: localStoredParams.apigateway_endpoint,
+      s3_bucket: localStoredParams?.s3_bucket,
+      obj_prefix: localStoredParams?.obj_prefix,
+      main_fun_arn: localStoredParams?.main_fun_arn,
+      apigateway_endpoint: localStoredParams?.apigateway_endpoint,
       action: "injected",
     };
     try {
@@ -285,10 +285,10 @@ export const EditCell = ({ keyname,value ,msgid,sid,action,origin_username}) => 
       msgid: msgidValue,
       session_id: sidValue,
       username: origin_username,
-      s3_bucket: localStoredParams.s3_bucket,
-      obj_prefix: localStoredParams.obj_prefix,
-      main_fun_arn: localStoredParams.main_fun_arn,
-      apigateway_endpoint: localStoredParams.apigateway_endpoint,
+      s3_bucket: localStoredParams?.s3_bucket,
+      obj_prefix: localStoredParams?.obj_prefix,
+      main_fun_arn: localStoredParams?.main_fun_arn,
+      apigateway_endpoint: localStoredParams?.apigateway_endpoint,
       action: actionValue,
       company:company
     };

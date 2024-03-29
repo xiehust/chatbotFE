@@ -277,15 +277,15 @@ const ThumbButtons = ({ msgid, session_id }) => {
   );
   const [downFilled, setDownFilled] = useState(
     localStoredParams?.feedback !== undefined &&
-      localStoredParams.feedback[msgid] &&
-      localStoredParams.feedback[msgid].action === "thumbs-down"
+      localStoredParams?.feedback[msgid] &&
+      localStoredParams?.feedback[msgid].action === "thumbs-down"
       ? true
       : false
   );
   const [upFilled, setUpFilled] = useState(
     localStoredParams?.feedback !== undefined &&
-      localStoredParams.feedback[msgid] &&
-      localStoredParams.feedback[msgid].action === "thumbs-up"
+      localStoredParams?.feedback[msgid] &&
+      localStoredParams?.feedback[msgid].action === "thumbs-up"
       ? true
       : false
   );

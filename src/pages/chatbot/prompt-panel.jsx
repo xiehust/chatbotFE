@@ -81,12 +81,12 @@ const ExpandableSettingPanel = () => {
   const [systemRoleValue, setSystemRoleValue] = useState(
     localStoredParams?.system_role === undefined
     ? defaultModelParams.system_role
-    : localStoredParams.system_role
+    : localStoredParams?.system_role
   );
   const [systemRolePromptValue, setSystemRolePromptValue] = useState(
     localStoredParams?.system_role_prompt === undefined
           ? defaultModelParams.system_role_prompt
-          : localStoredParams.system_role_prompt,
+          : localStoredParams?.system_role_prompt,
   );
   const { setMsgItems, msgItems,setModelParams, setImg2txtUrl} = useChatData();
   const [alldocs, setAlldocs] = useState([]);
@@ -95,138 +95,15 @@ const ExpandableSettingPanel = () => {
     localStoredParams?.template_opt || defaultModelParams.template_opt
   );
   
-  const [localStoredMsgItems, setLocalStoredMsgItems] = useLocalStorage(
-    params_local_storage_key + '-msgitems-'+userinfo.username,
-    []
-  );
-
 
   const [loadStatus, setLoadStatus] = useState("loading");
-  const [uploadErrtxt, setUploadErr] = useState();
-  const [uploadComplete, setUploadComplete] = useState(false);
-  const [file, setFile] = useState([]);
   const token = useAuthToken();
-  const [loading, setLoading] = useState(false);
-  const [helperMsg, setHelperMsg] = useState("Upload image file");
   const main_fun_arn = localStoredParams?.main_fun_arn;
   const apigateway_endpoint = localStoredParams?.apigateway_endpoint;
   const queryParams = {
     main_fun_arn: main_fun_arn,
     apigateway_endpoint: apigateway_endpoint,
     company:company,
-  };
-
-  const handleImageUpload = () => {
-    const msgid = `image-${generateId()}`;
-    setLoading(true);
-    if (
-      localStoredParams.ak &&
-      localStoredParams.sk &&
-      localStoredParams.s3_bucket &&
-      localStoredParams.s3_region
-    ) {
-      uploadS3(
-        file[0],
-        localStoredParams.s3_bucket,
-        `images/${username}/`,
-        localStoredParams.s3_region,
-        localStoredParams.ak,
-        localStoredParams.sk
-      )
-        .then(() => {
-          setLoading(false);
-          setImg2txtUrl(`${localStoredParams.s3_bucket}/images/${username}/${file[0].name}`); 
-          setMsgItems(
-            (prev) => [
-              ...prev,
-              {
-                id: msgid,
-                who: userinfo.username,
-                text: file[0].name,
-                image: file[0],
-              },
-            ] //创建一个新的item
-          );
-          // console.log(msgItems);
-          setLocalStoredMsgItems([
-            ...msgItems,
-            { id: msgid,
-                who: userinfo.username, 
-                text: file[0].name,
-              image: file[0] },
-          ]);
-          setUploadComplete(true);
-          setFile([]);
-        })
-        .catch((error) => {
-          console.log(error);
-          setImg2txtUrl(null); 
-          setLoading(false);
-          setUploadErr(`Upload ${file[0].name} error`);
-          setFile([]);
-        });
-    } else {
-      console.log(`missing buckets params, using default bucket:${default_bucket} to upload`);
-      setHelperMsg(`missing buckets params, using default bucket`);
-      //upload to default bucket
-      // const formData = new FormData();
-      //   formData.append("image", file[0]);
-        // console.log(file[0]);
-        const headers = {
-          'Authorization': token.token,
-          'Content-Type':file[0].type,
-          'Accept':file[0].type
-        };
-        const read = new FileReader();
-        read.readAsBinaryString(file[0]);
-        read.onloadend = function(){
-          const bits = read.result;
-          const body = {
-             filename: file[0].name,
-             mimeType: file[0].type,
-             fileSizeBytes: file[0].size,
-             lastModified: file[0].lastModified,
-             buf: bits
-          };
-
-          uploadFile( username,body, headers)
-          .then((response) => {
-            setLoading(false);
-            setImg2txtUrl(`${default_bucket}/images/${username}/${file[0].name}`); 
-            setMsgItems(
-              (prev) => [
-                ...prev,
-                {
-                  id: msgid,
-                  who: userinfo.username,
-                  text: file[0].name,
-                  image: file[0],
-                },
-              ] //创建一个新的item
-            );
-            console.log(msgItems);
-            setLocalStoredMsgItems([
-              ...msgItems,
-              { id: msgid,
-                 who: userinfo.username, 
-                  text: file[0].name,
-                image: file[0]},
-            ]);
-            setUploadComplete(true);
-            setFile([]);
-          })
-          .catch((error) => {
-            console.log(error);
-            setImg2txtUrl(null); 
-            setLoading(false);
-            setUploadErr(`Upload ${file[0].name} error`);
-            setFile([]);
-          });
-        }
-
-      }
-
-    
   };
 
   const handleLoadItems = async ({
@@ -280,7 +157,7 @@ const ExpandableSettingPanel = () => {
       system_role_prompt:
         localStoredParams?.system_role_prompt === undefined || localStoredParams?.system_role_prompt === ''
           ? defaultModelParams.system_role_prompt
-          : localStoredParams.system_role_prompt,
+          : localStoredParams?.system_role_prompt,
       obj_prefix:
         (localStoredParams?.obj_prefix === undefined || localStoredParams?.obj_prefix === '')
           ? defaultModelParams.obj_prefix
