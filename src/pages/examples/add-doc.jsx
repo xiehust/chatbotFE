@@ -41,15 +41,15 @@ const SettingsPanel = ()=>{
         const msgid = `msg-${Math.random().toString(8)}`;
         setLoading(true);
         console.log('localStoredParams:',localStoredParams);
-        if (localStoredParams.ak && localStoredParams.sk&&localStoredParams.obj_prefix
-                 && localStoredParams.s3_bucket && localStoredParams.s3_region){
+        if (localStoredParams?.ak && localStoredParams?.sk&&localStoredParams?.obj_prefix
+                 && localStoredParams?.s3_bucket && localStoredParams?.s3_region){
           uploadS3(file,
-            localStoredParams.s3_bucket,
-            localStoredParams.obj_prefix+company+'/'+username+'/',
+            localStoredParams?.s3_bucket,
+            localStoredParams?.obj_prefix+company+'/'+username+'/',
             {"username":username,"company":encodeURIComponent(company),"category":encodeURIComponent(catSelectedOption?.value??'')},
-            localStoredParams.s3_region,
-            localStoredParams.ak,
-            localStoredParams.sk,
+            localStoredParams?.s3_region,
+            localStoredParams?.ak,
+            localStoredParams?.sk,
             ).then(()=>{
               setLoading(false);
               setHelperMsg(prev => (prev+` Upload ${file.name} success`));
@@ -59,7 +59,7 @@ const SettingsPanel = ()=>{
                 {
                   header: t('upload_file'),
                   type: "success",
-                  content: t('upload_file')+`:${localStoredParams.s3_bucket}/${localStoredParams.obj_prefix}${company}/${username}/${file.name}`,
+                  content: t('upload_file')+`:${localStoredParams?.s3_bucket}/${localStoredParams?.obj_prefix}${company}/${username}/${file.name}`,
                   dismissible: true,
                   dismissLabel: "Dismiss message",
                   onDismiss: () =>
@@ -78,7 +78,7 @@ const SettingsPanel = ()=>{
             })
         }else{
           console.log(`missing buckets params, using default bucket:${default_bucket} to upload`);
-          setHelperMsg(`missing buckets params, using default bucket`);
+          // setHelperMsg(`missing buckets params, using default bucket`);
           //upload to default bucket
 
          
