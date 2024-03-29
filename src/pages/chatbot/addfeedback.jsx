@@ -40,8 +40,8 @@ const EditPanel = ({setVisible})=>{
       params_local_storage_key+username,
       null
     );
-    const [feedbackVal, setFeedbackVal] = useState(  (localStoredParams?.feedback !== undefined && localStoredParams.feedback[modalData.msgid])?
-            localStoredParams.feedback[modalData.msgid].feedback:'');
+    const [feedbackVal, setFeedbackVal] = useState(  (localStoredParams?.feedback !== undefined && localStoredParams?.feedback[modalData.msgid])?
+            localStoredParams?.feedback[modalData.msgid].feedback:'');
     const [loading, setLoading] = useState(false);
     const item_msgid = generateId();
     useEffect(() => {
