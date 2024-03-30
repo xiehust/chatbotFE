@@ -290,12 +290,18 @@ export const FullPageHeader = ({
             </Button>
           }
             <Button
+            onClick={props.handleAddClick}
+          >
+            {t("submit_new_feedback")}
+          </Button>
+            <Button
               disabled={!isOnlyOneSelected}
               href={'/prompt_playground/' + selectItem?.id}
               variant="primary"
             >{t('start_chat')}
             </Button>
             <Button
+             iconName="add-plus"
               href={'/prompt_hub/create'}
               variant="primary"
             >{t('create')}
@@ -335,6 +341,11 @@ export const CardPageHeader = ({
               onClick={props.refreshAction}
               iconName="refresh"
             />
+          <Button
+            onClick={props.handleAddClick}
+          >
+            {t("submit_new_feedback")}
+          </Button>
             <Button
               disabled={!isOnlyOneSelected}
               href={'/prompt_playground/' + selectItem?.id}

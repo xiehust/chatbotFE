@@ -302,7 +302,7 @@ export const deleteAgent = async(headers,formdata) =>{
 
 export const postFeedback = async(headers,formdata) =>{
     try {
-        const resp = await axios.post(`${API_http}/feedback`,JSON.stringify(formdata), {headers});
+        const resp = await axios.post(`${API_http}/feedback_us`,JSON.stringify(formdata), {headers});
         console.log(resp);
         if (resp.data.statusCode >=300){
             throw `error ${resp.data.statusCode}`;
@@ -317,7 +317,7 @@ export const postFeedback = async(headers,formdata) =>{
 
 export const deleteFeedback = async(headers,formdata) =>{
     try {
-        const resp = await axios.delete(`${API_http}/feedback`,{headers,data:JSON.stringify(formdata)});
+        const resp = await axios.delete(`${API_http}/feedback_us`,{headers,data:JSON.stringify(formdata)});
         if (resp.data.statusCode >=300){
             throw `error ${resp.data.statusCode}`;
         }else{
@@ -335,7 +335,7 @@ export const listFeedback = async(headers,queryParams={}) =>{
     .join('&');
 
     try {
-        const resp = await axios.get(`${API_http}/feedback?${queryString}`, {headers});
+        const resp = await axios.get(`${API_http}/feedback_us?${queryString}`, {headers});
         return resp.data;
     } catch (err) {
         throw err;

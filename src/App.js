@@ -14,7 +14,7 @@ import UserApp from "./pages/admin/user/user-table.index"
 import AddUserApp from "./pages/admin/adduser/adduser";
 import "@cloudscape-design/global-styles/index.css";
 
-import FeedbackTable from "./pages/feedback/feedback-servertable.index";
+import FeedbackTable from "./pages/feedback/feedback.index";
 
 import PromptHubTable from "./pages/prompt_hub/prompt.index";
 import CreatePromptApp from "./pages/prompt_hub/create-prompt";

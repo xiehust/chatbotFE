@@ -39,7 +39,7 @@ export const Breadcrumbs = () => {
       href: "/",
     },
     {
-      text: t("feedback_management"),
+      text: t("feedback_us"),
     },
   ];
   return (
@@ -89,14 +89,7 @@ export const FullPageHeader = ({
   );
   const handleDelete = async () =>{
     const body = {
-      msgid: msgid,
-      session_id: sid,
-      username: origin_username,
-      s3_bucket: localStoredParams.s3_bucket,
-      obj_prefix: localStoredParams.obj_prefix,
-      main_fun_arn: localStoredParams.main_fun_arn,
-      apigateway_endpoint: localStoredParams.apigateway_endpoint,
-      action: "delete",
+      id: msgid      
     };
     try {
       setDeleteLoading(true);
@@ -138,30 +131,23 @@ export const FullPageHeader = ({
       setDeleteLoading(false);
     }
   }
-  const handleInject = async () => {
+
+
+  const handleUpdate =  async () => {
+    setInjectLoading(true);
     const body = {
-      msgid: msgid,
-      session_id: sid,
-      username: origin_username,
-      company:company,
-      s3_bucket: localStoredParams.s3_bucket,
-      obj_prefix: localStoredParams.obj_prefix,
-      main_fun_arn: localStoredParams.main_fun_arn,
-      apigateway_endpoint: localStoredParams.apigateway_endpoint,
-      action: "injected",
+      id: msgid,
+      status:'accepted'   
     };
     try {
-      // console.log(body);
-      setInjectLoading(true);
       const resp = await postFeedback(headers, body);
-      setInjectLoading(false);
       props.refreshAction();
       setNotificationItems((item) => [
         ...item,
         {
-          header: t("inject_new_faq"),
+          header: t("update_feedback"),
           type: "success",
-          content: t("inject_new_faq"),
+          content: `${t("update_feedback")} success`,
           dismissible: true,
           dismissLabel: "Dismiss message",
           onDismiss: () =>
@@ -176,7 +162,7 @@ export const FullPageHeader = ({
       setNotificationItems((item) => [
         ...item,
         {
-          header: t("inject_new_faq"),
+          header: t("update_feedback"),
           type: "error",
           content: JSON.stringify(error),
           dismissible: true,
@@ -188,10 +174,9 @@ export const FullPageHeader = ({
           id: msgid,
         },
       ]);
-      setInjectLoading(false);
     }
-  };
-
+    setInjectLoading(false);
+  }
   return (
     <TableHeader
       variant="awsui-h1-sticky"
@@ -203,34 +188,34 @@ export const FullPageHeader = ({
             onClick={props.refreshAction}
             iconName="refresh"
           />
-          {/* <Button
+          {usergroup === "admin" &&<Button
             disabled={
               usergroup !== "admin" ||
               !isOnlyOneSelected ||
-              props.selectedItems[0].action === "injected"
+              props.selectedItems[0].status === "accepted"
             } //disable the button when status is injected
-            name="inject"
+            name="accepted"
             loading={injectLoading}
-            onClick={handleInject}
+            onClick={handleUpdate}
           >
-            {t("inject")}
-          </Button> */}
-          <Button disabled={
+            {t("accepted")}
+          </Button>}
+          {usergroup === "admin" &&<Button disabled={
               usergroup !== "admin" ||
               !isOnlyOneSelected 
-              // ||props.selectedItems[0].action === "injected"
+              // ||props.selectedItems[0].status === "accepted"
           } name="delete"
           loading={deleteLoading}
             onClick={handleDelete}
           >
             {t("delete")}
-          </Button>
+          </Button>}
           <Button
             iconName="add-plus"
             variant="primary"
             onClick={props.handleAddClick}
           >
-            {t("create")}
+            {t("submit_new_feedback")}
           </Button>
         </SpaceBetween>
       }
@@ -259,107 +244,3 @@ export const ToolsContent = () => (
     <p>Demo for AWS GCR Chatbot</p>
   </HelpPanel>
 );
-
-export const EditCell = ({ keyname,value ,msgid,sid,action,origin_username}) => {
-  const [toggle, setToggle] = useState(true);
-  const [text, setText] = useState(value);
-  const [loading,setLoading] = useState(false);
-  const { t } = useTranslation();
-  const { setNotificationItems } = useSimpleNotifications();
-  const userinfo = useAuthUserInfo();
-  const headers = useAuthorizedHeader();
-  const username = userinfo?.username || "default";
-  const company = userinfo?.company || "default";
-  const [localStoredParams] = useLocalStorage(
-    params_local_storage_key + username,
-    null
-  );
-  const [msgidValue, setMsgIdValue] = useState(msgid);
-  const [sidValue, setSidValue] = useState(sid);
-  const [actionValue, setActionValue] = useState(action);
-  const [keyName, setKeyname] = useState(keyname);
-
-  const handleUpdate = async () => {
-
-    let body = {
-      msgid: msgidValue,
-      session_id: sidValue,
-      username: origin_username,
-      s3_bucket: localStoredParams.s3_bucket,
-      obj_prefix: localStoredParams.obj_prefix,
-      main_fun_arn: localStoredParams.main_fun_arn,
-      apigateway_endpoint: localStoredParams.apigateway_endpoint,
-      action: actionValue,
-      company:company
-    };
-
-    // 如果是question，则更新quesiton字段,如果是feedback，则更新feedback字段
-    console.log(keyName);
-    body = keyName === 'question'?{...body,question:text}:(keyName === 'feedback'?{...body,feedback:text}:body)
-    try {
-      // console.log(body);
-      setLoading(true);
-      const resp = await postFeedback(headers, body);
-      setToggle(true);
-      setLoading(false);
-      setNotificationItems((item) => [
-        ...item,
-        {
-          header: t("update_new_faq"),
-          type: "success",
-          content: t("update_new_faq"),
-          dismissible: true,
-          dismissLabel: "Dismiss message",
-          onDismiss: () =>
-            setNotificationItems((items) =>
-              items.filter((item) => item.id !== msgid)
-            ),
-          id: msgid,
-        },
-      ]);
-    } catch (error) {
-      console.log(error);
-      setToggle(true);
-      setLoading(false);
-      setNotificationItems((item) => [
-        ...item,
-        {
-          header: t("update_new_faq"),
-          type: "error",
-          content:  JSON.stringify(error),
-          dismissible: true,
-          dismissLabel: "Dismiss message",
-          onDismiss: () =>
-            setNotificationItems((items) =>
-              items.filter((item) => item.id !== msgid)
-            ),
-          id: msgid,
-        },
-      ]);
-    }
-  };
-
-  return toggle ? (
-    <p onDoubleClick={()=>setToggle(false)}>{text}</p>
-  ) : (
-    <SpaceBetween size="xs" direction="vertical">
-    <Textarea
-      value={text}
-      onChange={({ detail }) => {
-        setText(detail.value);
-      }}
-    />
-      <SpaceBetween size="xs" direction="horizontal">
-        <Button iconName="check" variant="inline-icon"
-        loading={loading}
-        onClick={handleUpdate}
-         />
-        <Button iconName="close" variant="inline-icon"
-         onClick={()=>{
-          setToggle(true);
-          setText(value);
-        }}/>
-      </SpaceBetween>
-    </SpaceBetween>
-  );
-};

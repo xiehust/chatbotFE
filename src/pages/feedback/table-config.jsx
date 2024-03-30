@@ -4,59 +4,47 @@ import React from 'react';
 import { CollectionPreferences, StatusIndicator, Link } from '@cloudscape-design/components';
 import { addColumnSortLabels } from '../../common/labels';
 import {EditCell} from './common-components';
+import i18n from '../../common/i18n';
 
 export const COLUMN_DEFINITIONS = addColumnSortLabels( [
   {
     id: "id",
-    header: "Message Id",
+    header: "Id",
     cell: item => item.msgid || "-",
     minWidth: 80,
   },
   {
-    id: "sid",
-    header: "Session Id",
-    cell: item => item.sid || "-",
-    minWidth: 80,
-  },
-  {
-    id: "question",
-    header: "Question",
-    cell: item => item.question || "-",
+    id: "title",
+    header: i18n.t("title"),
+    cell: item => item.title || "-",
     minWidth: 180,
   },
   {
-    id: "answer",
-    header: "Original Answer",
-    cell: item => item.answer || "-",
+    id: "description",
+    header: i18n.t("description"),
+    cell: item => item.description || "-",
     minWidth: 180,
-  },
-  {
-    id: "feedback",
-    header: "New Answer",
-    cell: item => (<EditCell keyname ={"feedback"} value={item.feedback || "-"} msgid={item.msgid } sid={item.sid} action={item.action} origin_username={item.username}/>),
-    minWidth: 180,
-  },
-  {
-    id: "action",
-    header: "Status",
-    cell: item => (<StatusIndicator type={
-      item.action === 'injected'? 'success' : (item.action === 'thumbs-up'?'info':(item.action === 'thumbs-down'?'error':'pending'))
-      }
-    >{item.action || "N/A" }
-    </StatusIndicator> ),
-
-    minWidth: 80,
   },
   {
     id: "username",
-    header: "User Name",
+    header: i18n.t("requester_name"),
     cell: item => item.username || "-",
     minWidth: 80,
   },
   {
-    id: "timestamp",
-    header: "Timestamp",
-    cell: item => item.timestamp || "-",
+    id: "status",
+    header: "Status",
+    cell: item => (<StatusIndicator type={
+      item.status === 'accepted'? 'success' : (item.status === 'thumbs-up'?'info':(item.status === 'thumbs-down'?'error':'pending'))
+      }
+    >{item.status || "N/A" }
+    </StatusIndicator> ),
+    minWidth: 80,
+  },
+  {
+    id: "createtime",
+    header: i18n.t("createtime"),
+    cell: item => item.createtime || "-",
     minWidth: 80,
     // sortingField: "timestamp",
   },
@@ -64,7 +52,7 @@ export const COLUMN_DEFINITIONS = addColumnSortLabels( [
 
 export const DEFAULT_PREFERENCES = {
   pageSize: 30,
-  visibleContent: ['question','answer', 'action','timestamp'],
+  visibleContent: ['title','description', 'username','status','createtime'],
   wrapLines: false,
 };
 
@@ -75,15 +63,12 @@ const VISIBLE_CONTENT_OPTIONS = [
   {
     label: 'Main Databases properties',
     options: [
-      { id: 'id', label: 'Message Id', },
-      { id: 'sid', label: 'Session Id', },
-      { id: 'question', label: 'Question' },
-      { id: 'answer', label: 'Original Answer' },
-      { id: 'action', label: 'Status' },
-      { id: 'feedback', label: 'New Answer' },
-      { id: 'username', label: 'User Name' },
-      { id: 'timestamp', label: 'Timestamp' },
 
+      { id: 'title', label: i18n.t("title") },
+      { id: 'status', label: i18n.t("status") },
+      { id: 'description', label: i18n.t("description")},
+      { id: 'username', label: i18n.t("requester_name") },
+      { id: 'createtime', label: i18n.t("createtime") },
     ],
   },
 ];
@@ -94,7 +79,6 @@ export const PAGE_SIZE_OPTIONS = [
   { value: 30, label: '30' },
   { value: 50, label: '50' },
 ];
-
 
 
 export const Preferences = ({

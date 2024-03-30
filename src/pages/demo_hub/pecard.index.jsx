@@ -19,7 +19,8 @@ import {useAuthUserInfo, useAuthorizedHeader} from "../commons/use-auth";
 import {getPrompts} from '../commons/api-gateway';
 import { useTranslation } from 'react-i18next';
 import {params_local_storage_key,CardBreadcrumbs} from "../prompt_hub/common-components";
-import ModelSettings from "../commons/chat-settings";
+// import ModelSettings from "../commons/chat-settings";
+import CreateQAModal from '../feedback/addfeedback';
 
 
 
@@ -34,6 +35,7 @@ function CardsContent({
   const [preferences, setPreferences] = useLocalStorage('PE-Hub-Table-Preferences', DEFAULT_PREFERENCES);
   // const [columnDefinitions, saveWidths] = useColumnWidths('PE-Hub-Table-Widths', COLUMN_DEFINITIONS);
   const {t} = useTranslation();
+  const [qAModalVisible,setQAModalVisible] = useState(false);
 
   const { items, actions, filteredItemsCount, collectionProps, filterProps, paginationProps } = useCollection(
     distributions,
@@ -48,9 +50,14 @@ function CardsContent({
     }
   );
 
+  function handleAddClick(event){
+    event.preventDefault();
+    setQAModalVisible(true);
+  }
+
   return (
     <div>
-        <ModelSettings href={'/prompt_playground'}/>
+    <CreateQAModal visible={qAModalVisible} setVisible={setQAModalVisible} />
     <Cards
      {...collectionProps}
      cardDefinition={CARD_DEFINITIONS}
@@ -79,6 +86,7 @@ function CardsContent({
           totalItems={distributions}
           resourceName={resourceName}
           refreshAction={refreshAction}
+          handleAddClick={handleAddClick}
           href={buttonHref}
         />
       }

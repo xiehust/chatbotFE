@@ -3,8 +3,8 @@
 import { useEffect, useState, useRef } from 'react';
 import {listFeedback} from '../commons/api-gateway';
 import {useAuthUserInfo, useAuthorizedHeader} from "../commons/use-auth";
-import {params_local_storage_key} from "../chatbot/common-components";
-import { useLocalStorage } from '../../common/localStorage';
+// import {params_local_storage_key} from "../chatbot/common-components";
+// import { useLocalStorage } from '../../common/localStorage';
 
 
 
@@ -24,15 +24,7 @@ export function useDistributions(params = {}) {
   const userinfo = useAuthUserInfo();
   const username = userinfo?.username || 'default';
   const company = userinfo?.company || 'default';
-  const [localStoredParams] = useLocalStorage(
-    params_local_storage_key+username,
-    null
-  );
-  const main_fun_arn = localStoredParams?.main_fun_arn;
-  const apigateway_endpoint = localStoredParams?.apigateway_endpoint;
   const queryParams = {
-    main_fun_arn:main_fun_arn,
-    apigateway_endpoint:apigateway_endpoint,
     company:company
   }
   const refreshAction =()=>{
@@ -61,16 +53,15 @@ export function useDistributions(params = {}) {
 
     listFeedback(headers,payload).then(data =>{
       setLoading(false);
-      // console.log(data.body);
-      const itemdata = data.body.items.map(it => {
+      console.log(data.body);
+      const itemdata = data.body.map(it => {
         console.log(it);
         // const contentArray = JSON.parse(it.content);
         // const lastContent = contentArray[contentArray.length -1];
         return  {
-        msgid:it.msgid,
-        sid:it['session-id'],
+        msgid:it.id,
         question:it.question,
-        answer:it.answer,
+        // answer:it.answer,
         feedback:it.feedback,
         timestamp:it.timestamp,
         action:it.action,

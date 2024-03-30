@@ -37,14 +37,9 @@ const EditPanel = ({ setVisible }) => {
   };
   const username = userinfo?.username || "default";
   const company = userinfo?.company || "default";
-  const [localStoredParams, setLocalStoredParams] = useLocalStorage(
-    params_local_storage_key + username,
-    null
-  );
   const [answerValue, setAnswerValue] = useState("");
   const [questionValue, setQuestionValue] = useState("");
-  const main_fun_arn = localStoredParams?.main_fun_arn;
-  const apigateway_endpoint = localStoredParams?.apigateway_endpoint;
+  const [requesterName, setRequesterName] = useState(username);
   const [loading, setLoading] = useState(false);
   const msgid = generateId();
   useEffect(() => {
@@ -57,14 +52,11 @@ const EditPanel = ({ setVisible }) => {
         e.preventDefault();
         setLoading(true);
         const body = {
-          msgid: msgid,
-          session_id: msgid,
-          main_fun_arn: main_fun_arn,
-          apigateway_endpoint: apigateway_endpoint,
-          question: questionValue,
-          answer: answerValue,
-          action: "new-added",
-          username: username,
+          id: msgid,
+          title: questionValue,
+          description: answerValue,
+          status: "new-added",
+          username: requesterName,
           company:company,
         };
         try {
@@ -75,9 +67,9 @@ const EditPanel = ({ setVisible }) => {
           setNotificationItems((item) => [
             ...item,
             {
-              header: t("create_new_faq"),
+              header: t("submit_new_feedback"),
               type: "success",
-              content: t("create_new_faq"),
+              content: t("submit_new_feedback"),
               dismissible: true,
               dismissLabel: "Dismiss message",
               onDismiss: () =>
@@ -92,9 +84,9 @@ const EditPanel = ({ setVisible }) => {
           setNotificationItems((item) => [
         ...item,
         {
-          header: t("create_new_faq"),
+          header: t("submit_new_feedback"),
           type: "error",
-          content: t("create_new_faq")+' Failed',
+          content: t("submit_new_feedback")+' Failed',
           dismissible: true,
           dismissLabel: "Dismiss message",
           onDismiss: () =>
@@ -128,9 +120,9 @@ const EditPanel = ({ setVisible }) => {
         }
       >
         <SpaceBetween direction="vertical" size="l" >
-          <FormField label={t("question")}>
+          <FormField label={t("title")}>
             <Input
-              placeholder="Your question"
+              placeholder="Title"
               autoFocus
               value={questionValue}
               onChange={({ detail }) => {
@@ -138,13 +130,24 @@ const EditPanel = ({ setVisible }) => {
               }}
             />
           </FormField>
-          <FormField label={t("answer")}>
+          <FormField label={t("description")}>
             <Textarea
-              placeholder="Your answer"
-              rows={6}
+              placeholder="Put your desciption"
+              rows={6}  
               value={answerValue}
               onChange={({ detail }) => {
                 setAnswerValue(detail.value);
+              }}
+            />
+          </FormField>
+          <FormField label={t("requester_name")}
+          description='Put your name or email here'
+          >
+            <Input
+              placeholder="your name or email here"
+              value={requesterName}
+              onChange={({ detail }) => {
+                setRequesterName(detail.value);
               }}
             />
           </FormField>
@@ -171,7 +174,7 @@ const CreateQAModal = ({ visible, setVisible }) => {
       //       </SpaceBetween>
       //     </Box>
       //   }
-      header={t("create_new_faq")}
+      header={t("submit_new_feedback")}
     >
       <EditPanel setVisible={setVisible} />
     </Modal>

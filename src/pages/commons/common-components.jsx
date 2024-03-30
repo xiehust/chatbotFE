@@ -56,13 +56,13 @@ const navItems_admin = [
       { type: 'link', text: i18n.t('model_hub'), href: '/model_hub' },
     ],
   }, 
-  // {
-  //   type: 'section',
-  //   text: i18n.t('feedback_us'),
-  //   items: [
-  //     { type: 'link', text: i18n.t('feedback_management'), href: '/feedback' },
-  //   ],
-  // }, 
+  {
+    type: 'section',
+    text: i18n.t('feedback_us'),
+    items: [
+      { type: 'link', text: i18n.t('feedback_management'), href: '/feedback' },
+    ],
+  }, 
   {
     type: 'section',
     text: i18n.t('admin'),
@@ -94,13 +94,13 @@ const navItems = [
       { type: 'link', text: i18n.t('model_hub'), href: '/model_hub' },
     ],
   }, 
-  // {
-  //   type: 'section',
-  //   text: i18n.t('feedback_us'),
-  //   items: [
-  //     { type: 'link', text: i18n.t('feedback_management'), href: '/feedback' },
-  //   ],
-  // }, 
+  {
+    type: 'section',
+    text: i18n.t('feedback_us'),
+    items: [
+      { type: 'link', text: i18n.t('feedback_management'), href: '/feedback' },
+    ],
+  }, 
   // {
   //   type: 'section',
   //   text: i18n.t('admin'),

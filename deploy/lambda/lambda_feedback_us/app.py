@@ -101,15 +101,27 @@ def handler(event,lambda_context):
     elif http_method == 'POST' and resource == '/feedback_us':
         body = json.loads(event['body'])
         print(body)
-        time_tuple = time.localtime( time.time())
-        createtime = time.strftime("%Y-%m-%d %H:%M:%S", time_tuple)
-
-        item = {
-            **body,
-            "createtime":createtime
-        }
-        result = add_template(item)
-        return {'statusCode': 200 if result else 500,'headers': cors_headers, 'body':'' if result else 'Error'}
+        
+        id = body.get('id')
+        origin_feedaback = get_template(id,'default')
+        print(origin_feedaback)
+        ##update feedback
+        if origin_feedaback:
+            item = {
+                **origin_feedaback,
+                "status":body.get('status')
+            }
+            result = add_template(item)
+            return {'statusCode': 200 if result else 500,'headers': cors_headers, 'body':'Success' if result else 'Update DDB Error'}      
+        else:##create a new feedback
+            time_tuple = time.localtime( time.time())
+            createtime = time.strftime("%Y-%m-%d %H:%M:%S", time_tuple)
+            item = {
+                **body,
+                "createtime":createtime
+            }
+            result = add_template(item)
+            return {'statusCode': 200 if result else 500,'headers': cors_headers, 'body':'' if result else 'Error'}
     
     elif http_method == 'DELETE' and resource == '/feedback_us':
         body = json.loads(event['body'])

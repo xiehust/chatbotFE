@@ -242,14 +242,20 @@ export const FullPageHeader = ({
               onClick={props.refreshAction}
               iconName="refresh"
             />
-            <Button
+            {userinfo.groupname == 'admin'&&<Button
               disabled={!isOnlyOneSelected || userinfo.groupname != 'admin'}
               name="delete"
               onClick={deleteAction}
             >
               {t('delete')}
-            </Button>
+            </Button>}
             <Button
+            onClick={props.handleAddClick}
+          >
+            {t("submit_new_feedback")}
+          </Button>
+            <Button
+            iconName="add-plus"
               href={'/model_hub/create'}
               variant="primary"
             >{t('create')}

@@ -166,7 +166,7 @@ i18n
             use_stream:'Stream',
             correct_answer:'Correct',
             provide_your_answer:'Thanks for your answer',
-            feedback_management:'Feedback Management',
+            feedback_management:'Feedback List',
             create_new_faq:'Create New FAQ',
             question:'Question',
             answer:'Answer',
@@ -246,7 +246,13 @@ i18n
             is_recommended_desc:"It will show in Demo Hub if it is recommended",
             is_recommended:"Recommend",
             recommend:"Comment",
-            demo_hub:'Demo Hub'
+            demo_hub:'Demo Hub',
+            title:'Title',
+            requester_name:'User',
+            feedback_time:'Feedback Time',
+            submit_new_feedback:'Submit Feedback',
+            update_feedback:'Update Feedback Status',
+            accepted:'Accept' 
         }
       },
       zh:{
@@ -399,7 +405,7 @@ i18n
             use_stream:'Stream',
             correct_answer:'纠正',
             provide_your_answer:'感谢您的反馈',
-            feedback_management:'反馈管理',
+            feedback_management:'反馈列表',
             create_new_faq:'创建新的FAQ',
             question:'问题',
             answer:'答案',
@@ -479,7 +485,13 @@ i18n
             is_recommended_desc:"推荐试一试将会展示到演示中心",
             is_recommended:"推荐试一试",
             recommend:"备注",
-            demo_hub:'演示中心'
+            demo_hub:'演示中心',
+            title:'标题',
+            requester_name:'用户',
+            feedback_time:'反馈时间',
+            submit_new_feedback:'提交反馈',
+            update_feedback:'更新反馈状态',
+            accepted:'接受反馈'
         }
       }
     }

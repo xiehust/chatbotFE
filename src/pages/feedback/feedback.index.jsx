@@ -1,45 +1,48 @@
 // Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
 // SPDX-License-Identifier: MIT-0
 import React, { useEffect, useRef, useState } from 'react';
-import { useCollection } from '@cloudscape-design/collection-hooks';
-import { COLUMN_DEFINITIONS, DEFAULT_PREFERENCES, Preferences,} from './table-config';
-import { Flashbar, Pagination, Table, TextFilter } from '@cloudscape-design/components';
-import { FullPageHeader ,Breadcrumbs,DeleteConfirmModal} from './common-components';
+import {  COLUMN_DEFINITIONS, DEFAULT_PREFERENCES, Preferences } from './table-config';
+import { Flashbar, Pagination, Table, TextFilter,PropertyFilter ,SpaceBetween} from '@cloudscape-design/components';
+import { FullPageHeader ,Breadcrumbs,ToolsContent} from './common-components';
 import {
   CustomAppLayout,
   Navigation,
   TableNoMatchState,
-  TableEmptyState,
-  ToolsContent,
+  TableEmptyState
 } from '../commons/common-components';
-import { paginationLabels,distributionSelectionLabels } from '../../common/labels';
+import { paginationLabels,distributionSelectionLabels  } from '../../common/labels';
 import { getFilterCounterText } from '../../common/tableCounterStrings';
 import { useColumnWidths } from '../commons/use-column-widths';
 import { useLocalStorage } from '../../common/localStorage';
 import {useSimpleNotifications} from '../commons/use-notifications';
-import {useAuthUserInfo, useAuthorizedHeader} from "../commons/use-auth";
-import {getModelCards} from '../commons/api-gateway';
+import {useAuthorizedHeader,useAuthUserInfo} from "../commons/use-auth";
+import { useCollection } from '@cloudscape-design/collection-hooks';
+import intersection from 'lodash/intersection';
+import { FILTERING_PROPERTIES,} from './table-config';
 import { useTranslation } from 'react-i18next';
-import {params_local_storage_key} from "../chatbot/common-components";
-// import ModelSettings from "../commons/chat-settings";
-import CreateQAModal from '../feedback/addfeedback';
+import CreateQAModal from './addfeedback';
+import {PROPERTY_FILTERING_I18N_CONSTANTS} from '../../common/i18nStrings';
+import ModelSettings from "../commons/chat-settings";
+import {listFeedback} from '../commons/api-gateway';
 
 
 
+const DEFAULT_FILTERING_QUERY = { tokens: [], operation: 'and' };
 
-function TableContent({ 
+export function TableContent({ 
   resourceName,
+  buttonName,
   distributions,
   loadingState,
-  refreshAction,
-  buttonName,
   buttonHref,
+  refreshAction,
  }) {
-  const [preferences, setPreferences] = useLocalStorage('Model_hub-Docs-Table-Preferences', DEFAULT_PREFERENCES);
-  const [columnDefinitions, saveWidths] = useColumnWidths('Model_hub-Docs-Table-Widths', COLUMN_DEFINITIONS);
+  const [preferences, setPreferences] = useLocalStorage('Chatbot-Feedback-Table-Preferences', DEFAULT_PREFERENCES);
+//   const headers = useAuthorizedHeader();
   const {t} = useTranslation();
+  const [columnDefinitions, saveWidths] = useColumnWidths('Chatbot-React-Table-Widths', COLUMN_DEFINITIONS);
   const [qAModalVisible,setQAModalVisible] = useState(false);
-
+  
 
   const { items, actions, filteredItemsCount, collectionProps, filterProps, paginationProps } = useCollection(
     distributions,
@@ -49,22 +52,22 @@ function TableContent({
         noMatch: <TableNoMatchState onClearFilter={() => actions.setFiltering('')} />,
       },
       pagination: { pageSize: preferences.pageSize },
-      sorting: {defaultState: {sortingDescending:true, sortingColumn: columnDefinitions[12], isDescending:true }},
+      sorting: { defaultState: { sortingColumn: columnDefinitions[0] } },
       selection: {},
     }
   );
+
 
   function handleAddClick(event){
     event.preventDefault();
     setQAModalVisible(true);
   }
-
   return (
-    <div>
-     <CreateQAModal visible={qAModalVisible} setVisible={setQAModalVisible} />
-
+    <SpaceBetween size="l">
+    <ModelSettings href={'/feedback'}/>
+    <CreateQAModal visible={qAModalVisible} setVisible={setQAModalVisible} />
     <Table
-     {...collectionProps}
+      {...collectionProps}
       columnDefinitions={columnDefinitions}
       visibleColumns={preferences.visibleContent}
       items={items}
@@ -93,49 +96,53 @@ function TableContent({
           createButtonText={buttonName}
           refreshAction={refreshAction}
           handleAddClick={handleAddClick}
-
           href={buttonHref}
         />
       }
       pagination={<Pagination {...paginationProps} ariaLabels={paginationLabels} />}
       preferences={<Preferences preferences={preferences} setPreferences={setPreferences} />}
     />
-</div>
+    </SpaceBetween>
   );
 }
 
-export default function ModelHubTable () {
-  const appLayout = useRef();
-  const {notificationitems} = useSimpleNotifications();
-  const [toolsOpen, setToolsOpen] = useState(false);
+export default function FeedbackTable () {
   const {t} = useTranslation();
-  const headers = useAuthorizedHeader();
-  const [loadingState, setLoadingState] = useState(true);
+
+  const [toolsOpen, setToolsOpen] = useState(false);
+  const appLayout = useRef();
   const [docitems,setDocsItems] = useState([]);
+  const [loadingState, setLoadingState] = useState(true);
+  const {notificationitems} = useSimpleNotifications();
   const [refresh, setRefresh] = useState(false);
-  const refreshAction =()=>{
-    setRefresh(v => !v);
-  };
   const userinfo = useAuthUserInfo();
+  const headers = useAuthorizedHeader();
   const username = userinfo?.username || 'default';
   const company = userinfo?.company || 'default';
-  const [localStoredParams] = useLocalStorage(
-    params_local_storage_key+username,
-    null
-  );
-  const main_fun_arn = localStoredParams?.main_fun_arn;
-  const apigateway_endpoint = localStoredParams?.apigateway_endpoint;
+
+  const refreshAction =()=>{
+    setLoadingState(true);
+    setRefresh(v => !v);
+  };
+
   const queryParams = {
-    main_fun_arn:main_fun_arn,
-    apigateway_endpoint:apigateway_endpoint,
     company:company
   }
   useEffect(()=>{
-    setLoadingState(true);
-    getModelCards(headers,queryParams)
+    const controller = new AbortController();
+    listFeedback(headers,queryParams)
     .then(data =>{
-      console.log(data);
-      const items = data.map( it =>(it))
+        
+      const items = data.map( it =>(
+        {
+        msgid:it.id,
+        title:it.title,
+        description:it.description,
+        createtime:it.createtime,
+        status:it.status,
+        username:it.username
+        }
+      ))
       setDocsItems(items);
         setLoadingState(false);
     })
@@ -145,27 +152,30 @@ export default function ModelHubTable () {
         console.log(JSON.stringify(err))
     }
     )
+    return () => {
+        controller.abort();
+      };
 },[refresh]);
 
-  return (
 
+  return (
     <CustomAppLayout
       ref={appLayout}
-      navigation={<Navigation activeHref={'/model_hub'} />}
+      navigation={<Navigation activeHref={'/feedback_us'} />}
       notifications={<Flashbar items={notificationitems} stackItems/>}
       breadcrumbs={<Breadcrumbs />}
       content={<TableContent 
-                resourceName={t('model_hub')}
+                resourceName={t('feedback_us')}
+                buttonName = "Add"
                 distributions = {docitems}
                 loadingState={loadingState}
                 refreshAction={refreshAction}
+
             />}
       contentType="table"
+      toolsOpen={toolsOpen}
+      tools={<ToolsContent />}
       stickyNotifications
-      // tools={<ToolsContent />}
-      // toolsOpen={toolsOpen}
-      onToolsChange={({ detail }) => setToolsOpen(detail.open)}
     />
-
   );
 }
