@@ -16,6 +16,7 @@ const VISIBLE_CONTENT_OPTIONS = [
       { id: 'email', label:  i18n.t('created_by'), },
       { id: 'createtime', label:  i18n.t('createtime'), },
       { id: 'prompt_category', label:  i18n.t('prompt_category'), },
+      { id: 'industry', label:  i18n.t('select_industry'), },
       { id: 'is_recommended', label:  i18n.t('recommend'), },
     ],
   },
@@ -70,7 +71,7 @@ export const GEO_CATS = [
 
 export const DEFAULT_PREFERENCES = {
   pageSize: 30,
-  visibleContent: ['template_name','is_recommended','description','email','createtime','prompt_category',],
+  visibleContent: ['template_name','is_recommended','description','email','createtime','industry','prompt_category',],
   wrapLines: false,
 };
 
@@ -105,12 +106,12 @@ export const COLUMN_DEFINITIONS = addColumnSortLabels([
     header: i18n.t('recommend'),
     sortingField: "is_recommended",
   },
-  // {
-  //   id: 'geo',
-  //   cell: item =>item.geo||'-',
-  //   header: i18n.t('geo'),
-  //   sortingField: "geo",
-  // },
+  {
+    id: 'industry',
+    header: i18n.t('select_industry'),
+    cell: item => item.industry?.map(it => it.label).join(" | ") || '-',
+    sortingField:'industry'
+  },
   {
     id: 'prompt_category',
     cell: item =>item.prompt_category?.label||'-',

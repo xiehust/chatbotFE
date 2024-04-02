@@ -577,7 +577,7 @@ const IndustrySelect = ({ readOnly }) => {
   const { inValid, formData, setFormData } = useContext(addTemplateFormCtx);
 
   const [selectedOptions, setSelectedOptions] = useState(formData.industry);
-  const value = formData.industry?.map(it => it.label).join(' | ');
+  const value = formData.industry?.map(it => it.label).join(' | ') || '-';
   return (
     readOnly?<ReadOnlyBox value = {value}/> :<Multiselect
       invalid={inValid && !formData.industry}
