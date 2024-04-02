@@ -481,12 +481,17 @@ const ChatBox = ({ msgItems, loading }) => {
     }
   }, [loading]);
 
-  const scrollRef = useRef(null);
+  // const scrollRef = useRef(null);
+  // useEffect(() => {
+  //   if (scrollRef.current) {
+  //     scrollRef.current.scrollIntoView({ behaviour: "smooth" });
+  //   }
+  // }, [msgItems.length]);
+
   useEffect(() => {
-    if (scrollRef.current) {
-      scrollRef.current.scrollIntoView({ behaviour: "smooth" });
-    }
-  }, [msgItems.length]);
+    window.scrollTo(0, 0); // Scroll to top on component mount
+  }, []);
+
   const items = msgItems.map((msg) => (
     <MemoizedMsgItem
       // key={generateUniqueId()}
@@ -514,7 +519,7 @@ const ChatBox = ({ msgItems, loading }) => {
         ) : (
           <div />
         )}
-        <ListItem ref={scrollRef} />
+        {/* <ListItem ref={scrollRef} /> */}
       </List>
     </Box>
   );

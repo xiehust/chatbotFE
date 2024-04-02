@@ -252,7 +252,9 @@ i18n
             feedback_time:'Feedback Time',
             submit_new_feedback:'Submit Feedback',
             update_feedback:'Update Feedback Status',
-            accepted:'Accept' 
+            accepted:'Accept' ,
+            select_industry:"For Industry",
+            image:'Images'
         }
       },
       zh:{
@@ -491,7 +493,9 @@ i18n
             feedback_time:'反馈时间',
             submit_new_feedback:'提交反馈',
             update_feedback:'更新反馈状态',
-            accepted:'接受反馈'
+            accepted:'接受反馈',
+            select_industry:"适合行业",
+            image:'图片'
         }
       }
     }

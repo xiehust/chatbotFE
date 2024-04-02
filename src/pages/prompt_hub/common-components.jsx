@@ -27,7 +27,7 @@ import { useLocalStorage } from "../../common/localStorage";
 import { deletePrompt,uploadFile } from "../commons/api-gateway";
 import { useAuthorizedHeader, useAuthUserInfo,useAuthToken } from "../commons/use-auth";
 import { useSimpleNotifications } from '../commons/use-notifications';
-import { PROMPT_CATS, GEO_CATS, COMPAT_MODELS } from './table-config';
+import { PROMPT_CATS, GEO_CATS, COMPAT_MODELS,INSTRUSTRY_LIST } from './table-config';
 import 'ace-builds/css/ace.css';
 import 'ace-builds/css/theme/dawn.css';
 import 'ace-builds/css/theme/tomorrow_night_bright.css';
@@ -63,7 +63,8 @@ export function validateForm(props) {
   if (
     !props.template_name?.length ||
     !props.email?.length||
-    !props.prompt_category 
+    !props.prompt_category ||
+    !props.industry
   ) {
     return false;
   } else return true;
@@ -391,9 +392,6 @@ export const DetailPanel = ({ readOnlyWithErrors = false, readOnly = false }) =>
           </Header>}
       >
         <SpaceBetween size="l">
-          {/* <FormField label={t("select_geo_category")}>
-            <GeoSelect readOnly={readOnly} />
-          </FormField> */}
           <FormField label={t("uploader_email")} description={t("your_amazon_email")}>
             <Input
               invalid={inValid && !formData.email}
@@ -429,6 +427,9 @@ export const DetailPanel = ({ readOnlyWithErrors = false, readOnly = false }) =>
         <SpaceBetween size="l">
           <FormField label={t("select_compat_models")}>
             <ModelSelect readOnly={readOnly} />
+          </FormField>
+          <FormField label={t("select_industry")}>
+            <IndustrySelect readOnly={readOnly} />
           </FormField>
           <FormField label={t("select_category")}>
             <CategorySelect readOnly={readOnly} />
@@ -524,8 +525,10 @@ export const PreviewBox = ({ formData }) => {
 const CategorySelect = ({ readOnly }) => {
   const { inValid, formData, setFormData } = useContext(addTemplateFormCtx);
   const [selectedOption, setSelectedOption] = useState(formData.prompt_category);
+  const value = formData.prompt_category?.label;
+
   return (
-    <Select
+    readOnly?<ReadOnlyBox value = {value}/> :<Select
       invalid={inValid && !formData.prompt_category}
       disabled={readOnly}
       selectedOption={selectedOption}
@@ -542,12 +545,19 @@ const CategorySelect = ({ readOnly }) => {
   )
 }
 
+const ReadOnlyBox = ({value}) =>{
+  return (
+    <Box>{value}</Box>
+  )
+}
+
 const ModelSelect = ({ readOnly }) => {
   const { inValid, formData, setFormData } = useContext(addTemplateFormCtx);
 
   const [selectedOptions, setSelectedOptions] = useState(formData.compat_models);
+  const value = formData.compat_models?.map(it => it.label).join(' | ');
   return (
-    <Multiselect
+    readOnly?<ReadOnlyBox value = {value}/> :<Multiselect
       invalid={inValid && !formData.compat_models}
       disabled={readOnly}
       selectedOptions={selectedOptions}
@@ -559,6 +569,28 @@ const ModelSelect = ({ readOnly }) => {
         }));
       }}
       options={COMPAT_MODELS}
+    />
+  )
+}
+
+const IndustrySelect = ({ readOnly }) => {
+  const { inValid, formData, setFormData } = useContext(addTemplateFormCtx);
+
+  const [selectedOptions, setSelectedOptions] = useState(formData.industry);
+  const value = formData.industry?.map(it => it.label).join(' | ');
+  return (
+    readOnly?<ReadOnlyBox value = {value}/> :<Multiselect
+      invalid={inValid && !formData.industry}
+      disabled={readOnly}
+      selectedOptions={selectedOptions}
+      onChange={({ detail }) => {
+        setSelectedOptions(detail.selectedOptions);
+        setFormData((prev) => ({
+          ...prev,
+          industry: detail.selectedOptions,
+        }));
+      }}
+      options={INSTRUSTRY_LIST}
     />
   )
 }

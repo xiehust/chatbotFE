@@ -18,6 +18,11 @@ export const CARD_DEFINITIONS = {
       content: item => item.prompt_category?.label||'-',
     },
     {
+      id: 'industry',
+      header: i18n.t('select_industry'),
+      content: item => item.industry?.map(it => it.label).join(" | ") || '-',
+    },
+    {
       id: 'description',
       header: i18n.t('description'),
       content: item => item.description||"-",

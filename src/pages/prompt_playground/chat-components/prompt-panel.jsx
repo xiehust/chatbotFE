@@ -311,7 +311,7 @@ const ImageUploadComp = ({ id }) => {
         errorText={uploadErrtxt}
         i18nStrings={{
           uploadButtonText: (e) =>
-            e ? '' : '',
+            e ? t('image') : t('image'),
           dropzoneText: (e) =>
             e ? "Drop files to upload" : "Drop file to upload",
           removeFileAriaLabel: (e) => `Remove file ${e + 1}`,

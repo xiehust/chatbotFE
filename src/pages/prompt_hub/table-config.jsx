@@ -33,6 +33,17 @@ export const COMPAT_MODELS = [
   { label: "Others", value: "Others" },
 ]
 
+export const INSTRUSTRY_LIST = [
+  { label: "Gaming", value: "Gaming" },
+  { label: "Retail", value: "Retail" },
+  { label: "ME_AD", value: "ME_AD" },
+  { label: "Auto", value: "Auto" },
+  { label: "LSHC", value: "LSHC" },
+  { label: "GB", value: "GB" },
+  { label: "General", value: "Qwen" },
+  { label: "Others", value: "Others" },
+]
+
 
 export const PROMPT_CATS = [
   { label: "Translation", value: "translation" },

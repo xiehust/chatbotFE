@@ -34,12 +34,12 @@ function BaseFormContent({ content,setReadOnly, errorText = null }) {
   const [sumbitloading, setSubLoading] = useState(false);
   const [editState, setEditState] = useState(false);
   const msgid = generateId();
-  const [localStoredParams] = useLocalStorage(
-    params_local_storage_key+userInfo.username,
-    null
-  );
-  const main_fun_arn = localStoredParams?.main_fun_arn;
-  const apigateway_endpoint = localStoredParams?.apigateway_endpoint;
+  // const [localStoredParams] = useLocalStorage(
+  //   params_local_storage_key+userInfo.username,
+  //   null
+  // );
+  // const main_fun_arn = localStoredParams?.main_fun_arn;
+  // const apigateway_endpoint = localStoredParams?.apigateway_endpoint;
 
   return (
     <form
@@ -101,7 +101,7 @@ function BaseFormContent({ content,setReadOnly, errorText = null }) {
           <Header
           variant="h1"
           >
-          {`${formData.id}`}
+          {`${formData.template_name}`}
         </Header>
         }
         actions={
