@@ -254,7 +254,9 @@ i18n
             update_feedback:'Update Feedback Status',
             accepted:'Accept' ,
             select_industry:"For Industry",
-            image:'Images'
+            image:'Images',
+            filter_category:'Filter Category',
+            filter_industry:"Filter Industry"
         }
       },
       zh:{
@@ -495,7 +497,9 @@ i18n
             update_feedback:'更新反馈状态',
             accepted:'接受反馈',
             select_industry:"适合行业",
-            image:'图片'
+            image:'图片',
+            filter_category:'分类筛选',
+            filter_industry:"行业筛选"
         }
       }
     }

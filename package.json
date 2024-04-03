@@ -32,6 +32,7 @@
     "react-syntax-highlighter": "^15.5.0",
     "react-use-websocket": "^4.3.1",
     "remark-gfm": "^3.0.1",
+    "sass": "^1.72.0",
     "web-vitals": "^2.1.4"
   },
   "scripts": {

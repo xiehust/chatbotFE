@@ -115,28 +115,23 @@ const ImageUrlItems = ({images})=>{
 
 return (
   <ImageList
-  key ={generateUniqueId()}
+  // key ={generateUniqueId()}
   sx={{ width: 1024, height: "auto", objectFit: "contain" }}
   cols={Math.max( 4)}
   // rowHeight={256}
 >
-  {images.map(image =>
+  {images.map((image,idx) =>
     {
       try {
         const url = URL.createObjectURL(image);
+        // const key = generateUniqueId();
+        // console.log('idx:',idx);
         // const url = image;
         return (<ImageListItem key={generateUniqueId()}>
-          {/* <img
-            src={url}
-            alt={image.name}
-            loading="lazy"
-            sx={{
-              objectFit: "contain",
-            }}
-          /> */}
-          <EnlargableImage src={url} alt={image.name} />
+          <EnlargableImage key={generateUniqueId()} src={url} alt={image.name} />
           <ImageListItemBar
             // title={image.name}
+            key={generateUniqueId()}
             subtitle={
               <span>size: {(image.size / 1024).toFixed(1)}KB</span>
             }
@@ -144,7 +139,7 @@ return (
           />
         </ImageListItem>)
       } catch (err) {
-        return <div />;
+        return <div key={idx}/>;
       }
   }
   )}

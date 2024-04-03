@@ -36,12 +36,15 @@ export const COMPAT_MODELS = [
 
 export const INSTRUSTRY_LIST = [
   { label: "Gaming", value: "Gaming" },
-  { label: "Retail", value: "Retail" },
+  { label: "RCH", value: "RCH" },
   { label: "ME_AD", value: "ME_AD" },
   { label: "Auto", value: "Auto" },
-  { label: "LSHC", value: "LSHC" },
+  { label: "HCLS", value: "HCLS" },
+  { label: "MFG", value: "MFG" },
+  { label: "CI", value: "CI" },
   { label: "GB", value: "GB" },
-  { label: "General", value: "Qwen" },
+  { label: "FSI", value: "FSI" },
+  { label: "ALL", value: "ALL" },
   { label: "Others", value: "Others" },
 ]
 
@@ -132,7 +135,7 @@ export const COLUMN_DEFINITIONS = addColumnSortLabels([
   },
 ]);
 
-
+export const SEARCHABLE_COLUMNS = ['template_name','description','industry','prompt_category','email'];
 
 
 export const Preferences = ({

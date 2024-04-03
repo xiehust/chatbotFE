@@ -25,7 +25,13 @@ import { models } from "../../../common/shared";
 import { useLocalStorage } from "../../../common/localStorage";
 import { getPrompts, uploadS3, uploadFile } from "../../commons/api-gateway";
 import { params_local_storage_key } from "./common-components";
-import { AddVariablesComp, OpeningQuesionsComp, TemplateEditor, previewTemplate,ImageReadOnlyPreviewComp } from "../../prompt_hub/common-components";
+import { AddVariablesComp,
+   OpeningQuesionsComp, 
+  TemplateEditor, 
+  previewTemplate,
+  ImageReadOnlyPreviewComp,
+  base64toFiles
+ } from "../../prompt_hub/common-components";
 
 
 const default_bucket = process.env.REACT_APP_DEFAULT_UPLOAD_BUCKET;
@@ -333,10 +339,29 @@ const ImageUploadComp = ({ id }) => {
 
 const VariablesComp = ({ id }) => {
   const { t } = useTranslation();
+  const { setMsgItems} = useChatData();
 
   // const {formData, setFormData} = useTemplateFormCtx();
   const { formData, setFormData, setModelParams } = useChatData();
-
+  const [imgFiles, setImgFiles] = useState([]);
+  const userinfo = useAuthUserInfo();
+  const username = userinfo?.username || "default";
+  const msgid = `image-${generateId()}`;
+  useEffect(()=>{
+    const files = base64toFiles(formData?.images_base64||[]);
+    files.length&&setMsgItems(
+      (prev) => [
+        ...prev,
+        {
+          id: msgid,
+          who: userinfo.username,
+          text: 'images',
+          images: files,
+          // images_base64: images_base64
+        },
+      ] //创建一个新的item
+    );
+  },[]);
   return (
     <ExpandableSection
       defaultExpanded

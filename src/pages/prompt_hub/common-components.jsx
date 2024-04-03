@@ -1075,7 +1075,7 @@ const ImageEnlargeComp =({...props})=>{
 
 }
 
-const  base64toFiles =(images_base64) =>{
+export const  base64toFiles =(images_base64) =>{
   return images_base64.map( (base64Data,key) =>{
     const binaryString = window.atob(base64Data); // 将 base64 字符串解码为二进制字符串
     const bytes = new Uint8Array(binaryString.length);
@@ -1114,9 +1114,9 @@ const ImagePreview = ({ formData, setFormData,alt,imagesBase64,setImagesBase64, 
 export const ImageReadOnlyPreviewComp = ({ formData,setFormData}) => {
   const [imagesBase64, setImagesBase64] = useState(formData.images_base64??[]);
   const [loading,setLoading ] = useState(false);
-
   const sample_imgs_base64 = base64toFiles(imagesBase64);
-  const srcs = sample_imgs_base64.map(image => URL.createObjectURL(image))
+  const srcs = sample_imgs_base64.map(image => URL.createObjectURL(image));
+
   return (
     <SpaceBetween size="m" direction="horizontal">
       {srcs.map((src,key) => (
@@ -1133,6 +1133,6 @@ export const ImageReadOnlyPreviewComp = ({ formData,setFormData}) => {
       ))}
     </SpaceBetween>
   );
-
-
 }
+
+
