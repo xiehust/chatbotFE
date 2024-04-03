@@ -59,7 +59,7 @@ export const PROMPT_CATS = [
   { label: "Function Call", value: "function call" },
   { label: "Code Generation", value: "Code Generation"},
   { label: "Anthropic Official", value: "anthropic" },
-  { label: "other", value: "other" },
+  { label: "Other", value: "other" },
   
 ]
 
