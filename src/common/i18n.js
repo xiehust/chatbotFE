@@ -256,7 +256,9 @@ i18n
             select_industry:"For Industry",
             image:'Images',
             filter_category:'Filter Category',
-            filter_industry:"Filter Industry"
+            filter_industry:"Filter Industry",
+            is_public:"Is Public",
+            is_public_desc:"It will show in BRClient if it is public"
         }
       },
       zh:{
@@ -499,7 +501,9 @@ i18n
             select_industry:"适合行业",
             image:'图片',
             filter_category:'分类筛选',
-            filter_industry:"行业筛选"
+            filter_industry:"行业筛选",
+            is_public:'是否对外公开',
+            is_public_desc:'对外公开会同步到BRClient客户端'
         }
       }
     }

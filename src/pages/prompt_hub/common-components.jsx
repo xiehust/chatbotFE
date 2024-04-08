@@ -462,7 +462,7 @@ export const DetailPanel = ({ readOnlyWithErrors = false, readOnly = false }) =>
             />
           </FormField >
           <RecommendedPE readOnly={readOnly}/>
-
+          <TogglePublic readOnly={readOnly}/>
         </SpaceBetween>
       </Container>
       <Container
@@ -640,8 +640,24 @@ const RecommendedPE = ({ readOnly }) => {
   {t('is_recommended')}
 </Toggle>
 )
-
 }
+
+const TogglePublic = ({ readOnly }) => {
+  const { t } = useTranslation();
+  const userInfo = useAuthUserInfo();
+  const { formData, setFormData } = useContext(addTemplateFormCtx);
+  const [checked, setChecked] = useState(formData.is_public ?? false);
+  return   (<Toggle
+  description={t('is_public_desc')}
+  disabled={readOnly || userInfo.groupname !== 'admin'} checked={checked} onChange={(event) => {
+    setChecked(event.detail.checked);
+    setFormData((prev) => ({ ...prev, is_public: event.detail.checked }))
+  }}>
+  {t('is_public')}
+</Toggle>
+)
+}
+
 
 const VariableComp = ({ sn, formData, setFormData, readOnly }) => {
   const { t } = useTranslation();

@@ -5,6 +5,7 @@ import base64
 import json
 import logging
 import time
+import jwt
 from boto3.dynamodb.conditions import Attr
 logger = logging.getLogger()
 logger.setLevel(logging.INFO)
@@ -34,13 +35,17 @@ def get_s3_image_base64(bucket_name, key):
         return None
     
 
-def get_template(id, company,is_recommended,start_key=None) ->list:
+def get_template(id:str, company:str,is_recommended:bool,is_public:bool,start_key=None) ->list:
     
-    def get_template_sub(id, company,is_recommended, limit=1000, start_key=None):
+    def get_template_sub(id, company,is_recommended, is_public,limit=1000, start_key=None):
         records = None
         last_evaluated_key = None
-        if is_recommended == 'true':
+        if is_recommended and is_public:
+            filter_expr = Attr('company').eq(company) & Attr('is_recommended').eq(True) & Attr('is_public').eq(True)
+        elif is_recommended:
             filter_expr = Attr('company').eq(company) & Attr('is_recommended').eq(True)
+        elif is_public:
+            filter_expr = Attr('company').eq(company) & Attr('is_public').eq(True)
         else:
             filter_expr = Attr('company').eq(company)
         if id:
@@ -74,7 +79,7 @@ def get_template(id, company,is_recommended,start_key=None) ->list:
     results = []
     last_evaluated_key = None
     while True:
-        records, last_evaluated_key = get_template_sub(id, company,is_recommended, limit=1000, start_key=last_evaluated_key)
+        records, last_evaluated_key = get_template_sub(id, company,is_recommended, is_public,limit=1000, start_key=last_evaluated_key)
         if not records:
             break
         results += records
@@ -106,11 +111,35 @@ def delete_template(id):
         logger.info(str(e))
         return False
     
-    
+   
+def decode_token(event):
+    auth = event['headers']['Authorization']
+    token = auth.split(' ')[1]
+    logger.info(token)
+    try:
+        decoded_token = jwt.decode(token, os.environ['TOKEN_KEY'], algorithms=["HS256"])
+        # Token is valid, you can access the payload
+        logger.info(decoded_token)
+        return decoded_token
+    except jwt.ExpiredSignatureError:
+        # Token has expired
+        logger.info("Token has expired")
+        return None
+    except jwt.InvalidTokenError:
+        # Token is invalid
+        logger.info("Invalid token")
+        return None
+     
 
 def handler(event,lambda_context):
     http_method = event.get('httpMethod')
     resource = event.get('resource')
+    decoded_token = decode_token(event)
+    if not decoded_token:
+        return {'statusCode':400,'headers': cors_headers,'body':'invalid token'}
+    
+    username = decoded_token.get('payload')
+    is_public = True if username == 'public' else False
     if http_method == 'GET' and resource == '/prompt_hub':
         query_params = event.get('queryStringParameters')
         print(query_params)
@@ -119,8 +148,8 @@ def handler(event,lambda_context):
             # apigateway_endpoint = query_params.get('apigateway_endpoint')
             id = query_params.get('id')
             company =  query_params.get('company', 'default')
-            is_recommended = query_params.get('is_recommended')
-            results = get_template(id,company,is_recommended)
+            is_recommended =  True if query_params.get('is_recommended') == 'true' else False
+            results = get_template(id,company,is_recommended,is_public)
             images_base64 = []
             if id:
                 result = results[0]

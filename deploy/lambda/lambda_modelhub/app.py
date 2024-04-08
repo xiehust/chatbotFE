@@ -82,8 +82,6 @@ def delete_template(id):
     except Exception as e:
         logger.info(str(e))
         return False
-    
-    
 
 def handler(event,lambda_context):
     http_method = event.get('httpMethod')
