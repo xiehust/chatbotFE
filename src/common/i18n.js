@@ -258,7 +258,8 @@ i18n
             filter_category:'Filter Category',
             filter_industry:"Filter Industry",
             is_public:"Is Public",
-            is_public_desc:"It will show in BRClient if it is public"
+            is_public_desc:"It will show in BRClient if it is public",
+            is_external:'External'
         }
       },
       zh:{
@@ -503,7 +504,8 @@ i18n
             filter_category:'分类筛选',
             filter_industry:"行业筛选",
             is_public:'是否对外公开',
-            is_public_desc:'对外公开会同步到BRClient客户端'
+            is_public_desc:'对外公开会同步到BRClient客户端',
+            is_external:' 外部演示 '
         }
       }
     }

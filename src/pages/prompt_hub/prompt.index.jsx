@@ -97,7 +97,7 @@ const Filters = ({filterProps,actions,filteredItemsCount,cat,setCat,industry,set
 
 
 function matchesCategory(item, selectedCategory) {
-  return selectedCategory === defaultCategory || item.prompt_category.value === selectedCategory.value;
+  return selectedCategory === defaultCategory || item.prompt_category?.value === selectedCategory.value;
 }
 
 function matchesIndustry(item, selectedIndustry) {
@@ -234,7 +234,8 @@ export default function PromptHubTable () {
   const queryParams = {
     main_fun_arn:main_fun_arn,
     apigateway_endpoint:apigateway_endpoint,
-    company:company
+    company:company,
+    is_external:false
   }
   useEffect(()=>{
     setLoadingState(true);

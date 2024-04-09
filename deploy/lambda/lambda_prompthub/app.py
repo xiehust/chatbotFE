@@ -7,6 +7,8 @@ import logging
 import time
 import jwt
 from boto3.dynamodb.conditions import Attr
+from decimal import Decimal
+
 logger = logging.getLogger()
 logger.setLevel(logging.INFO)
 dynamodb_resource = boto3.resource('dynamodb')
@@ -20,6 +22,12 @@ cors_headers = {
   "Access-Control-Allow-Methods": "*"
 }
 
+class DecimalEncoder(json.JSONEncoder):
+    def default(self, obj):
+        if isinstance(obj, Decimal):
+            return f'{obj}'
+        return super(DecimalEncoder, self).default(obj)
+    
 def get_s3_image_base64(bucket_name, key):
     # Create an S3 client
     s3 = boto3.client('s3')
@@ -35,9 +43,9 @@ def get_s3_image_base64(bucket_name, key):
         return None
     
 
-def get_template(id:str, company:str,is_recommended:bool,is_public:bool,start_key=None) ->list:
+def get_template(id:str, company:str,is_recommended:bool,is_public:bool,is_external:bool,start_key=None) ->list:
     
-    def get_template_sub(id, company,is_recommended, is_public,limit=1000, start_key=None):
+    def get_template_sub(id, company,is_recommended, is_public,is_external,limit=1000, start_key=None):
         records = None
         last_evaluated_key = None
         if is_recommended and is_public:
@@ -71,6 +79,9 @@ def get_template(id:str, company:str,is_recommended:bool,is_public:bool,start_ke
                 
                  ##不返回template详情内容
                 records = [ {key: value for key, value in my_dict.items() if key != 'template'} for my_dict in records ]
+                #如果is_external 是False， 则返回is_external != True的内容
+                if not is_external:
+                    records = [ my_dict for my_dict in records if my_dict.get('is_external') != True ]
                 last_evaluated_key = response.get('LastEvaluatedKey')
             except Exception as e:
                 logger.info(str(e))
@@ -79,7 +90,7 @@ def get_template(id:str, company:str,is_recommended:bool,is_public:bool,start_ke
     results = []
     last_evaluated_key = None
     while True:
-        records, last_evaluated_key = get_template_sub(id, company,is_recommended, is_public,limit=1000, start_key=last_evaluated_key)
+        records, last_evaluated_key = get_template_sub(id, company,is_recommended, is_public,is_external,limit=1000, start_key=last_evaluated_key)
         if not records:
             break
         results += records
@@ -149,7 +160,8 @@ def handler(event,lambda_context):
             id = query_params.get('id')
             company =  query_params.get('company', 'default')
             is_recommended =  True if query_params.get('is_recommended') == 'true' else False
-            results = get_template(id,company,is_recommended,is_public)
+            is_external =  True if query_params.get('is_external') == 'true' else False
+            results = get_template(id,company,is_recommended,is_public,is_external)
             images_base64 = []
             if id:
                 result = results[0]
@@ -161,7 +173,7 @@ def handler(event,lambda_context):
                     images_base64.append(image_base64)
                 results = {**result,"images_base64":images_base64}
             # print(results)
-            return {'statusCode': 200, 'headers': cors_headers,'body':json.dumps(results,ensure_ascii=False)}
+            return {'statusCode': 200, 'headers': cors_headers,'body':json.dumps(results,ensure_ascii=False,cls=DecimalEncoder)}
     
     elif http_method == 'POST' and resource == '/prompt_hub':
         body = json.loads(event['body'])

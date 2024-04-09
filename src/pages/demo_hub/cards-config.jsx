@@ -1,5 +1,5 @@
 import React from 'react';
-import { Link, CollectionPreferences, Badge, Button ,Box} from '@cloudscape-design/components';
+import { Link, CollectionPreferences, Badge, Button ,Box, SpaceBetween} from '@cloudscape-design/components';
 import i18n from '../../common/i18n';
 
 
@@ -30,8 +30,16 @@ export const CARD_DEFINITIONS = {
     {
       id: 'is_recommended',
       // header: i18n.t('recommend'),
-      content: item =>(item.is_recommended&&<Badge color="green">{i18n.t('is_recommended')}</Badge>),
+      content: item =>(<SpaceBetween direction="horizontal" size='m'>
+            {item.is_recommended&&<Badge color="green">{i18n.t('is_recommended')}</Badge>}
+            {item.is_external&&<Badge color="blue">{i18n.t('is_external')}</Badge>}
+      </SpaceBetween>),
     },
+    // {
+    //   id: 'is_external',
+    //   // header: i18n.t('recommend'),
+    //   content: item =>(item.is_external&&<Badge color="blue">{i18n.t('is_external')}</Badge>),
+    // },
     {
       id: 'createtime',
       header: i18n.t('createtime'),
@@ -40,7 +48,10 @@ export const CARD_DEFINITIONS = {
     {
       id: 'buttonurl',
       content: item => (
-        <Box float="right"> <Button href={'/prompt_playground/'+item.id}>{i18n.t('start_chat')}</Button></Box>
+        <Box float="right">{item.is_external ?<Button iconAlign="right" iconName="external" target="_blank" href={item.link}>{i18n.t('start_chat')}</Button> : 
+        <Button href={`/prompt_playground/${item.id}`}>{i18n.t('start_chat')}</Button>}
+        
+        </Box>
       ),
     },
   ],

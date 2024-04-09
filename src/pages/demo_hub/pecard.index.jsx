@@ -102,7 +102,7 @@ const Filters = ({ filterProps, actions, filteredItemsCount, cat, setCat, indust
 
 
 function matchesCategory(item, selectedCategory) {
-  return selectedCategory === defaultCategory || item.prompt_category.value === selectedCategory.value;
+  return selectedCategory === defaultCategory || item.prompt_category?.value === selectedCategory.value;
 }
 
 function matchesIndustry(item, selectedIndustry) {
@@ -231,6 +231,7 @@ export default function PEPlayCard() {
     apigateway_endpoint: apigateway_endpoint,
     company: company,
     is_recommended: true,
+    is_external:true,
   }
   useEffect(() => {
     setLoadingState(true);
