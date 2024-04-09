@@ -157,6 +157,8 @@ const SettingsPanel = ()=>{
                  metadata: {"username":username,"company":encodeURIComponent(company),"category":encodeURIComponent(catSelectedOption?.value??'')}
               };
 
+              console.log(`filename:${body.filename},type:${body.mimeType},fileSizeBytes:${body.fileSizeBytes}`);
+
               uploadFile( username,company,body, headers)
               .then((response) => {
                 setLoading(false);
