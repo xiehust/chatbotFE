@@ -6,7 +6,7 @@ import i18n from '../../common/i18n';
 export const CARD_DEFINITIONS = {
   header: item => (
     <div>
-      <Link fontSize="heading-m"  href={`/prompt_hub/${item?.id}`}>
+      <Link fontSize="heading-m"  external href={`/prompt_hub/${item?.id}`}>
       {item?.template_name}
       </Link>
     </div>

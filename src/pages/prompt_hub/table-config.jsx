@@ -88,13 +88,13 @@ export const COLUMN_DEFINITIONS = addColumnSortLabels([
   {
     id: 'id',
     header: i18n.t('template_id'),
-    cell: item => <Link href={`/prompt_hub/${item?.id}`}>{item?.id}</Link>,
+    cell: item => <Link external href={`/prompt_hub/${item?.id}`}>{item?.id}</Link>,
     sortingField: "id",
   },
   {
     id: 'template_name',
     header: i18n.t('template_name'),
-    cell: item => <Link href={`/prompt_hub/${item?.id}`}>{item?.template_name}</Link>,
+    cell: item => <Link external href={`/prompt_hub/${item?.id}`}>{item?.template_name}</Link>,
     sortingField: "template_name",
   },
   {
