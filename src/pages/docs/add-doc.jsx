@@ -83,7 +83,7 @@ const SettingsPanel = ()=>{
       null
     );
     const [catSelectedOption,setCatSelectedOption] = useState()
-    const [helperMsg, setHelperMsg] = useState(".pdf,.txt,.csv,.xlsx,.faq,.md,.example,.examples,.json,.wiki");
+    const [helperMsg, setHelperMsg] = useState(".pdf,.txt,.csv,.xlsx,.faq,.md,.example,.examples,.json,.wiki, size < 3MB");
     const [uploadErrtxt, setUploadErr] = useState();
     const [files, setFiles] = useState([]);
     const [loading, setLoading] = useState(false);
@@ -158,6 +158,13 @@ const SettingsPanel = ()=>{
               };
 
               console.log(`filename:${body.filename},type:${body.mimeType},fileSizeBytes:${body.fileSizeBytes}`);
+              if (body.fileSizeBytes > 1024*1024*3){
+
+                setLoading(false);
+                setUploadErr(`Upload ${file.name} error, file size too large, must <= 3MB`);
+                setFiles([]);
+                return;
+              }
 
               uploadFile( username,company,body, headers)
               .then((response) => {
