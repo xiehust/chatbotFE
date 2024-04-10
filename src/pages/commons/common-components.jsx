@@ -58,7 +58,7 @@ const navItems_admin = [
     text: i18n.t('readme'),
     items: [
       { type: 'link', external: true, 
-      info: <Badge color="green">New</Badge>,
+      info: <Badge color="green">必读</Badge>,
       text: '体验平台使用FAQ', href: 'https://amzn-chn.feishu.cn/docx/UtoydMndCo2svMxkt9rcTvI4nEd' },
     ],
   }, 
@@ -88,7 +88,7 @@ const navItems = [
     text: i18n.t('readme'),
     items: [
       { type: 'link',external: true,
-       info: <Badge color="green">New</Badge>,
+       info: <Badge color="green">必读</Badge>,
        text: '体验平台使用FAQ', href: 'https://amzn-chn.feishu.cn/docx/UtoydMndCo2svMxkt9rcTvI4nEd' },
     ],
   }, 
