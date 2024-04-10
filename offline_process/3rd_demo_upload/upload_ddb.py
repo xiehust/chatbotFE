@@ -5,8 +5,8 @@ import pandas as pd
 import argparse 
 import random
 
-# session = boto3.Session(profile_name='corp-us-east-1')
-session = boto3.Session(profile_name='default')
+session = boto3.Session(profile_name='corp-us-east-1')
+# session = boto3.Session(profile_name='default')
 
 
 # Define the table name
