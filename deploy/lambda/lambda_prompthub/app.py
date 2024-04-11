@@ -49,13 +49,13 @@ def get_template(id:str, company:str,is_recommended:bool,is_public:bool,is_exter
         records = None
         last_evaluated_key = None
         if is_recommended and is_public:
-            filter_expr = Attr('company').eq(company) & Attr('is_recommended').eq(True) & Attr('is_public').eq(True)
+            filter_expr = Attr('delete_status').ne('deleted') & Attr('company').eq(company) & Attr('is_recommended').eq(True) & Attr('is_public').eq(True) .Attr('company').eq(company) & Attr('is_recommended').eq(True) & Attr('is_public').eq(True)
         elif is_recommended:
-            filter_expr = Attr('company').eq(company) & Attr('is_recommended').eq(True)
+            filter_expr = Attr('delete_status').ne('deleted') &Attr('company').eq(company) & Attr('is_recommended').eq(True)
         elif is_public:
-            filter_expr = Attr('company').eq(company) & Attr('is_public').eq(True)
+            filter_expr = Attr('delete_status').ne('deleted') &Attr('company').eq(company) & Attr('is_public').eq(True)
         else:
-            filter_expr = Attr('company').eq(company)
+            filter_expr = Attr('delete_status').ne('deleted')& Attr('company').eq(company)
         if id:
             try:
                 response = table.get_item(Key={'id': id})
@@ -110,17 +110,35 @@ def add_template(data):
         logger.info(str(e))
         return False
 
+#use table.update update the record with adding a new field status = 'deleted'
 def delete_template(id):
     try:
-        response = table.delete_item(
-            Key={
-                'id': id
-            }
-        )
+        table.update_item(
+            Key={'id': id},
+            UpdateExpression="set delete_status = :s",
+            ExpressionAttributeValues={
+                ':s': 'deleted'
+            })
         return True
     except Exception as e:
         logger.info(str(e))
         return False
+    
+        
+            
+        
+
+    
+    # try:
+    #     response = table.delete_item(
+    #         Key={
+    #             'id': id
+    #         }
+    #     )
+    #     return True
+    # except Exception as e:
+    #     logger.info(str(e))
+    #     return False
     
    
 def decode_token(event):
