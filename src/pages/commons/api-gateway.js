@@ -205,6 +205,15 @@ export const addTemplate = async(headers,formdata) =>{
     }
 }
 
+export const autoPe = async(headers,formdata) =>{
+    try {
+        const resp = await axios.post(`${API_http}/automatic_prompt`,JSON.stringify(formdata), {headers});
+        return resp.data;
+    } catch (err) {
+        throw err;
+    }
+}
+
 export const listAgents = async(headers,queryParams={}) =>{
     // Build the query string parameters
     const queryString = Object.keys(queryParams)

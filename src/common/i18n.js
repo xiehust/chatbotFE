@@ -259,7 +259,9 @@ i18n
             filter_industry:"Filter Industry",
             is_public:"Is Public",
             is_public_desc:"It will show in BRClient if it is public",
-            is_external:'External'
+            is_external:'External',
+            autope_desc: "Automatically optimize your Prompt, ETA 5~30s, depends on your original prompt, You can try multi rounds to generate results, but be careful to delele the results in template, and keep the final one",
+            auto_pe:"Auto Optimize"
         }
       },
       zh:{
@@ -505,7 +507,9 @@ i18n
             filter_industry:"行业筛选",
             is_public:'是否对外公开',
             is_public_desc:'对外公开会同步到BRClient客户端',
-            is_external:' 外部演示 '
+            is_external:' 外部演示 ',
+            autope_desc: "自动优化提示词,根据原始prompt长度不同,预计需要5-30s时间不等，您可以尝试多次优化，注意保存时需要删除不需要的结果",
+            auto_pe:"自动优化"
         }
       }
     }

@@ -24,7 +24,7 @@ import { TableHeader } from "../commons/common-components";
 import { useTranslation, Trans } from "react-i18next";
 import { useLocalStorage } from "../../common/localStorage";
 // import { params_local_storage_key } from "../chatbot/common-components";
-import { deletePrompt,uploadFile } from "../commons/api-gateway";
+import { deletePrompt,uploadFile,autoPe } from "../commons/api-gateway";
 import { useAuthorizedHeader, useAuthUserInfo,useAuthToken } from "../commons/use-auth";
 import { useSimpleNotifications } from '../commons/use-notifications';
 import { PROMPT_CATS, GEO_CATS, COMPAT_MODELS,INSTRUSTRY_LIST } from './table-config';
@@ -373,6 +373,7 @@ export function previewTemplate(formData) {
 }
 
 
+
 export const DetailPanel = ({ readOnlyWithErrors = false, readOnly = false }) => {
 
   const { t } = useTranslation();
@@ -485,6 +486,7 @@ export const DetailPanel = ({ readOnlyWithErrors = false, readOnly = false }) =>
             }
           />
         </FormField>
+          <AutoPE formData={formData} setFormData={setFormData} readOnly={readOnly}/>
         <FormField>
           <AddMigrationComp readOnly={readOnly} />
         </FormField>
@@ -624,6 +626,66 @@ const GeoSelect = ({ readOnly }) => {
       items={GEO_CATS}
     />
   )
+}
+
+export const AutoPE = ({ formData, setFormData,readOnly }) =>{
+  const { t } = useTranslation();
+  const headers = useAuthorizedHeader();
+  // const { formData, setFormData } = useContext(addTemplateFormCtx);
+  const [loading,setLoading] = useState(false);
+  const [error,setError] = useState(false);
+  const [errorMsg, setErrorMsg] = useState("");
+  const sep = "\n\n---------------optimized prompt----------------\n\n";
+  const onClick = (event)=>{
+    event.preventDefault();
+    setError(false);
+    setErrorMsg('');
+    if (formData?.template === undefined || formData?.template.length === 0){
+      setErrorMsg('Please enter some content in template first')
+      setError(true);
+      return;
+    }
+    setLoading(true);
+
+    //split formData.template by sep
+    const system_role_prompt = formData.system_role_prompt;
+    const prompt_arr = formData.template.split(sep);
+    let last_prompt = formData.template;
+    if (prompt_arr.length){
+        last_prompt = prompt_arr[prompt_arr.length - 1];
+    }
+    const body = {
+      original_prompt:system_role_prompt+'\n'+last_prompt
+    }
+    autoPe(headers,body).then(data=>{
+        const gen_prompt = data.rewrited_prompt;
+        const new_prompt = formData.template + sep + gen_prompt;
+        setFormData((prev) => ({ ...prev, template: new_prompt }));
+        setLoading(false);
+      }).catch(err=>{
+        console.log(err);
+        setErrorMsg(JSON.stringify(err));
+        setLoading(true);
+    });
+  }
+  return (
+    <FormField
+      description={t("autope_desc")}
+      errorText={errorMsg}
+    >
+    <Button
+      disabled={readOnly}
+      iconAlign="right"
+      iconName="refresh"
+      onClick = {onClick}
+      loading={loading}
+    >
+      {t("auto_pe")}
+    </Button>
+    </FormField>
+  )
+
+
 }
 
 const RecommendedPE = ({ readOnly }) => {

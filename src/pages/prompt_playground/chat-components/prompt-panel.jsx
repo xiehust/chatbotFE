@@ -30,7 +30,8 @@ import { AddVariablesComp,
   TemplateEditor, 
   previewTemplate,
   ImageReadOnlyPreviewComp,
-  base64toFiles
+  base64toFiles,
+  AutoPE,
  } from "../../prompt_hub/common-components";
 
 
@@ -379,6 +380,7 @@ const VariablesComp = ({ id }) => {
                 }
                 } />
             </FormField>
+            <AutoPE formData={formData} setFormData={setFormData}/>
             <ImageReadOnlyPreviewComp formData={formData} setFormData={setFormData}/>
           </SpaceBetween>
         </Grid>}

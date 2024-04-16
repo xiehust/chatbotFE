@@ -22,7 +22,12 @@ def handler(event, lambda_context):
     if http_method == 'POST' and resource == '/automatic_prompt':
         body = json.loads(event['body'])
         original_prompt = body.get('original_prompt')
-        result = rewrite(original_prompt)
+        logger.info(f"original_prompt:\n{original_prompt}")
+        if not original_prompt:
+            result = 'No original_prompt provided'
+        else:
+            result = rewrite(original_prompt)
+        logger.info(f"result:\n{result}")
         results = {
             'rewrited_prompt': result
         }
