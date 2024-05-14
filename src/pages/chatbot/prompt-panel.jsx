@@ -28,8 +28,8 @@ import { params_local_storage_key } from "./common-components";
 
 const default_bucket = process.env.REACT_APP_DEFAULT_UPLOAD_BUCKET;
 export const defaultModelParams = {
-  temperature: 0.01,
-  max_tokens: 3000,
+  temperature: 0.1,
+  max_tokens: 1024,
   model_name: models[0].value,
   model_name_opt: models[0],
   use_qa: true,
