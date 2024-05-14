@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: MIT-0
 // Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
 // SPDX-License-Identifier: MIT-0
-import React, { useEffect, useState, useRef } from "react";
+import React, { useEffect, useState, useRef,memo } from "react";
 import {
   Container,
   Header,
@@ -15,6 +15,8 @@ import { a11yDark } from "react-syntax-highlighter/dist/esm/styles/hljs";
 import { useChatData, generateUniqueId } from "./common-components";
 import { useTranslation } from "react-i18next";
 import botlogo from "../../resources/Res_Amazon-SageMaker_Model_48_Light.svg";
+import userlogo from "../../resources/icons8-user-96.png"
+
 import { useAuthToken, useAuthUserInfo } from "../commons/use-auth";
 import useWebSocket from "react-use-websocket";
 import { API_socket, postFeedback } from "../commons/api-gateway";
@@ -134,43 +136,86 @@ const MarkdownToHtml = ({ text }) => {
   );
 };
 
-const MsgItem = ({ who, text, image, msgid, connectionId }) => {
-  if (image) {
-    console.log("image:", image);
-    let url;
-    try {
-      url = URL.createObjectURL(image);
-    } catch (err) {
-      url = null;
-      return <div />;
+const ImageUrlItems = ({images})=>{
+
+  return (
+    <ImageList
+    key ={generateUniqueId()}
+    sx={{ width: 1024, height: "auto", objectFit: "contain" }}
+    cols={Math.max( 4)}
+    // rowHeight={256}
+  >
+    {images.map(image =>
+      {
+        try {
+          const url = URL.createObjectURL(image);
+          // const url = image;
+          return (<ImageListItem key={generateUniqueId()}>
+            <img
+              src={url}
+              alt={image.name}
+              loading="lazy"
+              sx={{
+                objectFit: "contain",
+              }}
+            />
+            <ImageListItemBar
+              // title={image.name}
+              subtitle={
+                <span>size: {(image.size / 1024).toFixed(1)}KB</span>
+              }
+              // position="below"
+            />
+          </ImageListItem>)
+        } catch (err) {
+          return <div />;
+        }
     }
+    )}
+  </ImageList>
+  )
+}
+
+
+const MsgItem = ({ who, text, images_base64,images, msgid, connectionId }) => {
+  const userInfo = useAuthUserInfo();
+  // const sessionId = `web_chat_${userInfo.username}_${connectionId}`
+  const sessionId = `web_chat_${userInfo.username}`
+
+  //restore image file from localstorage
+  if (images_base64){
+    
+    const imagesObj = images_base64.map( (base64Data,key) =>{
+      const binaryString = window.atob(base64Data); // 将 base64 字符串解码为二进制字符串
+      const bytes = new Uint8Array(binaryString.length);
+      
+      for (let i = 0; i < binaryString.length; i++) {
+        bytes[i] = binaryString.charCodeAt(i);
+      }
+      const blob = new Blob([bytes], { type: 'image/png' }); 
+        // Create a new File object from the Blob
+        return new File([blob], `image_${key}.png`, { type: 'image/png' });
+    });
     return (
       who !== BOTNAME && (
-        <ListItem sx={{ display: "flex", justifyContent: "flex-end" }}>
+        <ListItem >
           <Stack direction="row" spacing={2} sx={{ alignItems: "top" }}>
-            <ImageList
-              sx={{ width: 500, height: "auto", objectFit: "contain" }}
-              cols={1}
-            >
-              <ImageListItem key={image.name}>
-                <img
-                  src={url}
-                  alt={image.name}
-                  loading="lazy"
-                  sx={{
-                    objectFit: "contain",
-                  }}
-                />
-                <ImageListItemBar
-                  title={image.name}
-                  subtitle={
-                    <span>size: {(image.size / 1024).toFixed(1)}KB</span>
-                  }
-                  position="below"
-                />
-              </ImageListItem>
-            </ImageList>
-            <Avatar {...stringAvatar(who)} />
+          <Avatar src={userlogo}  alt={"User"}/>
+          <ImageUrlItems key={generateUniqueId()} images={imagesObj}/>
+          </Stack>
+        </ListItem>
+      )
+    );
+
+  }
+  else if (images) {
+
+    return (
+      who !== BOTNAME && (
+        <ListItem >
+          <Stack direction="row" spacing={2} sx={{ alignItems: "top" }}>
+          <Avatar src={userlogo}  alt={"User"}/>
+          <ImageUrlItems key={generateUniqueId()}  images={images}/>
           </Stack>
         </ListItem>
       )
@@ -186,27 +231,28 @@ const MsgItem = ({ who, text, image, msgid, connectionId }) => {
     // console.log(text);
 
     return who !== BOTNAME ? (
-      <ListItem sx={{ display: "flex", justifyContent: "flex-end" }}>
+      <ListItem >
         <Stack direction="row" spacing={2} sx={{ alignItems: "top" }}>
-          <TextItem sx={{ bgcolor: "#f2fcf3", borderColor: "#037f0c" }}>
-            <MarkdownToHtml text={newlines.join(" ")} />
-          </TextItem>
-
-          <Avatar {...stringAvatar(who)} />
+          <Avatar src={userlogo}  alt={"User"}/>
+          <Grid container spacing={0.1}>
+            <TextItem sx={{ bgcolor: "#f2fcf3", borderColor: "#037f0c" }}>
+              <MarkdownToHtml text={newlines.join(" ")} />
+            </TextItem>
+          </Grid>
         </Stack>
       </ListItem>
     ) : (
-      <ListItem>
+      <ListItem >
         <Stack direction="row" spacing={2} sx={{ alignItems: "top" }}>
           <Avatar src={botlogo} alt={"AIBot"} />
-          <Grid container spacing={0.5}>
+          <Grid container spacing={0.1}>
             <Grid item xs={11}>
               <TextItem>
                 <MarkdownToHtml text={newlines.join(" ")} />
               </TextItem>
             </Grid>
             <Grid item xs={11}>
-              <ThumbButtons msgid={msgid} session_id={connectionId} />
+              <ThumbButtons msgid={msgid} sessionId={sessionId} />
             </Grid>
           </Grid>
         </Stack>
@@ -231,22 +277,22 @@ const ThumbButtons = ({ msgid, session_id }) => {
   );
   const [downFilled, setDownFilled] = useState(
     localStoredParams?.feedback !== undefined &&
-      localStoredParams.feedback[msgid] &&
-      localStoredParams.feedback[msgid].action === "thumbs-down"
+      localStoredParams?.feedback[msgid] &&
+      localStoredParams?.feedback[msgid].action === "thumbs-down"
       ? true
       : false
   );
   const [upFilled, setUpFilled] = useState(
     localStoredParams?.feedback !== undefined &&
-      localStoredParams.feedback[msgid] &&
-      localStoredParams.feedback[msgid].action === "thumbs-up"
+      localStoredParams?.feedback[msgid] &&
+      localStoredParams?.feedback[msgid].action === "thumbs-up"
       ? true
       : false
   );
   useEffect(() => {}, []);
 
-  const main_fun_arn = localStoredParams.main_fun_arn;
-  const apigateway_endpoint = localStoredParams.apigateway_endpoint;
+  const main_fun_arn = localStoredParams?.main_fun_arn;
+  const apigateway_endpoint = localStoredParams?.apigateway_endpoint;
 
   const handleClickDown = async () => {
     const body = {
@@ -376,15 +422,37 @@ const TextItem = (props) => {
   );
 };
 
+const MemoizedMsgItem = memo(MsgItem);
+
+
 const ChatBox = ({ msgItems, loading }) => {
-  const [loadingtext, setLoaderTxt] = useState(".");
+  const [loadingtext, setLoaderTxt] = useState("Loading.");
+  const intervalRef = useRef(0);
+  function handleStartTick() {
+    
+    let textContent = "";
+    const intervalId = setInterval(() => {
+      setLoaderTxt((v) => v + ".");
+      textContent += ".";
+      if (textContent.length > 6) {
+        setLoaderTxt('Loading.');
+        textContent = "";
+      }
+    }, 500);
+    intervalRef.current = intervalId;
+  }
+
+  function handleStopClick() {
+    const intervalId = intervalRef.current;
+    if (intervalId) clearInterval(intervalId);
+  }
   useEffect(() => {
     if (loading) {
-      setLoaderTxt("Waiting......");
-      // handleStartTick();
+      setLoaderTxt("Loading.");
+      handleStartTick();
     } else {
       setLoaderTxt("");
-      // handleStopClick();
+      handleStopClick();
     }
   }, [loading]);
 
@@ -395,11 +463,12 @@ const ChatBox = ({ msgItems, loading }) => {
     }
   }, [msgItems.length]);
   const items = msgItems.map((msg) => (
-    <MsgItem
-      key={generateUniqueId()}
+    <MemoizedMsgItem
+      key={msg.id}
       who={msg.who}
       text={msg.text}
-      image={msg.image}
+      images={msg.images}
+      images_base64 = {msg.images_base64}
       msgid={msg.id}
       connectionId={msg.connectionId}
     />
@@ -483,27 +552,35 @@ const ConversationsPanel = () => {
     }
     if (resp.role) {
       // if stream stop, save the whole message
+      // console.log(chunck)
       if (chunck === "[DONE]") {
         setStopFlag(false);
         if (streamOutput.current !== "") {
-          setConversations((prev) => [
-            ...prev,
-            {
-              role: resp.role,
-              content: streamOutput.current,
-              connectionId: resp.connectionId,
-            },
-          ]);
 
-          setLocalStoredMsgItems([
-            ...msgItems.slice(0, -1),
-            {
-              id: resp.msgid,
-              who: BOTNAME,
-              text: streamOutput.current,
-              connectionId: resp.connectionId,
-            },
-          ]);
+          const targetItem = msgItems.filter((item) => item.id === resp.msgid);
+          
+          // console.log('targetItem length:',targetItem.length)
+          //如果存在则更新
+          if (targetItem.length) {
+            setConversations((prev) => [
+              ...prev,
+              {
+                role: resp.role,
+                content: streamOutput.current,
+                connectionId: resp.connectionId,
+              },
+            ]);
+            setLocalStoredMsgItems([
+              ...msgItems.slice(0, -1),
+              {
+                id: resp.msgid,
+                who: BOTNAME,
+                text: streamOutput.current,
+                connectionId: resp.connectionId,
+              },
+            ]);
+          }
+
           //如果是SD模型返回的url，则保存起来
           const [imgPaths, newtext] = extractImagTag(streamOutput.current);
           imgPaths.map((url) => setImg2txtUrl(url));

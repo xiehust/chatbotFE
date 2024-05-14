@@ -53,6 +53,15 @@ const navItems_admin = [
       { type: 'link', text: i18n.t('user'), href: '/admin/user' },
     ],
   },
+  {
+    type: 'section',
+    text: i18n.t('readme'),
+    items: [
+      { type: 'link', external: true, 
+      info: <Badge color="green">必读</Badge>,
+      text: '体验平台使用FAQ', href: 'https://amzn-chn.feishu.cn/docx/UtoydMndCo2svMxkt9rcTvI4nEd' },
+    ],
+  }, 
 ];
 
 const navItems = [
@@ -74,6 +83,15 @@ const navItems = [
 
     ],
   },
+  {
+    type: 'section',
+    text: i18n.t('readme'),
+    items: [
+      { type: 'link',external: true,
+       info: <Badge color="green">必读</Badge>,
+       text: '体验平台使用FAQ', href: 'https://amzn-chn.feishu.cn/docx/UtoydMndCo2svMxkt9rcTvI4nEd' },
+    ],
+  }, 
 ];
 
 

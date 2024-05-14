@@ -120,8 +120,8 @@ export const DeleteConfirmModal = ({selectItem,visible,setVisible,refreshAction}
     null
   );
   const msgid = `msg-${Math.random().toString(8)}`;
-  const main_fun_arn = localStoredParams.main_fun_arn;
-  const apigateway_endpoint = localStoredParams.apigateway_endpoint;
+  const main_fun_arn = localStoredParams?.main_fun_arn;
+  const apigateway_endpoint = localStoredParams?.apigateway_endpoint;
   const deleteAction = () =>{
     setLoading(true);
     const payload = {
