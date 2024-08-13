@@ -18,6 +18,8 @@ const VISIBLE_CONTENT_OPTIONS = [
       { id: 'prompt_category', label:  i18n.t('prompt_category'), },
       { id: 'industry', label:  i18n.t('select_industry'), },
       { id: 'is_recommended', label:  i18n.t('recommend'), },
+      { id: 'department', label:  i18n.t('department'), },
+
     ],
   },
 ];
@@ -49,18 +51,37 @@ export const INSTRUSTRY_LIST = [
 ]
 
 
+// export const PROMPT_CATS = [
+//   { label: "Translation", value: "translation" },
+//   { label: "Rewrite/Write", value: "Rewrite/Write" },
+//   { label: "Summary", value: "Summary" },
+//   { label: "Vision", value: "Vision" },
+//   { label: "RAG", value: "rag" },
+//   { label: "Roleplay", value: "roleplay" },
+//   { label: "Function Call", value: "function call" },
+//   { label: "Code Generation", value: "Code Generation"},
+//   { label: "Anthropic Official", value: "anthropic" },
+//   { label: "Other", value: "other" },
+// ]
+
 export const PROMPT_CATS = [
-  { label: "Translation", value: "translation" },
-  { label: "Rewrite/Write", value: "Rewrite/Write" },
-  { label: "Summary", value: "Summary" },
-  { label: "Vision", value: "Vision" },
-  { label: "RAG", value: "rag" },
-  { label: "Roleplay", value: "roleplay" },
-  { label: "Function Call", value: "function call" },
-  { label: "Code Generation", value: "Code Generation"},
-  { label: "Anthropic Official", value: "anthropic" },
-  { label: "Other", value: "other" },
-  
+  { label: "翻译", value: "翻译" },
+  { label: "智能运营/营销", value: "智能运营/营销" },
+  { label: "角色扮演", value: "角色扮演" },
+  { label: "创意写作", value: "创意写作" },
+  { label: "智能教辅", value: "智能教辅" },
+  { label: "智能办公", value: "智能办公" },
+  { label: "客服", value: "客服" },
+  { label: "审核", value: "审核"},
+  { label: "智能开发", value: "智能开发" },
+  { label: "安防摄像头VQA", value: "安防摄像头VQA" },
+  { label: "智能检索/知识库", value: "智能检索/知识库" },
+  { label: "Agent", value: "Agent" },
+  { label: "安全", value: "安全" },
+  { label: "图像/视频", value: "图像/视频" },
+  { label: "生成/处理", value: "生成/处理" },
+  { label: "LLM运维/开发框架", value: "LLM运维/开发框架" },
+  { label: "其他", value: "其他" },
 ]
 
 export const GEO_CATS = [
@@ -122,6 +143,12 @@ export const COLUMN_DEFINITIONS = addColumnSortLabels([
     sortingField: "prompt_category",
   },
   {
+    id: 'department',
+    header: i18n.t('department'),
+    cell: item => item.department || '-',
+    sortingField:'department'
+  },
+  {
     id: 'email',
     cell: item =>item.email||'-',
     header: i18n.t('created_by'),
@@ -135,7 +162,7 @@ export const COLUMN_DEFINITIONS = addColumnSortLabels([
   },
 ]);
 
-export const SEARCHABLE_COLUMNS = ['template_name','description','industry','prompt_category','email'];
+export const SEARCHABLE_COLUMNS = ['template_name','description','industry','department','prompt_category','email'];
 
 
 export const Preferences = ({

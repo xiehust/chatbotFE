@@ -111,6 +111,9 @@ function matchesIndustry(item, selectedIndustry) {
   return selectedIndustry === defaultIndustry || industries.includes(selectedIndustry.value);
 }
 
+// function matchesDepartment(item, selectedDepartment) {
+//   return selectedCategory === defaultDepartment || item.department?.value === defaultDepartment.value;
+// }
 
 function CardsContent({
   resourceName,

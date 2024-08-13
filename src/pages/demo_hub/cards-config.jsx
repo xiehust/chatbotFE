@@ -23,6 +23,11 @@ export const CARD_DEFINITIONS = {
       content: item => item.industry?.map(it => it.label).join(" | ") || '-',
     },
     {
+      id: 'department',
+      header: i18n.t('department'),
+      content: item => item.department||"-",
+    },
+    {
       id: 'description',
       header: i18n.t('description'),
       content: item => item.description||"-",
@@ -35,11 +40,7 @@ export const CARD_DEFINITIONS = {
             {item.is_external&&<Badge color="blue">{i18n.t('is_external')}</Badge>}
       </SpaceBetween>),
     },
-    // {
-    //   id: 'is_external',
-    //   // header: i18n.t('recommend'),
-    //   content: item =>(item.is_external&&<Badge color="blue">{i18n.t('is_external')}</Badge>),
-    // },
+
     {
       id: 'createtime',
       header: i18n.t('createtime'),
@@ -64,8 +65,8 @@ export const VISIBLE_CONTENT_OPTIONS = [
         { id: 'template_name', label: 'template_name' },
         { id: 'createtime', label: i18n.t('createtime') },
         { id: 'description', label: i18n.t('description') },
-        { id: 'buttonurl', label: 'Button' },
-        { id: 'prompt_category', label: i18n.t('prompt_category')},
+        { id: 'department', label: i18n.t('department') },
+       { id: 'prompt_category', label: i18n.t('prompt_category')},
       ],
     },
   ];
