@@ -62,7 +62,7 @@ def process_excel(filename):
 if __name__ == "__main__":
     #add input args for filename
     parser = argparse.ArgumentParser()
-    parser.add_argument('--filename', type=str,default='data/3rd_demo_hub.xlsx')
+    parser.add_argument('--filename', type=str,default='data/3rd_demo_hub0506.xlsx')
     args = parser.parse_args()
     filename = args.filename
     

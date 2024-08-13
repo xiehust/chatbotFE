@@ -2,8 +2,10 @@ import boto3
 import json
 from datetime import datetime
 import requests
+import pandas as pd
+session = boto3.Session(profile_name='corp-us-east-1')
 # Create a DynamoDB client
-dynamodb_resource = boto3.resource('dynamodb')
+dynamodb_resource = session.resource('dynamodb')
 
 # Define the table name
 table = dynamodb_resource.Table('prompt_hub_table')
@@ -14,7 +16,7 @@ url = 'https://xlng9g1hea.execute-api.us-east-1.amazonaws.com/prod/prompt_hub?co
 def add_db(url,item):
     params = {"company": "default"}
     headers = {
-        "Authorization": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJwYXlsb2FkIjoiZ3Vlc3QiLCJpYXQiOjE3MTAyNTY1NjksImV4cCI6MTczNjE3NjU2OX0.ozQbvA4IB6CADXAVOtBT0DReyZkCDtewk2WLMnG6gS8"
+        "Authorization": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJwYXlsb2FkIjoiYWRtaW4iLCJpYXQiOjE3MTc3NTM2NTgsImV4cCI6MTc0MzY3MzY1OH0.IV807SRrLsn_Y-0WDkTMfOxP1GyvgcrOhG_vgzXIfWs"
     }
     data = {
        **item
@@ -28,15 +30,20 @@ def add_db(url,item):
         print(str(e))
 
 # Scan the table
-response = table.scan(
-                        FilterExpression='company = :val',
-                        ExpressionAttributeValues={':val': 'default'},
-                        Limit=1000
-                    )
+try:
+    response = table.scan(
+                            FilterExpression='company = :val',
+                            ExpressionAttributeValues={':val': 'default'},
+                            Limit=1000
+                        )
+except Exception as e:
+    print(e)
+    exit(1)
+print(response)
 items = response.get('Items')
 # Initialize an empty list to store the items
+# [add_db(url,item) for item in items]
 
-[add_db(url,item) for item in items]
 
 # Get the current date as a string
 current_date = datetime.now().strftime("%Y-%m-%d")
@@ -47,4 +54,4 @@ filename = f"dynamodb_data_{current_date}.json"
 with open(filename, 'w') as file:
     json.dump(items, file, indent=4,ensure_ascii=False)
 
-print(f"Data saved to pehub_data.json")
+print(f"Data saved to {filename}")
