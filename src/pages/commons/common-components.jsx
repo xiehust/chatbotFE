@@ -93,6 +93,7 @@ const navItems = [
     text: i18n.t('model_hub'),
     items: [
       { type: 'link', text: i18n.t('model_hub'), href: '/model_hub' },
+      { type: 'link', text: i18n.t('model_hub_v2'), href: 'http://modelhubv2-1812270978.us-east-1.elb.amazonaws.com/jobs' },
     ],
   }, 
   {
