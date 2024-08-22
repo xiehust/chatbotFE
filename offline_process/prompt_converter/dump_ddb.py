@@ -17,14 +17,14 @@ dynamodb_resource = session.resource('dynamodb')
 
 # Define the table name
 table = dynamodb_resource.Table('prompt_hub_table')
-url = 'https://'
+url = 'https://xlng9g1hea.execute-api.us-east-1.amazonaws.com/prod/prompt_hub?company=default'
 
 
 
 def add_db(url,item):
     params = {"company": "default"}
     headers = {
-        "Authorization": ""
+        "Authorization": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJwYXlsb2FkIjoiYWRtaW4iLCJpYXQiOjE3MTc3NTM2NTgsImV4cCI6MTc0MzY3MzY1OH0.IV807SRrLsn_Y-0WDkTMfOxP1GyvgcrOhG_vgzXIfWs"
     }
     data = {
        **item
