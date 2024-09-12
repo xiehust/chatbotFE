@@ -35,11 +35,26 @@ export const CARD_DEFINITIONS = {
             {item.is_external&&<Badge color="blue">{i18n.t('is_external')}</Badge>}
       </SpaceBetween>),
     },
-    // {
-    //   id: 'is_external',
-    //   // header: i18n.t('recommend'),
-    //   content: item =>(item.is_external&&<Badge color="blue">{i18n.t('is_external')}</Badge>),
-    // },
+    {
+      id: 'live_demo_info',
+      header: i18n.t('live_demo_info'),
+      content: item => item.live_demo_info||"-",
+    },
+    {
+      id: 'live_demo_url',
+      header: i18n.t('live_demo_url'),
+      content: item => (item.live_demo_url&&<Link external href={item.live_demo_url}>{i18n.t('open')}</Link>)||"-",
+    },
+    {
+      id: 'repo_url',
+      header: i18n.t('repo_url'),
+      content: item => (item.repo_url&&<Link external href={item.repo_url}>{i18n.t('open')}</Link>)||"-",
+    },
+    {
+      id: 'video_demo_url',
+      header: i18n.t('video_demo_url'),
+      content: item => (item.link&&<Link external href={item.link}>{i18n.t('open')}</Link>)||"-",
+    },
     {
       id: 'createtime',
       header: i18n.t('createtime'),
@@ -48,9 +63,7 @@ export const CARD_DEFINITIONS = {
     {
       id: 'buttonurl',
       content: item => (
-        <Box float="right">{item.is_external ?<Button iconAlign="right" iconName="external" target="_blank" href={item.link}>{i18n.t('start_chat')}</Button> : 
-        <Button href={`/prompt_playground/${item.id}`}>{i18n.t('start_chat')}</Button>}
-        
+        <Box float="right">{!item.is_external&&<Button href={`/prompt_playground/${item.id}`}>{i18n.t('start_chat')}</Button>}
         </Box>
       ),
     },
@@ -66,6 +79,9 @@ export const VISIBLE_CONTENT_OPTIONS = [
         { id: 'description', label: i18n.t('description') },
         { id: 'buttonurl', label: 'Button' },
         { id: 'prompt_category', label: i18n.t('prompt_category')},
+        { id: 'live_demo_info', label: i18n.t('live_demo_info')},
+        { id: 'repo_url', label: i18n.t('repo_url')},
+
       ],
     },
   ];
@@ -82,7 +98,7 @@ export const VISIBLE_CONTENT_OPTIONS = [
   
   export const DEFAULT_PREFERENCES = {
     pageSize: 30,
-    visibleContent: ['template_name', 'createtime', 'description','prompt_category', 'buttonurl'],
+    visibleContent: ['template_name', 'createtime', 'description','prompt_category', 'buttonurl','repo_url','live_demo_info'],
   };
   
   export const Preferences = ({

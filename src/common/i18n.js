@@ -262,7 +262,12 @@ i18n
             is_external:'External',
             autope_desc: "Automatically optimize your Prompt, ETA 5~30s, depends on your original prompt, You can try multi rounds to generate results, but be careful to delele the results in template, and keep the final one",
             auto_pe:"Auto Optimize",
-            model_hub_v2:"Model Hub V2"
+            model_hub_v2:"Model Hub V2",
+            live_demo_info:"Live Demo Info",
+            live_demo_url:"Live Demo Url",
+            repo_url:"Code Repo Url",
+            open:'View',
+            video_demo_url:'Video Demo Url'
         }
       },
       zh:{
@@ -511,7 +516,12 @@ i18n
             is_external:' 外部演示 ',
             autope_desc: "自动优化提示词,根据原始prompt长度不同,预计需要5-30s时间不等，您可以尝试多次优化，注意保存时需要删除不需要的结果",
             auto_pe:"自动优化",
-            model_hub_v2:"模型中心v2"
+            model_hub_v2:"模型中心v2",
+            live_demo_info:"在线演示信息",
+            live_demo_url:"在线演示Url",
+            repo_url:"代码库Url",
+            open:'查看',
+            video_demo_url:'视频演示'
         }
       }
     }

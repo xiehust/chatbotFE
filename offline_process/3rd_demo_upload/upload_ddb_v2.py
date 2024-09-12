@@ -5,8 +5,8 @@ import pandas as pd
 import argparse 
 import random
 
-# session = boto3.Session(profile_name='corp-us-east-1')
-session = boto3.Session(profile_name='default')
+session = boto3.Session(profile_name='corp-us-east-1')
+# session = boto3.Session(profile_name='default')
 
 
 # Define the table name
@@ -46,7 +46,7 @@ def process_excel(filename):
     time_tuple = time.localtime( time.time())
     createtime = time.strftime("%Y-%m-%d %H:%M:%S", time_tuple)
     df.drop('Seq',inplace=True,axis=1)
-    df.rename(columns={'Demo name':'template_name','Description':'description','Link':'link','Industry':'industry'}, inplace=True)
+    df.rename(columns={'Demo name':'template_name','Description':'description','Video Demo URL':'link','Industry':'industry','Repo URL':'repo_url','Live Demo URL':'live_demo_url','Live Demo Info':'live_demo_info'}, inplace=True)
     df['createtime'] = createtime
     df['company'] = 'default'
     df['template'] = ''
@@ -62,7 +62,7 @@ def process_excel(filename):
 if __name__ == "__main__":
     #add input args for filename
     parser = argparse.ArgumentParser()
-    parser.add_argument('--filename', type=str,default='data/3rd_demo_hub0911-1.xlsx')
+    parser.add_argument('--filename', type=str,)
     args = parser.parse_args()
     filename = args.filename
     
