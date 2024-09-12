@@ -51,11 +51,6 @@ export const CARD_DEFINITIONS = {
       content: item => (item.repo_url&&<Link external href={item.repo_url}>{i18n.t('open')}</Link>)||"-",
     },
     {
-      id: 'video_demo_url',
-      header: i18n.t('video_demo_url'),
-      content: item => (item.link&&<Link external href={item.link}>{i18n.t('open')}</Link>)||"-",
-    },
-    {
       id: 'createtime',
       header: i18n.t('createtime'),
       content: item => item.createtime||"-",
@@ -63,7 +58,8 @@ export const CARD_DEFINITIONS = {
     {
       id: 'buttonurl',
       content: item => (
-        <Box float="right">{!item.is_external&&<Button href={`/prompt_playground/${item.id}`}>{i18n.t('start_chat')}</Button>}
+        <Box float="right">{!item.is_external?<Button href={`/prompt_playground/${item.id}`}>{i18n.t('start_chat')}</Button>
+      :<Button iconAlign="right" iconName="external" target="_blank" href={item.link}>{i18n.t('video_demo_url')}</Button>}
         </Box>
       ),
     },
