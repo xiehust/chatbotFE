@@ -51,6 +51,7 @@ export class LambdaStack extends NestedStack {
     const prompt_hub_table = props.prompt_hub_table;
     const model_hub_table = props.model_hub_table;
     const feedback_us_table = props.feedback_us_table;
+    const demo_hub_table = props.demo_hub_table;
 
     this.handlersMap = new Map();
 
@@ -237,6 +238,7 @@ export class LambdaStack extends NestedStack {
       memorySize: 256,
     })
     prompt_hub_table.grantReadWriteData(this.lambda_prompt_hub);
+    model_hub_table.grantReadWriteData(this.lambda_prompt_hub);
 
 
     // model hub 管理函数

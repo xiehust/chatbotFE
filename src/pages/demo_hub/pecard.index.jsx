@@ -230,8 +230,7 @@ export default function PEPlayCard() {
     main_fun_arn: main_fun_arn,
     apigateway_endpoint: apigateway_endpoint,
     company: company,
-    is_recommended: true,
-    is_external:true,
+    demo_version: '2025v1'
   }
   useEffect(() => {
     setLoadingState(true);

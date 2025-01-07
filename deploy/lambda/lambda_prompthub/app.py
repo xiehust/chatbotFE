@@ -43,9 +43,9 @@ def get_s3_image_base64(bucket_name, key):
         return None
     
 
-def get_template(id:str, company:str,is_recommended:bool,is_public:bool,is_external:bool,start_key=None) ->list:
+def get_template(id:str, company:str,is_recommended:bool,is_public:bool,is_external:bool,demo_version:str=None,start_key=None) ->list:
     
-    def get_template_sub(id, company,is_recommended, is_public,is_external,limit=1000, start_key=None):
+    def get_template_sub(id, company,is_recommended, is_public,is_external,limit=1000,demo_version:str=None, start_key=None):
         records = None
         last_evaluated_key = None
         if is_recommended and is_public:
@@ -54,8 +54,10 @@ def get_template(id:str, company:str,is_recommended:bool,is_public:bool,is_exter
             filter_expr = Attr('delete_status').ne('deleted') &Attr('company').eq(company) & Attr('is_recommended').eq(True)
         elif is_public:
             filter_expr = Attr('delete_status').ne('deleted') &Attr('company').eq(company) & Attr('is_public').eq(True)
-        else:
-            filter_expr = Attr('delete_status').ne('deleted')& Attr('company').eq(company)
+        elif demo_version:
+            filter_expr = Attr('delete_status').ne('deleted')& Attr('company').eq(company) & Attr('demo_version').eq(demo_version)
+        else: # demo_version不为空则，返回pe记录
+            filter_expr = Attr('delete_status').ne('deleted')& Attr('company').eq(company) & Attr('demo_version').ne('deleted') & ~Attr('demo_version').exists()
         if id:
             try:
                 response = table.get_item(Key={'id': id})
@@ -90,7 +92,7 @@ def get_template(id:str, company:str,is_recommended:bool,is_public:bool,is_exter
     results = []
     last_evaluated_key = None
     while True:
-        records, last_evaluated_key = get_template_sub(id, company,is_recommended, is_public,is_external,limit=1000, start_key=last_evaluated_key)
+        records, last_evaluated_key = get_template_sub(id, company,is_recommended, is_public,is_external,limit=1000, demo_version=demo_version,start_key=last_evaluated_key)
         if not records:
             break
         results += records
@@ -179,7 +181,8 @@ def handler(event,lambda_context):
             company =  query_params.get('company', 'default')
             is_recommended =  True if query_params.get('is_recommended') == 'true' else False
             is_external =  True if query_params.get('is_external') == 'true' else False
-            results = get_template(id,company,is_recommended,is_public,is_external)
+            demo_version = query_params.get('demo_version') 
+            results = get_template(id,company,is_recommended,is_public,is_external,demo_version)
             images_base64 = []
             if id:
                 result = results[0]
