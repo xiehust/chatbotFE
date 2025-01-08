@@ -210,13 +210,13 @@ export const FullPageHeader = ({
           >
             {t("delete")}
           </Button>}
-          <Button
+          {/* <Button
             iconName="add-plus"
             variant="primary"
             onClick={props.handleAddClick}
           >
             {t("submit_new_feedback")}
-          </Button>
+          </Button> */}
         </SpaceBetween>
       }
       {...props}

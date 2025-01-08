@@ -4,12 +4,15 @@ import boto3
 import json
 import logging
 import time
+from botocore.exceptions import ClientError
+
 logger = logging.getLogger()
 logger.setLevel(logging.INFO)
 dynamodb_resource = boto3.resource('dynamodb')
 PH_INDEX_TABLE= 'feedback_us_table'
+PEHUB_TABLE = 'prompt_hub_table'
 table = dynamodb_resource.Table(PH_INDEX_TABLE)
-
+demo_table = dynamodb_resource.Table(PEHUB_TABLE)
 
 cors_headers = {
   "Access-Control-Allow-Headers": "Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token,X-Amz-User-Agent",
@@ -17,10 +20,45 @@ cors_headers = {
   "Access-Control-Allow-Methods": "*"
 }
 
+def send_email(subject, body,recipient):
+    sender = os.environ['SENDER_EMAIL']
+    # recipient = os.environ['RECIPIENT_EMAIL']
+    ses_client = boto3.client('ses')
+    try:
+        response = ses_client.send_email(
+            Source=sender,
+            Destination={
+                'ToAddresses': [
+                    recipient,
+                ],
+            },
+            Message={
+                'Subject': {
+                    'Data': subject,
+                },
+                'Body': {
+                    'Text': {
+                        'Data': body,
+                    },
+                }
+            }
+        )
+    except ClientError as e:
+        logger.error(e.response['Error']['Message'])
+    else:
+        logger.info("Email sent! Message ID:", response['MessageId'])
 
+
+def get_demo(id:str) ->dict:
+    try:
+        response = demo_table.get_item(Key={'id': id})
+        record = response.get('Item')
+        return record
+    except Exception as e:
+        logger.info(str(e))
+        return None
 
 def get_template(id, company,start_key=None) ->list:
-    
     def get_template_sub(id, company, limit=25, start_key=None):
         records = None
         last_evaluated_key = None
@@ -60,7 +98,7 @@ def get_template(id, company,start_key=None) ->list:
         results += records
         if not last_evaluated_key:
             break
-    return records
+    return results
         
 def add_template(data):
     item = {**data}
@@ -108,7 +146,7 @@ def handler(event,lambda_context):
         ##update feedback
         if origin_feedaback:
             item = {
-                **origin_feedaback,
+                **origin_feedaback[0],
                 "status":body.get('status')
             }
             result = add_template(item)
@@ -120,6 +158,19 @@ def handler(event,lambda_context):
                 **body,
                 "createtime":createtime
             }
+            print(f"item:{item}")
+            if body.get('record_id'):
+                demo_item = get_demo(body.get('record_id'))
+                if demo_item:
+                    subject = f"{item['title']}"
+                    email_body = f"Name: {demo_item['demo_name']}\nFeedback: {item['description']}\nFeedback person: {item['username']}\n"
+                    print(f"Email subject:{subject}\nEmail body:{email_body}")
+                    item = {
+                        **item,
+                        "contact":demo_item.get('contact')
+                    }
+                    # send_email(subject, email_body, demo_item.get('contact'))
+            
             result = add_template(item)
             return {'statusCode': 200 if result else 500,'headers': cors_headers, 'body':'' if result else 'Error'}
     

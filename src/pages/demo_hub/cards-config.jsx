@@ -1,68 +1,91 @@
 import React from 'react';
-import { Link, CollectionPreferences, Badge, Button ,Box, SpaceBetween} from '@cloudscape-design/components';
+import { Link, CollectionPreferences, Badge,HelpPanel, Button ,Box,Grid, SpaceBetween} from '@cloudscape-design/components';
+import KeyValuePairs from "@cloudscape-design/components/key-value-pairs";
+
 import i18n from '../../common/i18n';
 
 
 export const CARD_DEFINITIONS = {
   header: item => (
     <div>
-      <Link fontSize="heading-m"  external href={`/prompt_hub/${item?.id}`}>
-      {item?.template_name}
+      <Link fontSize="heading-m">
+      {item?.demo_name}
       </Link>
     </div>
   ),
   sections: [
-    {
-      id: 'prompt_category',
-      header: i18n.t('prompt_category'),
-      content: item => item.prompt_category?.label||'-',
-    },
-    {
-      id: 'industry',
-      header: i18n.t('select_industry'),
-      content: item => item.industry?.map(it => it.label).join(" | ") || '-',
-    },
     {
       id: 'description',
       header: i18n.t('description'),
       content: item => item.description||"-",
     },
     {
-      id: 'is_recommended',
-      // header: i18n.t('recommend'),
-      content: item =>(<SpaceBetween direction="horizontal" size='m'>
-            {item.is_recommended&&<Badge color="green">{i18n.t('is_recommended')}</Badge>}
-            {item.is_external&&<Badge color="blue">{i18n.t('is_external')}</Badge>}
-      </SpaceBetween>),
-    },
-    {
-      id: 'live_demo_info',
-      header: i18n.t('live_demo_info'),
-      content: item => item.live_demo_info||"-",
-    },
-    {
-      id: 'live_demo_url',
-      header: i18n.t('live_demo_url'),
-      content: item => (item.live_demo_url&&<Link external href={item.live_demo_url}>{i18n.t('open')}</Link>)||"-",
-    },
-    {
-      id: 'repo_url',
-      header: i18n.t('repo_url'),
-      content: item => (item.repo_url&&<Link external href={item.repo_url}>{i18n.t('open')}</Link>)||"-",
-    },
-    {
-      id: 'createtime',
-      header: i18n.t('createtime'),
-      content: item => item.createtime||"-",
-    },
-    {
-      id: 'buttonurl',
+      id: 'category',
       content: item => (
-        <Box float="right">{!item.is_external?<Button href={`/prompt_playground/${item.id}`}>{i18n.t('start_chat')}</Button>
-      :<Button iconAlign="right" iconName="external" target="_blank" href={item.link}>{i18n.t('video_demo_url')}</Button>}
-        </Box>
+        <KeyValuePairs
+        columns={2}
+        items={[
+          {
+            label: i18n.t('category'),
+            value: item.category||'-',
+          },
+          {
+            label: i18n.t('demo_type'),
+            value: (item.demo_type === 'Ready-to-Adopt Asset'? 
+                  <Badge color="green">{item.demo_type}</Badge> :
+                  <Badge color="blue">{item.demo_type||'-'}</Badge> 
+                  ),
+          },
+        ]}
+        />
       ),
     },
+    {
+      id: 'deck_link',
+      // header: i18n.t('deck_link'),
+      content: item => (
+        <KeyValuePairs
+        columns={2}
+        items={[
+          {
+              label: i18n.t('china_region_support'),
+              value: (item.china_region_support === 'YES' ? <Badge color="green">{"YES"}</Badge>:<Badge color="blue">{"NO"}</Badge>),
+          },
+          {
+            label: i18n.t('createtime'),
+            value: (item.createtime||"-"),
+          },
+          {
+            label: i18n.t('deck_link'),
+            value: (item.deck_link&&<Link external href={item.deck_link}>{i18n.t('open')}</Link>)||"-",
+          },
+          {
+            label: i18n.t('code_repo_link'),
+            value: (item.code_repo_link&&<Link external href={item.code_repo_link}>{i18n.t('open')}</Link>)||"-",
+          },
+          {
+            label: i18n.t('demo_link'),
+            value: (item.demo_link&&<Link external href={item.demo_link}>{i18n.t('open')}</Link>)||"-",
+          },
+          {
+            // label: i18n.t('feedback_us'),
+            value:(<Link>{i18n.t('feedback_us_notes')}</Link>)
+            // info: (<Link>{i18n.t('feedback_us_notes')}</Link>),
+          },
+        ]}
+        />
+      ),
+    },
+    // {
+    //   id: 'buttonurl',
+    //   content: item => (<Button 
+    //     iconAlign="right"
+    //      key={item.id}
+    //      onClick={()=>{
+    //       console.log(item.id)
+    //      }}
+    //   >{i18n.t('feedback_us')}</Button>),
+    // },
   ],
 };
 
@@ -70,31 +93,31 @@ export const VISIBLE_CONTENT_OPTIONS = [
     {
       label: 'Main properties',
       options: [
-        { id: 'template_name', label: 'template_name' },
+        { id: 'category', label: i18n.t('category') },
         { id: 'createtime', label: i18n.t('createtime') },
         { id: 'description', label: i18n.t('description') },
         { id: 'buttonurl', label: 'Button' },
-        { id: 'prompt_category', label: i18n.t('prompt_category')},
-        { id: 'live_demo_info', label: i18n.t('live_demo_info')},
-        { id: 'repo_url', label: i18n.t('repo_url')},
+        { id: 'deck_link', label: i18n.t('deck_link')},
+        { id: 'code_repo_link', label: i18n.t('code_repo_link')},
+        { id: 'demo_type', label: i18n.t('demo_type')},
 
       ],
     },
   ];
   
   export const CARD_CONFIG = [
-      {cards: 4}
+      {cards: 3}
   ];
   
   export const PAGE_SIZE_OPTIONS = [
-    { value: 10, label: '10 Distributions' },
-    { value: 30, label: '30 Distributions' },
-    { value: 50, label: '50 Distributions' },
+    { value: 10, label: '10 Records' },
+    { value: 30, label: '30 Records' },
+    { value: 50, label: '50 Records' },
   ];
   
   export const DEFAULT_PREFERENCES = {
     pageSize: 30,
-    visibleContent: ['template_name', 'createtime', 'description','prompt_category', 'buttonurl','repo_url','live_demo_info'],
+    visibleContent: ['category', 'createtime', 'description', 'buttonurl','code_repo_link','deck_link','demo_type'],
   };
   
   export const Preferences = ({

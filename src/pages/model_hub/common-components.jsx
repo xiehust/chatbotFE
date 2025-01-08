@@ -242,8 +242,8 @@ export const FullPageHeader = ({
               onClick={props.refreshAction}
               iconName="refresh"
             />
-            {userinfo.groupname == 'admin'&&<Button
-              disabled={!isOnlyOneSelected || userinfo.groupname != 'admin'}
+            {userinfo.groupname === 'admin'&&<Button
+              disabled={!isOnlyOneSelected || userinfo.groupname !== 'admin'}
               name="delete"
               onClick={deleteAction}
             >

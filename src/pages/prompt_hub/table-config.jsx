@@ -48,6 +48,31 @@ export const INSTRUSTRY_LIST = [
   { label: "Others", value: "Others" },
 ]
 
+export const DEMO_TYPE_CATS = [
+  { label: "Ready-to-Adopt Asset", value: "Ready-to-Adopt Asset"},
+  { label: "Simple Demo Asset", value: "Simple Demo Asset"},
+]
+export const DEMO_CATS = [
+  { label: "翻译", value: "翻译"},
+  { label: "智能运营", value: "智能运营"},
+  { label: "角色扮演", value: "角色扮演"},
+  { label: "内容创作", value: "内容创作"},
+  { label: "智能教辅", value: "智能教辅"},
+  { label: "智能办公", value: "智能办公"},
+  { label: "知识助手", value: "知识助手"},
+  { label: "智能客服", value: "智能客服"},
+  { label: "智能开发", value: "智能开发"},
+  { label: "审核", value: "审核"},
+  { label: "图像生成/处理/分析", value: "图像生成/处理/分析"},
+  { label: "视频生成/处理/分析", value: "视频生成/处理/分析"},
+  { label: "音频生成/处理/分析", value: "音频生成/处理/分析"},
+  { label: "提示词", value: "提示词"},
+  { label: "开发平台LLMOps", value: "开发平台LLMOps"},
+  { label: "知识检索/知识库", value: "知识检索/知识库"},
+  { label: "Agent", value: "Agent"},
+  { label: "微调", value: "微调"},
+  { label: "其他", value: "其他"},
+]
 
 export const PROMPT_CATS = [
   { label: "Translation", value: "translation" },
@@ -60,7 +85,6 @@ export const PROMPT_CATS = [
   { label: "Code Generation", value: "Code Generation"},
   { label: "Anthropic Official", value: "anthropic" },
   { label: "Other", value: "other" },
-  
 ]
 
 export const GEO_CATS = [

@@ -119,7 +119,7 @@ function TableContent({
   const [preferences, setPreferences] = useLocalStorage('PE-Hub-Table-Preferences', DEFAULT_PREFERENCES);
   const [columnDefinitions, saveWidths] = useColumnWidths('PE-Hub-Table-Widths', COLUMN_DEFINITIONS);
   const {t} = useTranslation();
-  const [qAModalVisible,setQAModalVisible] = useState(false);
+  // const [qAModalVisible,setQAModalVisible] = useState(false);
   const [cat,setCat] = useState(defaultCategory);
   const [industry,setIndustry] = useState(defaultIndustry);
 
@@ -149,10 +149,10 @@ function TableContent({
     }
   );
 
-  function handleAddClick(event){
-    event.preventDefault();
-    setQAModalVisible(true);
-  }
+  // function handleAddClick(event){
+  //   event.preventDefault();
+  //   setQAModalVisible(true);
+  // }
 
   function clearFilter() {
     actions.setFiltering('');
@@ -162,7 +162,7 @@ function TableContent({
 
   return (
     <div>
-    <CreateQAModal visible={qAModalVisible} setVisible={setQAModalVisible} />
+    {/* <CreateQAModal visible={qAModalVisible} setVisible={setQAModalVisible} /> */}
     <Table
      {...collectionProps}
       columnDefinitions={columnDefinitions}
@@ -184,14 +184,6 @@ function TableContent({
             cat={cat} setCat={setCat}
             industry = {industry} setIndustry={setIndustry}/>
       }
-      // filter={
-      //   <TextFilter
-      //     {...filterProps}
-      //     filteringAriaLabel="Filter "
-      //     filteringPlaceholder="Find "
-      //     countText={getFilterCounterText(filteredItemsCount)}
-      //   />
-      // }
       header={
         <FullPageHeader
           selectedItems={collectionProps.selectedItems}
@@ -199,7 +191,7 @@ function TableContent({
           resourceName={resourceName}
           createButtonText={buttonName}
           refreshAction={refreshAction}
-          handleAddClick={handleAddClick}
+          // handleAddClick={handleAddClick}
           href={buttonHref}
         />
       }

@@ -31,6 +31,7 @@ import { PROMPT_CATS, GEO_CATS, COMPAT_MODELS,INSTRUSTRY_LIST } from './table-co
 import 'ace-builds/css/ace.css';
 import 'ace-builds/css/theme/dawn.css';
 import 'ace-builds/css/theme/tomorrow_night_bright.css';
+import CreateQAModal from '../feedback/addfeedback';
 
 export const params_local_storage_key = 'pehub-localstorage';
 // const ace = await import('ace-builds');
@@ -265,10 +266,17 @@ export const FullPageHeader = ({
   const deleteAction = () => {
     setVisible(true);
   };
+  const [qAModalVisible, setQAModalVisible] = useState(false);
+  function handleAddClick(event) {
+    event.preventDefault();
+    setQAModalVisible(true);
+  }
   const selectItem = isOnlyOneSelected ? props.selectedItems[0] : undefined;
   // console.log(selectItem);
   return (
     <div>
+      <CreateQAModal visible={qAModalVisible} setVisible={setQAModalVisible} selectItem={selectItem} />
+      
       <DeleteConfirmModal visible={visible} setVisible={setVisible} selectItem={selectItem} refreshAction={props.refreshAction} />
       <TableHeader
         variant="awsui-h1-sticky"
@@ -291,7 +299,7 @@ export const FullPageHeader = ({
             </Button>
           }
             <Button
-            onClick={props.handleAddClick}
+            onClick={handleAddClick}
           >
             {t("submit_new_feedback")}
           </Button>
@@ -323,14 +331,17 @@ export const CardPageHeader = ({
   const { t } = useTranslation();
   const userinfo = useAuthUserInfo();
   const isOnlyOneSelected = props.selectedItems.length === 1;
-  const [visible, setVisible] = useState(false)
-  const deleteAction = () => {
-    setVisible(true);
-  };
+  const [visible, setVisible] = useState(false);
+  const [qAModalVisible, setQAModalVisible] = useState(false);
+  function handleAddClick(event) {
+    event.preventDefault();
+    setQAModalVisible(true);
+  }
   const selectItem = isOnlyOneSelected ? props.selectedItems[0] : undefined;
   // console.log(selectItem);
   return (
     <div>
+      <CreateQAModal visible={qAModalVisible} setVisible={setQAModalVisible} selectItem={selectItem} />
       <DeleteConfirmModal visible={visible} setVisible={setVisible} selectItem={selectItem} refreshAction={props.refreshAction} />
       <TableHeader
         variant="awsui-h1-sticky"
@@ -343,16 +354,18 @@ export const CardPageHeader = ({
               iconName="refresh"
             />
           <Button
-            onClick={props.handleAddClick}
+          disabled={!isOnlyOneSelected}
+           variant="primary"
+            onClick={handleAddClick}
           >
             {t("submit_new_feedback")}
           </Button>
-            <Button
+            {/* <Button
               disabled={!isOnlyOneSelected}
               href={'/prompt_playground/' + selectItem?.id}
               variant="primary"
             >{t('start_chat')}
-            </Button>
+            </Button> */}
           </SpaceBetween>
         }
         {...props}

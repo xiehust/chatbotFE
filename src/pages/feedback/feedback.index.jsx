@@ -140,7 +140,8 @@ export default function FeedbackTable () {
         description:it.description,
         createtime:it.createtime,
         status:it.status,
-        username:it.username
+        username:it.username,
+        contact:it.contact
         }
       ))
       setDocsItems(items);

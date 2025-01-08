@@ -246,9 +246,10 @@ i18n
             is_recommended_desc:"It will show in Demo Hub if it is recommended",
             is_recommended:"Recommend",
             recommend:"Comment",
-            demo_hub:'Demo Hub',
+            demo_hub:'Asset Hub',
             title:'Title',
-            requester_name:'User',
+            requester_name:'Feedback User',
+            asset_contact_person: 'Asset Contact',
             feedback_time:'Feedback Time',
             submit_new_feedback:'Submit Feedback',
             update_feedback:'Update Feedback Status',
@@ -267,7 +268,18 @@ i18n
             live_demo_url:"Live Demo Url",
             repo_url:"Code Repo Url",
             open:'View',
-            video_demo_url:'Video Demo Url'
+            video_demo_url:'Video Demo Url',
+            category:'Category',
+            code_repo_link:'Code Repo',
+            deck_link:'Deck Link',
+            demo_type:'Demo Type',
+            demo_link:'Demo Link',
+            china_region_support:'China Region Support',
+            demo_name:'Name',
+            feedback_us_notes:"Please click feedback button up right"
+
+
+
         }
       },
       zh:{
@@ -500,9 +512,10 @@ i18n
             is_recommended_desc:"推荐试一试将会展示到演示中心",
             is_recommended:"推荐试一试",
             recommend:"备注",
-            demo_hub:'演示中心',
+            demo_hub:'方案中心',
             title:'标题',
-            requester_name:'用户',
+            requester_name:'反馈提供人',
+            asset_contact_person:'方案联系人',
             feedback_time:'反馈时间',
             submit_new_feedback:'提交反馈',
             update_feedback:'更新反馈状态',
@@ -521,7 +534,15 @@ i18n
             live_demo_url:"在线演示Url",
             repo_url:"代码库Url",
             open:'查看',
-            video_demo_url:'视频演示'
+            video_demo_url:'视频演示',
+            category:'分类',
+            code_repo_link:'代码库',
+            deck_link:'Deck链接',
+            demo_type:'类型',
+            demo_link:'演示链接',
+            china_region_support:'是否支持中国区',
+            demo_name:'名称',
+            feedback_us_notes:"请点击右上角提交反馈"
         }
       }
     }

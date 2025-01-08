@@ -46,7 +46,7 @@ const navItems_admin = [
     type: 'section',
     text: i18n.t('demo_hub'),
     items: [
-      { type: 'link', text: i18n.t('demo_hub'), href: '/prompt_playground' },
+      { type: 'link', text: i18n.t('demo_hub'), href: '/asset_hub' },
     ],
   }, 
   {
@@ -85,7 +85,7 @@ const navItems = [
     type: 'section',
     text: i18n.t('demo_hub'),
     items: [
-      { type: 'link', text: i18n.t('demo_hub'), href: '/prompt_playground' },
+      { type: 'link', text: i18n.t('demo_hub'), href: '/asset_hub' },
     ],
   }, 
   {
@@ -96,23 +96,14 @@ const navItems = [
       { type: 'link', text: i18n.t('model_hub_v2'), href: 'http://modelhub.jugglehub.top/', external: true,  },
     ],
   }, 
-  {
-    type: 'section',
-    text: i18n.t('feedback_us'),
-    items: [
-      { type: 'link', text: i18n.t('feedback_management'), href: '/feedback' },
-    ],
-  }, 
   // {
   //   type: 'section',
-  //   text: i18n.t('admin'),
+  //   text: i18n.t('feedback_us'),
   //   items: [
-  //     { type: 'link', text: i18n.t('docs'), href: '/docs' },
-  //     { type: 'link', text: i18n.t('prompt_template'), href: '/template' },
-  //     { type: 'link', text: i18n.t('examples_management'), href: '/examples' },
-
+  //     { type: 'link', text: i18n.t('feedback_management'), href: '/feedback' },
   //   ],
-  // },
+  // }, 
+
 ];
 
 
@@ -225,12 +216,12 @@ function TopNavHeader (){
       },
       items: [
         {
-          id: "en",
-          text: "English"
-        },
-        {
           id: "zh",
           text: "简体中文"
+        },
+        {
+          id: "en",
+          text: "English"
         }
       ]
     },

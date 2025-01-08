@@ -29,16 +29,16 @@ import { params_local_storage_key, CardBreadcrumbs } from "../prompt_hub/common-
 // import ModelSettings from "../commons/chat-settings";
 import CreateQAModal from '../feedback/addfeedback';
 import {
-  INSTRUSTRY_LIST,
-  PROMPT_CATS,
+  DEMO_TYPE_CATS,
+  DEMO_CATS,
   SEARCHABLE_COLUMNS
 } from '../prompt_hub/table-config';
 
 import '../../styles/table-select.scss';
 const defaultCategory = { value: '0', label: 'Any Category' };
-const defaultIndustry = { value: '0', label: 'Any Industry' };
-const selectCategoryOptions = [...PROMPT_CATS, defaultCategory];
-const selectIndustryOptions = [...INSTRUSTRY_LIST, defaultIndustry];
+const defaultDemoType= { value: '0', label: 'Any Type' };
+const selectCategoryOptions = [...DEMO_CATS, defaultCategory];
+const selectDemoTypeOptions = [...DEMO_TYPE_CATS, defaultDemoType];
 
 
 const Filters = ({ filterProps, actions, filteredItemsCount, cat, setCat, industry, setIndustry }) => {
@@ -80,7 +80,7 @@ const Filters = ({ filterProps, actions, filteredItemsCount, cat, setCat, indust
         {/* <FormField label={t("filter_industry")}> */}
         <Select
           data-testid="class-filter"
-          options={selectIndustryOptions}
+          options={selectDemoTypeOptions}
           selectedAriaLabel="Selected"
           selectedOption={industry}
           onChange={event => {
@@ -92,7 +92,7 @@ const Filters = ({ filterProps, actions, filteredItemsCount, cat, setCat, indust
         {/* </FormField> */}
       </div>
       <div aria-live="polite">
-        {(filterProps.filteringText || cat !== defaultCategory || industry !== defaultIndustry) && (
+        {(filterProps.filteringText || cat !== defaultCategory || industry !== defaultDemoType) && (
           <span className="filtering-results">{getFilterCounterText(filteredItemsCount)}</span>
         )}
       </div>
@@ -102,13 +102,13 @@ const Filters = ({ filterProps, actions, filteredItemsCount, cat, setCat, indust
 
 
 function matchesCategory(item, selectedCategory) {
-  return selectedCategory === defaultCategory || item.prompt_category?.value === selectedCategory.value;
+  return selectedCategory === defaultCategory || item.category === selectedCategory.value;
 }
 
 function matchesIndustry(item, selectedIndustry) {
-  const industries = item.industry?.map(it => it.value).join('|') || '';
-  // console.log(industries)
-  return selectedIndustry === defaultIndustry || industries.includes(selectedIndustry.value);
+  // const industries = item.demo_type?.map(it => it.value).join('|') || '';
+  // return selectedIndustry === defaultDemoType || industries.includes(selectedIndustry.value);
+  return selectedIndustry === defaultDemoType || item.demo_type === selectedIndustry.value;
 }
 
 
@@ -123,9 +123,10 @@ function CardsContent({
   const [preferences, setPreferences] = useLocalStorage('PE-Hub-Table-Preferences', DEFAULT_PREFERENCES);
   // const [columnDefinitions, saveWidths] = useColumnWidths('PE-Hub-Table-Widths', COLUMN_DEFINITIONS);
   const { t } = useTranslation();
-  const [qAModalVisible, setQAModalVisible] = useState(false);
+  // const [qAModalVisible, setQAModalVisible] = useState(false);
+  // const [recordId,setRecordId] = useState(undefined);
   const [cat,setCat] = useState(defaultCategory);
-  const [industry,setIndustry] = useState(defaultIndustry);
+  const [industry,setIndustry] = useState(defaultDemoType);
   const { items, actions, filteredItemsCount, collectionProps, filterProps, paginationProps } = useCollection(
     distributions,
     {
@@ -152,20 +153,20 @@ function CardsContent({
     }
   );
 
-  function handleAddClick(event) {
-    event.preventDefault();
-    setQAModalVisible(true);
-  }
+  // function handleAddClick(event) {
+  //   event.preventDefault();
+  //   setQAModalVisible(true);
+  // }
 
   function clearFilter() {
     actions.setFiltering('');
     setCat(defaultCategory);
-    setIndustry(defaultIndustry);
+    setIndustry(defaultDemoType);
   }
 
   return (
     <div>
-      <CreateQAModal visible={qAModalVisible} setVisible={setQAModalVisible} />
+      {/* <CreateQAModal visible={qAModalVisible} setVisible={setQAModalVisible} recordId={recordId} /> */}
       <Cards
         {...collectionProps}
         cardDefinition={CARD_DEFINITIONS}
@@ -193,7 +194,7 @@ function CardsContent({
             totalItems={distributions}
             resourceName={resourceName}
             refreshAction={refreshAction}
-            handleAddClick={handleAddClick}
+            // handleAddClick={handleAddClick}
             href={buttonHref}
           />
         }

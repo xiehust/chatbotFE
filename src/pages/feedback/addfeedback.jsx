@@ -1,6 +1,6 @@
 // Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
 // SPDX-License-Identifier: MIT-0
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect ,useRef} from "react";
 import {
   Box,
   SpaceBetween,
@@ -26,10 +26,55 @@ function generateId() {
   return `${timestamp}-${randomNumber}`;
 }
 
-const EditPanel = ({ setVisible }) => {
+const validateEmpty = (value) => Boolean(value && value.length > 0);
+
+//add validate for email address @amazon
+const validateEmail = (value) => {
+  const emailRegex = /^[^\s@]+@amazon\.com$/;
+  return emailRegex.test(value);
+}
+const validationConfig = {
+  title: [{ validate: validateEmpty, errorText: 'title is required.' }],
+  description: [{ validate: validateEmpty, errorText: 'description is required.' }],
+  username: [{ validate: validateEmail, errorText: '@amazon.com email is required.' }],
+};
+
+function validateField(attribute, value , customValue = value) {
+  const validations = validationConfig[attribute];
+  // console.log('validations', attribute,validations);
+  if(validations){
+    for (const validation of validations) {
+      const { validate, errorText, warningText } = validation;
+  
+      const isValid = validate(value);
+      if (!isValid) {
+        return {
+          errorText: typeof errorText === 'function' ? errorText(customValue) : errorText,
+          warningText: typeof warningText === 'function' ? warningText(customValue) : warningText,
+        };
+      }
+    }
+  }
+  return { errorText: null };
+}
+
+const defaultErrors = {
+  title: null,
+  description: null,
+  username: null,
+};
+
+const fieldsToValidate = [
+  // 'title',
+  'description',
+  'username'
+];
+
+const EditPanel = ({ setVisible,selectItem }) => {
   const { t } = useTranslation();
   const userinfo = useAuthUserInfo();
-  // const {modalData} = useChatData();
+  const [formErrorText, setFormErrorText] = useState(null);
+  const [errors, _setErrors] = useState(defaultErrors);
   const { setNotificationItems } = useSimpleNotifications();
   const token = useAuthToken();
   const headers = {
@@ -39,13 +84,52 @@ const EditPanel = ({ setVisible }) => {
   const company = userinfo?.company || "default";
   const [answerValue, setAnswerValue] = useState("");
   const [questionValue, setQuestionValue] = useState("");
-  const [requesterName, setRequesterName] = useState(username);
+  const [requesterName, setRequesterName] = useState("");
   const [loading, setLoading] = useState(false);
   const msgid = generateId();
-  useEffect(() => {
-    // console.log('EditPanel');
-  }, []);
-  // console.log(JSON.stringify(modalData));
+  const setErrors = (updateObj = {}) => _setErrors(prevErrors => ({ ...prevErrors, ...updateObj }));
+  const recordId = selectItem&&selectItem?.id;
+  const demoName = selectItem&&selectItem?.demo_name;
+  // const contact = selectItem&&selectItem?.contact;
+
+  const refs = {
+    title: useRef(null),
+    description: useRef(null),
+    username: useRef(null),
+  }
+
+  const shouldFocus = (errorsState, attribute) => {
+    let shouldFocus = errorsState[attribute]?.length > 0;
+
+    if (attribute === 'functions' && !shouldFocus) {
+      shouldFocus = errorsState.functionFiles?.length > 0;
+    }
+
+    return shouldFocus;
+  };
+
+  const focusTopMostError = errorsState => {
+    for (const [attribute, ref] of Object.entries(refs)) {
+      if (shouldFocus(errorsState, attribute)) {
+        if (ref.current?.focus) {
+          return ref.current.focus();
+        }
+
+        if (ref.current?.focusAddButton) {
+          return ref.current.focusAddButton();
+        }
+      }
+    }
+  };
+
+  const onChangeValidate = (attribute, value) => {
+    // Validates when there is an error message in the field
+    if (errors[attribute]?.length > 0) {
+      const { errorText } = validateField(attribute, value);
+      setErrors({ [attribute]: errorText });
+    }
+  };
+  
   return (
     <form
       onSubmit={async (e) => {
@@ -53,12 +137,32 @@ const EditPanel = ({ setVisible }) => {
         setLoading(true);
         const body = {
           id: msgid,
-          title: questionValue,
+          record_id:recordId,
+          title:`[Feedback]:${demoName}` ,
           description: answerValue,
           status: "new-added",
           username: requesterName,
           company:company,
         };
+
+        const newErrors = { ...errors };
+        let validatePass = true;
+        fieldsToValidate.forEach(attribute => {
+          const { errorText } = validateField(attribute, body[attribute], body[attribute]);
+          newErrors[attribute] = errorText;
+          if (errorText) {
+            console.log(errorText);
+            validatePass = false;
+          }
+        });
+        if (!validatePass) {
+          setErrors(newErrors);
+          focusTopMostError(newErrors);
+          setLoading(false);
+          return
+        }
+
+
         try {
           console.log(body);
           const resp = await postFeedback(headers, body);
@@ -120,34 +224,53 @@ const EditPanel = ({ setVisible }) => {
         }
       >
         <SpaceBetween direction="vertical" size="l" >
-          <FormField label={t("title")}>
+          {demoName&&<FormField label={t('demo_name')}>
+                    <Input
+                      autoFocus
+                      value={demoName}
+                      disabled
+                    />
+                  </FormField>
+          }
+          {/* <FormField label={t("title")}
+            errorText={errors.title}
+          >
             <Input
               placeholder="Title"
               autoFocus
               value={questionValue}
+              ref={refs.title}
               onChange={({ detail }) => {
                 setQuestionValue(detail.value);
+                onChangeValidate('title', detail.value);
               }}
             />
-          </FormField>
-          <FormField label={t("description")}>
+          </FormField> */}
+          <FormField label={t("description")}
+          errorText={errors.description}
+          >
             <Textarea
-              placeholder="Put your desciption"
+              placeholder="提供需求反馈，请提供客户相关信息, 如客户名,OPP大小等"
               rows={6}  
+              ref={refs.description}
               value={answerValue}
               onChange={({ detail }) => {
                 setAnswerValue(detail.value);
+                onChangeValidate('description', detail.value);
               }}
             />
           </FormField>
           <FormField label={t("requester_name")}
-          description='Put your name or email here'
+          description='Put your email here'
+          errorText={errors.username}
           >
             <Input
-              placeholder="your name or email here"
+              placeholder="your email: xxx@amazon"
+              ref={refs.username}
               value={requesterName}
               onChange={({ detail }) => {
                 setRequesterName(detail.value);
+                onChangeValidate('username', detail.value)
               }}
             />
           </FormField>
@@ -157,26 +280,16 @@ const EditPanel = ({ setVisible }) => {
   );
 };
 
-const CreateQAModal = ({ visible, setVisible }) => {
+const CreateQAModal = ({ visible, setVisible,selectItem=undefined }) => {
   const { t } = useTranslation();
-  useEffect(() => {
-    // console.log('CreateQAModal');
-  }, []);
+  // console.log(selectItem)
   return (
     <Modal
       onDismiss={() => setVisible(false)}
       visible={visible}
-      //   footer={
-      //     <Box float="right">
-      //       <SpaceBetween direction="horizontal" size="xs">
-      //         <Button variant="link" onClick={ ()=> setVisible(false)}>{t('cancel')}</Button>
-      //         {/* <Button variant="primary" href = '#' onClick={ ()=> setVisible(false)}>{t('confirm')}</Button> */}
-      //       </SpaceBetween>
-      //     </Box>
-      //   }
       header={t("submit_new_feedback")}
     >
-      <EditPanel setVisible={setVisible} />
+      <EditPanel setVisible={setVisible} selectItem={selectItem}/>
     </Modal>
   );
 };

@@ -32,8 +32,14 @@ export const COLUMN_DEFINITIONS = addColumnSortLabels( [
     minWidth: 80,
   },
   {
+    id: "asset_contact_person",
+    header: i18n.t("asset_contact_person"),
+    cell: item => item.contact || "-",
+    minWidth: 80,
+  },
+  {
     id: "status",
-    header: "Status",
+    header: i18n.t("status"),
     cell: item => (<StatusIndicator type={
       item.status === 'accepted'? 'success' : (item.status === 'thumbs-up'?'info':(item.status === 'thumbs-down'?'error':'pending'))
       }
@@ -52,7 +58,7 @@ export const COLUMN_DEFINITIONS = addColumnSortLabels( [
 
 export const DEFAULT_PREFERENCES = {
   pageSize: 30,
-  visibleContent: ['title','description', 'username','status','createtime'],
+  visibleContent: ['title','description', 'username','asset_contact_person','status','createtime'],
   wrapLines: false,
 };
 
@@ -68,6 +74,7 @@ const VISIBLE_CONTENT_OPTIONS = [
       { id: 'status', label: i18n.t("status") },
       { id: 'description', label: i18n.t("description")},
       { id: 'username', label: i18n.t("requester_name") },
+      { id: 'asset_contact_person', label: i18n.t("asset_contact_person") },
       { id: 'createtime', label: i18n.t("createtime") },
     ],
   },
