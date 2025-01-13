@@ -57,15 +57,21 @@ export const CARD_DEFINITIONS = {
           },
           {
             label: i18n.t('deck_link'),
-            value: (item.deck_link&&<Link external href={item.deck_link}>{i18n.t('open')}</Link>)||"-",
+            value: item.deck_link? 
+                  (item.deck_link.split(/[,，]/).map((it,k) => <Link key={k+1} external href={it}>{`${i18n.t('link')}${k+1}`}</Link>))
+                  :"-",
           },
           {
             label: i18n.t('code_repo_link'),
-            value: (item.code_repo_link&&<Link external href={item.code_repo_link}>{i18n.t('open')}</Link>)||"-",
+            value: item.code_repo_link? 
+                  (item.code_repo_link.split(/[,，]/).map((it,k) => <Link key={k+1} external href={it}>{`${i18n.t('link')}${k+1}`}</Link>))
+                  :"-",
           },
           {
             label: i18n.t('demo_link'),
-            value: (item.demo_link&&<Link external href={item.demo_link}>{i18n.t('open')}</Link>)||"-",
+            value: item.demo_link? 
+                  (item.demo_link.split(/[,，]/).map((it,k) => <Link key={k+1} external href={it}>{`${i18n.t('link')}${k+1}`}</Link>))
+                  :"-",
           },
           {
             // label: i18n.t('feedback_us'),

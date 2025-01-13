@@ -276,7 +276,8 @@ i18n
             demo_link:'Demo Link',
             china_region_support:'China Region Support',
             demo_name:'Name',
-            feedback_us_notes:"Please click feedback button up right"
+            feedback_us_notes:"Please click feedback button up right",
+            link:'Link'
 
 
 
@@ -542,7 +543,8 @@ i18n
             demo_link:'演示链接',
             china_region_support:'是否支持中国区',
             demo_name:'名称',
-            feedback_us_notes:"请点击右上角提交反馈"
+            feedback_us_notes:"请点击右上角提交反馈",
+            link:"链接"
         }
       }
     }
