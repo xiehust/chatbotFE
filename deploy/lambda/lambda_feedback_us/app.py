@@ -22,22 +22,23 @@ cors_headers = {
 
 def send_email(subject, body,recipient):
     sender = os.environ['SENDER_EMAIL']
-    # recipient = os.environ['RECIPIENT_EMAIL']
+    recipient = os.environ.get('RECIPIENT_EMAIL',recipient)
+    recipients = recipient.split(',') if ',' in recipient else [recipient]
     ses_client = boto3.client('ses')
     try:
         response = ses_client.send_email(
             Source=sender,
             Destination={
-                'ToAddresses': [
-                    recipient,
-                ],
+                'ToAddresses': recipients ,
             },
             Message={
                 'Subject': {
+                    'Charset': 'UTF-8',
                     'Data': subject,
                 },
                 'Body': {
                     'Text': {
+                        'Charset': 'UTF-8',
                         'Data': body,
                     },
                 }
@@ -46,7 +47,7 @@ def send_email(subject, body,recipient):
     except ClientError as e:
         logger.error(e.response['Error']['Message'])
     else:
-        logger.info("Email sent! Message ID:", response['MessageId'])
+        logger.info(f"Email sent success! Message ID:{response['MessageId']}")
 
 
 def get_demo(id:str) ->dict:
@@ -162,14 +163,14 @@ def handler(event,lambda_context):
             if body.get('record_id'):
                 demo_item = get_demo(body.get('record_id'))
                 if demo_item:
-                    subject = f"{item['title']}"
-                    email_body = f"Name: {demo_item['demo_name']}\nFeedback: {item['description']}\nFeedback person: {item['username']}\n"
+                    subject = f"[Asset Hub Feedback Recieved]:{item['title']}"
+                    email_body = f"Name: {demo_item['demo_name']}\nFeedback: {item['description']}\nFeedback person: {item['username']}\nAsset Contact:{demo_item.get('contact')}"
                     print(f"Email subject:{subject}\nEmail body:{email_body}")
                     item = {
                         **item,
                         "contact":demo_item.get('contact')
                     }
-                    # send_email(subject, email_body, demo_item.get('contact'))
+                    send_email(subject, email_body, demo_item.get('contact'))
             
             result = add_template(item)
             return {'statusCode': 200 if result else 500,'headers': cors_headers, 'body':'' if result else 'Error'}
