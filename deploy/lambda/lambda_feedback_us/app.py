@@ -163,8 +163,8 @@ def handler(event,lambda_context):
             if body.get('record_id'):
                 demo_item = get_demo(body.get('record_id'))
                 if demo_item:
-                    subject = f"[Asset Hub Feedback Recieved]:{item['title']}"
-                    email_body = f"Name: {demo_item['demo_name']}\nFeedback: {item['description']}\nFeedback person: {item['username']}\nAsset Contact:{demo_item.get('contact')}"
+                    subject = f"[Asset Hub Feedback Recieved]:{demo_item['demo_name']}"
+                    email_body = f"Name: {demo_item['demo_name']}\nAsset Contact:{demo_item.get('contact')}\n\nFeedback content: {item['description']}\n\nFeedback person: {item['username']}"
                     print(f"Email subject:{subject}\nEmail body:{email_body}")
                     item = {
                         **item,
