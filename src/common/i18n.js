@@ -255,6 +255,7 @@ i18n
             update_feedback:'Update Feedback Status',
             accepted:'Accept' ,
             select_industry:"For Industry",
+            industry:'Industry',
             image:'Images',
             filter_category:'Filter Category',
             filter_industry:"Filter Industry",
@@ -277,7 +278,8 @@ i18n
             china_region_support:'China Region Support',
             demo_name:'Name',
             feedback_us_notes:"Please click feedback button up right",
-            link:'Link'
+            link:'Link',
+            detail:'Detail'
 
 
 
@@ -522,6 +524,7 @@ i18n
             update_feedback:'更新反馈状态',
             accepted:'接受反馈',
             select_industry:"适合行业",
+            industry:'行业',
             image:'图片',
             filter_category:'分类筛选',
             filter_industry:"行业筛选",
@@ -544,7 +547,8 @@ i18n
             china_region_support:'是否支持中国区',
             demo_name:'名称',
             feedback_us_notes:"请点击右上角提交反馈",
-            link:"链接"
+            link:"链接",
+            detail:'详细信息'
         }
       }
     }

@@ -37,7 +37,7 @@ export const COMPAT_MODELS = [
 export const INSTRUSTRY_LIST = [
   { label: "Gaming", value: "Gaming" },
   { label: "RCH", value: "RCH" },
-  { label: "ME_AD", value: "ME_AD" },
+  { label: "MEAD", value: "MEAD" },
   { label: "Auto", value: "Auto" },
   { label: "HCLS", value: "HCLS" },
   { label: "MFG", value: "MFG" },

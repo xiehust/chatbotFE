@@ -360,12 +360,21 @@ export const CardPageHeader = ({
           >
             {t("submit_new_feedback")}
           </Button>
-            {/* <Button
-              disabled={!isOnlyOneSelected}
-              href={'/prompt_playground/' + selectItem?.id}
-              variant="primary"
-            >{t('start_chat')}
-            </Button> */}
+          {/* <Button
+            disabled={!isOnlyOneSelected || userinfo.groupname !== 'admin'}
+            href={'/prompt_playground/' + selectItem?.id}
+          >{t('edit')}
+          </Button>
+          <Button
+            disabled={!isOnlyOneSelected || userinfo.groupname !== 'admin'}
+            href={'/prompt_playground/' + selectItem?.id}
+          >{t('delete')}
+          </Button>
+          <Button
+            disabled={!isOnlyOneSelected || userinfo.groupname !== 'admin'}
+            href={'/prompt_playground/' + selectItem?.id}
+          >{t('add')}
+          </Button> */}
           </SpaceBetween>
         }
         {...props}

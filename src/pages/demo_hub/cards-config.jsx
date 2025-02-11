@@ -30,23 +30,27 @@ export const CARD_DEFINITIONS = {
             value: item.category||'-',
           },
           {
-            label: i18n.t('demo_type'),
-            value: (item.demo_type === 'Ready-to-Adopt Asset'? 
-                  <Badge color="green">{item.demo_type}</Badge> :
-                  <Badge color="blue">{item.demo_type||'-'}</Badge> 
-                  ),
+            label: i18n.t('industry'),
+            value: item.industry||'-',
           },
         ]}
         />
       ),
     },
     {
-      id: 'deck_link',
+      id: 'detail',
       // header: i18n.t('deck_link'),
       content: item => (
         <KeyValuePairs
         columns={2}
         items={[
+          {
+            label: i18n.t('demo_type'),
+            value: (item.demo_type === 'Ready-to-Adopt Asset'? 
+                  <Badge color="green">{item.demo_type}</Badge> :
+                  <Badge color="blue">{item.demo_type||'-'}</Badge> 
+                  ),
+          },
           {
               label: i18n.t('china_region_support'),
               value: (item.china_region_support === 'YES' ? <Badge color="green">{"YES"}</Badge>:<Badge color="blue">{"NO"}</Badge>),
@@ -74,6 +78,10 @@ export const CARD_DEFINITIONS = {
                   :"-",
           },
           {
+            label: i18n.t('contact'),
+            value: (item.contact||"-"),
+          },
+          {
             // label: i18n.t('feedback_us'),
             value:(<Link>{i18n.t('feedback_us_notes')}</Link>)
             // info: (<Link>{i18n.t('feedback_us_notes')}</Link>),
@@ -82,16 +90,6 @@ export const CARD_DEFINITIONS = {
         />
       ),
     },
-    // {
-    //   id: 'buttonurl',
-    //   content: item => (<Button 
-    //     iconAlign="right"
-    //      key={item.id}
-    //      onClick={()=>{
-    //       console.log(item.id)
-    //      }}
-    //   >{i18n.t('feedback_us')}</Button>),
-    // },
   ],
 };
 
@@ -100,12 +98,11 @@ export const VISIBLE_CONTENT_OPTIONS = [
       label: 'Main properties',
       options: [
         { id: 'category', label: i18n.t('category') },
-        { id: 'createtime', label: i18n.t('createtime') },
+        // { id: 'createtime', label: i18n.t('createtime') },
         { id: 'description', label: i18n.t('description') },
-        { id: 'buttonurl', label: 'Button' },
-        { id: 'deck_link', label: i18n.t('deck_link')},
-        { id: 'code_repo_link', label: i18n.t('code_repo_link')},
-        { id: 'demo_type', label: i18n.t('demo_type')},
+        { id: 'detail', label: i18n.t('detail')},
+        // { id: 'code_repo_link', label: i18n.t('code_repo_link')},
+        // { id: 'demo_type', label: i18n.t('demo_type')},
 
       ],
     },
@@ -123,7 +120,7 @@ export const VISIBLE_CONTENT_OPTIONS = [
   
   export const DEFAULT_PREFERENCES = {
     pageSize: 30,
-    visibleContent: ['category', 'createtime', 'description', 'buttonurl','code_repo_link','deck_link','demo_type'],
+    visibleContent: ['category', 'description','detail'],
   };
   
   export const Preferences = ({

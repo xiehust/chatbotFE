@@ -31,17 +31,22 @@ import CreateQAModal from '../feedback/addfeedback';
 import {
   DEMO_TYPE_CATS,
   DEMO_CATS,
-  SEARCHABLE_COLUMNS
+  SEARCHABLE_COLUMNS,
+  INSTRUSTRY_LIST
 } from '../prompt_hub/table-config';
 
 import '../../styles/table-select.scss';
 const defaultCategory = { value: '0', label: 'Any Category' };
 const defaultDemoType= { value: '0', label: 'Any Type' };
+const defaultIndustry= { value: '0', label: 'Any Industry' };
+
 const selectCategoryOptions = [...DEMO_CATS, defaultCategory];
 const selectDemoTypeOptions = [...DEMO_TYPE_CATS, defaultDemoType];
 
+const selectIndustryOptions = [...INSTRUSTRY_LIST, defaultIndustry];
 
-const Filters = ({ filterProps, actions, filteredItemsCount, cat, setCat, industry, setIndustry }) => {
+
+const Filters = ({ filterProps, actions, filteredItemsCount, cat, setCat, demoType, setDemoType, industry, setIndustry }) => {
   const { t } = useTranslation();
 
 
@@ -62,7 +67,6 @@ const Filters = ({ filterProps, actions, filteredItemsCount, cat, setCat, indust
         />
       </div>
       <div className="select-filter">
-        {/* <FormField label={t("filter_category")}> */}
         <Select
           data-testid="engine-filter"
           options={selectCategoryOptions}
@@ -74,13 +78,11 @@ const Filters = ({ filterProps, actions, filteredItemsCount, cat, setCat, indust
           ariaDescribedby={null}
           expandToViewport={true}
         />
-        {/* </FormField> */}
       </div>
       <div className="select-filter">
-        {/* <FormField label={t("filter_industry")}> */}
         <Select
           data-testid="class-filter"
-          options={selectDemoTypeOptions}
+          options={selectIndustryOptions}
           selectedAriaLabel="Selected"
           selectedOption={industry}
           onChange={event => {
@@ -89,10 +91,24 @@ const Filters = ({ filterProps, actions, filteredItemsCount, cat, setCat, indust
           ariaDescribedby={null}
           expandToViewport={true}
         />
-        {/* </FormField> */}
+
+      </div>
+      <div className="select-filter">
+        <Select
+          data-testid="class-filter"
+          options={selectDemoTypeOptions}
+          selectedAriaLabel="Selected"
+          selectedOption={demoType}
+          onChange={event => {
+            setDemoType(event.detail.selectedOption);
+          }}
+          ariaDescribedby={null}
+          expandToViewport={true}
+        />
+
       </div>
       <div aria-live="polite">
-        {(filterProps.filteringText || cat !== defaultCategory || industry !== defaultDemoType) && (
+        {(filterProps.filteringText || cat !== defaultCategory || industry !== defaultIndustry || demoType !== defaultDemoType) && (
           <span className="filtering-results">{getFilterCounterText(filteredItemsCount)}</span>
         )}
       </div>
@@ -106,9 +122,12 @@ function matchesCategory(item, selectedCategory) {
 }
 
 function matchesIndustry(item, selectedIndustry) {
-  // const industries = item.demo_type?.map(it => it.value).join('|') || '';
-  // return selectedIndustry === defaultDemoType || industries.includes(selectedIndustry.value);
-  return selectedIndustry === defaultDemoType || item.demo_type === selectedIndustry.value;
+  const industries = item.industry?.map(it => it.value).join('|') || '';
+  return selectedIndustry === defaultIndustry || industries.includes(selectedIndustry.value);
+}
+
+function matchesDemoType(item, selectedDemoType) {
+  return selectedDemoType === defaultDemoType || item.demo_type === selectedDemoType.value;
 }
 
 
@@ -123,10 +142,11 @@ function CardsContent({
   const [preferences, setPreferences] = useLocalStorage('PE-Hub-Table-Preferences', DEFAULT_PREFERENCES);
   // const [columnDefinitions, saveWidths] = useColumnWidths('PE-Hub-Table-Widths', COLUMN_DEFINITIONS);
   const { t } = useTranslation();
-  // const [qAModalVisible, setQAModalVisible] = useState(false);
-  // const [recordId,setRecordId] = useState(undefined);
+
   const [cat,setCat] = useState(defaultCategory);
-  const [industry,setIndustry] = useState(defaultDemoType);
+  const [demoType,setDemoType] = useState(defaultDemoType);
+  const [industry,setIndustry] = useState(defaultIndustry);
+
   const { items, actions, filteredItemsCount, collectionProps, filterProps, paginationProps } = useCollection(
     distributions,
     {
@@ -138,6 +158,9 @@ function CardsContent({
             return false;
           }
           if (!matchesIndustry(item, industry)) {
+            return false;
+          }
+          if (!matchesDemoType(item, demoType)) {
             return false;
           }
           const filteringTextLowerCase = filteringText.toLowerCase();
@@ -153,20 +176,15 @@ function CardsContent({
     }
   );
 
-  // function handleAddClick(event) {
-  //   event.preventDefault();
-  //   setQAModalVisible(true);
-  // }
-
   function clearFilter() {
     actions.setFiltering('');
     setCat(defaultCategory);
-    setIndustry(defaultDemoType);
+    setIndustry(defaultIndustry);
+    setDemoType(defaultDemoType);
   }
 
   return (
     <div>
-      {/* <CreateQAModal visible={qAModalVisible} setVisible={setQAModalVisible} recordId={recordId} /> */}
       <Cards
         {...collectionProps}
         cardDefinition={CARD_DEFINITIONS}
@@ -185,8 +203,13 @@ function CardsContent({
           <Filters filterProps={filterProps} 
               actions={actions} 
               filteredItemsCount = {filteredItemsCount}
-              cat={cat} setCat={setCat}
-              industry = {industry} setIndustry={setIndustry}/>
+              cat={cat} 
+              setCat={setCat}
+              industry = {industry} 
+              setIndustry={setIndustry}
+              demoType={demoType}
+              setDemoType={setDemoType}
+              />
         }
         header={
           <CardPageHeader
