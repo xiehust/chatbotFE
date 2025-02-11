@@ -279,9 +279,8 @@ i18n
             demo_name:'Name',
             feedback_us_notes:"Please click feedback button up right",
             link:'Link',
-            detail:'Detail'
-
-
+            detail:'Detail',
+            contact:'Contact'
 
         }
       },
@@ -548,7 +547,8 @@ i18n
             demo_name:'名称',
             feedback_us_notes:"请点击右上角提交反馈",
             link:"链接",
-            detail:'详细信息'
+            detail:'详细信息',
+            contact:'联系人'
         }
       }
     }
