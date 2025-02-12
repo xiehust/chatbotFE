@@ -79,7 +79,7 @@ export const CARD_DEFINITIONS = {
           },
           {
             label: i18n.t('contact'),
-            value: (item.contact||"-"),
+            value: (`${item.contact||"-"}|${item.team||"-"}`),
           },
           {
             // label: i18n.t('feedback_us'),
