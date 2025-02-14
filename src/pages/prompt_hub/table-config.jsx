@@ -50,7 +50,9 @@ export const INSTRUSTRY_LIST = [
 
 export const DEMO_TYPE_CATS = [
   { label: "Ready-to-Adopt Asset", value: "Ready-to-Adopt Asset"},
+  { label: "Ready-to-Production Asset", value: "Ready-to-Production Asset"},
   { label: "Simple Demo Asset", value: "Simple Demo Asset"},
+
 ]
 export const DEMO_CATS = [
   { label: "翻译", value: "翻译"},
