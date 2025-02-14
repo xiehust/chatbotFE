@@ -122,7 +122,7 @@ function matchesCategory(item, selectedCategory) {
 }
 
 function matchesIndustry(item, selectedIndustry) {
-  const industries = item.industry?.map(it => it.value).join('|') || '';
+  const industries = item.industry?.map(it => it).join('|') || '';
   return selectedIndustry === defaultIndustry || industries.includes(selectedIndustry.value);
 }
 

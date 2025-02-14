@@ -31,7 +31,7 @@ export const CARD_DEFINITIONS = {
           },
           {
             label: i18n.t('industry'),
-            value: item.industry||'-',
+            value: item.industry?.map(it => it).join(" | ") || '-',
           },
         ]}
         />

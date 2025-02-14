@@ -35,17 +35,19 @@ export const COMPAT_MODELS = [
 ]
 
 export const INSTRUSTRY_LIST = [
-  { label: "Gaming", value: "Gaming" },
+  { label: "GAME", value: "GAME" },
   { label: "RCH", value: "RCH" },
   { label: "MEAD", value: "MEAD" },
-  { label: "Auto", value: "Auto" },
+  { label: "AUTO", value: "AUTO" },
   { label: "HCLS", value: "HCLS" },
   { label: "MFG", value: "MFG" },
   { label: "CI", value: "CI" },
+  { label: "IOT", value: "IOT" },
   { label: "GB", value: "GB" },
+  { label: "EDU", value: "EDU" },
   { label: "FSI", value: "FSI" },
   { label: "ALL", value: "ALL" },
-  { label: "Others", value: "Others" },
+  // { label: "Others", value: "Others" },
 ]
 
 export const DEMO_TYPE_CATS = [
