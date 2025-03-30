@@ -11,7 +11,7 @@ import {
   Select,
   Input,
 } from '@cloudscape-design/components';
-import { CardPageHeader } from '../prompt_hub/common-components';
+import { CardPageHeader } from './common-components';
 import {
   CustomAppLayout,
   Navigation,
@@ -25,9 +25,8 @@ import { useSimpleNotifications } from '../commons/use-notifications';
 import { useAuthUserInfo, useAuthorizedHeader } from "../commons/use-auth";
 import { getPrompts } from '../commons/api-gateway';
 import { useTranslation } from 'react-i18next';
-import { params_local_storage_key, CardBreadcrumbs } from "../prompt_hub/common-components";
+import { params_local_storage_key, Breadcrumbs } from "./common-components";
 // import ModelSettings from "../commons/chat-settings";
-import CreateQAModal from '../feedback/addfeedback';
 import {
   DEMO_TYPE_CATS,
   DEMO_CATS,
@@ -279,7 +278,7 @@ export default function PEPlayCard() {
       ref={appLayout}
       navigation={<Navigation activeHref={'/prompt_playground'} />}
       notifications={<Flashbar items={notificationitems} stackItems />}
-      breadcrumbs={<CardBreadcrumbs />}
+      breadcrumbs={<Breadcrumbs />}
       content={<CardsContent
         resourceName={t('demo_hub')}
         distributions={docitems}

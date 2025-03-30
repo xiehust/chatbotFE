@@ -8,7 +8,7 @@ import i18n from '../../common/i18n';
 export const CARD_DEFINITIONS = {
   header: item => (
     <div>
-      <Link fontSize="heading-m">
+      <Link fontSize="heading-m" href={`/asset_hub/${item.id}`}>
       {item?.demo_name}
       </Link>
     </div>
@@ -46,9 +46,9 @@ export const CARD_DEFINITIONS = {
         items={[
           {
             label: i18n.t('demo_type'),
-            value: (item.demo_type === 'Ready-to-Adopt Asset'? 
-                  <Badge color="green">{item.demo_type}</Badge> :
-                  <Badge color="blue">{item.demo_type||'-'}</Badge> 
+            value: (item.demo_type === 'Simple Demo Asset'? 
+                  <Badge color="blue">{item.demo_type}</Badge> :
+                  <Badge color="green">{item.demo_type||'-'}</Badge> 
                   ),
           },
           {

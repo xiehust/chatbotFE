@@ -280,7 +280,11 @@ i18n
             feedback_us_notes:"Please click feedback button up right",
             link:'Link',
             detail:'Detail',
-            contact:'Contact'
+            contact:'Contact',
+            delete_asset:'Delete Asset',
+            add_asset:'Delete Asset',
+            asset_hub:'Asset Hub',
+            team:'Team'
 
         }
       },
@@ -479,7 +483,7 @@ i18n
             prompt_category: 'Prompt分类',
             action:'动作',
             select_geo_category:'选择地区',
-            main_info:'模板内容',
+            main_info:'主要内容',
             your_amazon_email:"您的Amazon Email",
             uploader_email:"创建者Email",
             department:'部门',
@@ -548,7 +552,11 @@ i18n
             feedback_us_notes:"请点击右上角提交反馈",
             link:"链接",
             detail:'详细信息',
-            contact:'联系人'
+            contact:'联系人',
+            delete_asset:'删除Asset',
+            add_asset:'增加Asset',
+            asset_hub:'方案中心',
+            team:'团队'
         }
       }
     }

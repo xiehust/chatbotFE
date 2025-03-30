@@ -323,65 +323,7 @@ export const FullPageHeader = ({
   );
 };
 
-export const CardPageHeader = ({
-  resourceName,
-  createButtonText,
-  ...props
-}) => {
-  const { t } = useTranslation();
-  const userinfo = useAuthUserInfo();
-  const isOnlyOneSelected = props.selectedItems.length === 1;
-  const [visible, setVisible] = useState(false);
-  const [qAModalVisible, setQAModalVisible] = useState(false);
-  function handleAddClick(event) {
-    event.preventDefault();
-    setQAModalVisible(true);
-  }
-  const selectItem = isOnlyOneSelected ? props.selectedItems[0] : undefined;
-  // console.log(selectItem);
-  return (
-    <div>
-      <CreateQAModal visible={qAModalVisible} setVisible={setQAModalVisible} selectItem={selectItem} />
-      <DeleteConfirmModal visible={visible} setVisible={setVisible} selectItem={selectItem} refreshAction={props.refreshAction} />
-      <TableHeader
-        variant="awsui-h1-sticky"
-        title={resourceName}
-        actionButtons={
-          <SpaceBetween size="xs" direction="horizontal">
-            <Button
-              name="refresh"
-              onClick={props.refreshAction}
-              iconName="refresh"
-            />
-          <Button
-          disabled={!isOnlyOneSelected}
-           variant="primary"
-            onClick={handleAddClick}
-          >
-            {t("submit_new_feedback")}
-          </Button>
-          {/* <Button
-            disabled={!isOnlyOneSelected || userinfo.groupname !== 'admin'}
-            href={'/prompt_playground/' + selectItem?.id}
-          >{t('edit')}
-          </Button>
-          <Button
-            disabled={!isOnlyOneSelected || userinfo.groupname !== 'admin'}
-            href={'/prompt_playground/' + selectItem?.id}
-          >{t('delete')}
-          </Button>
-          <Button
-            disabled={!isOnlyOneSelected || userinfo.groupname !== 'admin'}
-            href={'/prompt_playground/' + selectItem?.id}
-          >{t('add')}
-          </Button> */}
-          </SpaceBetween>
-        }
-        {...props}
-      />
-    </div>
-  );
-};
+
 
 export function previewTemplate(formData) {
   let rawText = formData.template??'';

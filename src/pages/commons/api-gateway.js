@@ -227,6 +227,18 @@ export const listAgents = async(headers,queryParams={}) =>{
     }
 }
 
+export const addAsset = async(headers,formdata) =>{
+    return await addPrompt(headers,formdata);
+}
+
+export const deleteAsset = async(headers,formdata) =>{
+    return await deletePrompt(headers,formdata);
+}
+
+export const getAsset = async(headers,formdata) =>{
+    return await getPrompts(headers,formdata);
+}
+
 
 export const addPrompt = async(headers,formdata) =>{
     try {

@@ -24,6 +24,8 @@ import ModelHubTable from "./pages/model_hub/model.index";
 import CreateModelApp from "./pages/model_hub/create-model";
 import ModelCardDetail from "./pages/model_hub/model-detail";
 import PEPlayCard from "./pages/demo_hub/pecard.index";
+import CreateAsset from "./pages/demo_hub/create-asset";
+import AssetDetail from "./pages/demo_hub/demo-detail";
 
 export default function App() {
   return (
@@ -39,8 +41,9 @@ export default function App() {
           <Route path="/prompt_hub" element={<RequireAuth redirectPath="/login"><PromptHubTable/></RequireAuth>}/>
           <Route path="/prompt_hub/create" element={<RequireAuth redirectPath="/login"><CreatePromptApp/></RequireAuth>}/>
           <Route path="/prompt_hub/:templateId" element={<RequireAuth redirectPath="/login"><PromptDetail/></RequireAuth>}/>
-          <Route path="/asset_hub/:id" element={<RequireAuth redirectPath="/login"><PromptChat/></RequireAuth>}/>
+          <Route path="/asset_hub/:Id" element={<RequireAuth redirectPath="/login"><AssetDetail/></RequireAuth>}/>
           <Route path="/asset_hub" element={<RequireAuth  redirectPath="/login"><PEPlayCard/></RequireAuth>}/>
+          <Route path="/asset_hub/create" element={<RequireAuth  redirectPath="/login"><CreateAsset/></RequireAuth>}/>
 
           <Route path="/model_hub" element={<RequireAuth redirectPath="/login"><ModelHubTable/></RequireAuth>}/>
           <Route path="/model_hub/create" element={<RequireAuth redirectPath="/login"><CreateModelApp/></RequireAuth>}/>
