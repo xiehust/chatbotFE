@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: MIT-0
 import React, { useEffect, useRef, useState } from 'react';
 import { useCollection } from '@cloudscape-design/collection-hooks';
-import { DEFAULT_PREFERENCES, Preferences, CARD_CONFIG, CARD_DEFINITIONS } from './cards-config';
+import { DEFAULT_PREFERENCES, Preferences, CARD_CONFIG, CARD_DEFINITIONS ,SEARCHABLE_COLUMNS} from './cards-config';
 import {
   Flashbar,
   Pagination,
@@ -30,9 +30,8 @@ import { params_local_storage_key, Breadcrumbs } from "./common-components";
 import {
   DEMO_TYPE_CATS,
   DEMO_CATS,
-  SEARCHABLE_COLUMNS,
   INSTRUSTRY_LIST
-} from '../prompt_hub/table-config';
+} from './table-config';
 
 import '../../styles/table-select.scss';
 const defaultCategory = { value: '0', label: 'Any Category' };

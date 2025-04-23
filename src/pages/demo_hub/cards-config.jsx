@@ -14,6 +14,11 @@ export const CARD_DEFINITIONS = {
     </div>
   ),
   sections: [
+    // {
+    //   id: 'title',
+    //   header: i18n.t('title'),
+    //   content: item => item.demo_name||"-",
+    // },
     {
       id: 'description',
       header: i18n.t('description'),
@@ -98,7 +103,7 @@ export const VISIBLE_CONTENT_OPTIONS = [
       label: 'Main properties',
       options: [
         { id: 'category', label: i18n.t('category') },
-        // { id: 'createtime', label: i18n.t('createtime') },
+        // { id: 'title', label: i18n.t('title') },
         { id: 'description', label: i18n.t('description') },
         { id: 'detail', label: i18n.t('detail')},
         // { id: 'code_repo_link', label: i18n.t('code_repo_link')},
@@ -151,3 +156,5 @@ export const VISIBLE_CONTENT_OPTIONS = [
       }}
     />
   );
+
+  export const SEARCHABLE_COLUMNS = ['demo_name','description','contact'];

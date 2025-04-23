@@ -155,8 +155,6 @@ export const COLUMN_DEFINITIONS = addColumnSortLabels([
   },
 ]);
 
-export const SEARCHABLE_COLUMNS = ['template_name','description','industry','prompt_category','email'];
-
 
 export const Preferences = ({
   preferences,
