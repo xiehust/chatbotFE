@@ -1,0 +1,98 @@
+.asset-card {
+  background-color: #ffffff;
+  border: 1px solid #d5dbdb;
+  border-radius: 8px;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  height: 100%;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+  position: relative;
+  overflow: hidden;
+}
+
+.asset-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.asset-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 4px;
+  height: 100%;
+  background-color: #FF9900;
+}
+
+.asset-title {
+  font-size: 18px;
+  font-weight: 700;
+  margin-bottom: 12px;
+  color: #035dbd;
+  display: flex;
+  align-items: center;
+}
+
+.description-label, .demo-link-label {
+  font-size: 14px;
+  font-weight: 700;
+  margin-bottom: 4px;
+  color: #5f6b7a;
+}
+
+.asset-description {
+  margin-bottom: 16px;
+  color: #16191f;
+  flex-grow: 1;
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+.asset-link {
+  margin-bottom: 16px;
+}
+
+.asset-link a {
+  color: #0972d3;
+  text-decoration: none;
+  font-size: 14px;
+  display: inline-flex;
+  align-items: center;
+}
+
+.asset-link a:hover {
+  text-decoration: underline;
+}
+
+.asset-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+  margin-top: auto;
+}
+
+/* Button Styles */
+.awsui-button-secondary {
+  background-color: #ffffff;
+  color: #16191f;
+  border: 1px solid #aab7b8;
+}
+
+.awsui-button-secondary:hover {
+  background-color: #f2f3f3;
+  border-color: #16191f;
+}
+
+.awsui-button-danger {
+  background-color: #d91515;
+  color: #ffffff;
+  border: 1px solid #d91515;
+}
+
+.awsui-button-danger:hover {
+  background-color: #9c0202;
+  border-color: #9c0202;
+}

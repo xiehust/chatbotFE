@@ -1,0 +1,162 @@
+.awsui-app-layout__header {
+  background-color: #ffffff;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  z-index: 1000;
+}
+
+.awsui-header {
+  padding: 20px;
+}
+
+.awsui-header-content {
+  max-width: 1200px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+}
+
+.awsui-header-top {
+  display: flex;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.aws-logo {
+  margin-right: 20px;
+}
+
+.aws-logo img {
+  height: 30px;
+  width: auto;
+}
+
+.awsui-header-title {
+  color: #16191f;
+  font-size: 24px;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+}
+
+.awsui-header-title span {
+  color: #646770;
+  font-weight: 400;
+}
+
+.awsui-header-title::after {
+  content: '';
+  display: inline-block;
+  width: 1px;
+  height: 24px;
+  background-color: #ffffff;
+  margin: 0 10px;
+}
+
+.awsui-header-actions {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+/* Search Container */
+.search-container {
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+  gap: 16px;
+}
+
+.awsui-input-container {
+  position: relative;
+  flex-grow: 1;
+  display: flex;
+  align-items: center;
+}
+
+.awsui-input-icon {
+  position: absolute;
+  left: 10px;
+  font-size: 16px;
+  color: #5f6b7a;
+  z-index: 1;
+}
+
+.awsui-input {
+  width: 100%;
+  padding: 8px 8px 8px 35px;
+  border: 1px solid #aab7b8;
+  border-radius: 4px;
+  font-size: 14px;
+  color: #16191f;
+  background-color: #ffffff;
+  transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+}
+
+.awsui-input:focus {
+  outline: none;
+  border-color: #0972d3;
+  box-shadow: 0 0 0 2px rgba(9, 114, 211, 0.35);
+}
+
+/* Button Styles */
+.awsui-button {
+  padding: 8px 16px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 500;
+  transition: all 0.15s ease-in-out;
+  text-align: center;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 80px;
+  box-shadow: 0 1px 1px rgba(0, 0, 0, 0.1);
+}
+
+.awsui-button-primary {
+  background-color: #FF9900;
+  color: #ffffff;
+  border: 1px solid #FF9900;
+}
+
+.awsui-button-primary:hover {
+  background-color: #EC7211;
+  border-color: #EC7211;
+}
+
+.awsui-button:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.awsui-button-primary:disabled {
+  background-color: #8c8c8c;
+  border-color: #8c8c8c;
+  color: #ffffff;
+}
+
+/* Responsive Adjustments */
+@media (max-width: 768px) {
+  .awsui-header-content {
+    flex-direction: column;
+  }
+  
+  .awsui-header-top {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  
+  .aws-logo {
+    margin-bottom: 10px;
+  }
+  
+  .awsui-header-title::after {
+    display: none;
+  }
+  
+  .search-container {
+    flex-direction: column;
+  }
+}

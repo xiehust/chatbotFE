@@ -1,0 +1,26 @@
+/* General Styles */
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: "Amazon Ember", "Helvetica Neue", Roboto, Arial, sans-serif;
+  line-height: 1.6;
+  color: #16191f;
+  background-color: #f5f5f5; /* Changed to light grey */
+  margin: 0;
+  padding: 0;
+  background-repeat: no-repeat;
+  background-position: center;
+  background-attachment: fixed;
+  background-size: 400px;
+  background-blend-mode: lighten;
+}
+
+#root {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}

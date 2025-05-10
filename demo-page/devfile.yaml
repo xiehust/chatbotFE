@@ -1,0 +1,26 @@
+schemaVersion: 2.0.0
+metadata:
+  name: asset-demos-fullstack
+  version: 1.0.0
+  description: Devfile for Asset Demos full-stack application with Flask backend and React frontend
+components:
+  - name: dev
+    container:
+      image: public.ecr.aws/aws-mde/universal-image:latest
+      memoryLimit: 2Gi
+commands:
+  - id: install
+    exec:
+      component: dev
+      commandLine: "cd /workspace/backend && python -m venv .venv && source .venv/bin/activate && pip install -r requirements.txt && cd /workspace/frontend && npm install"
+      workingDir: /workspace
+  - id: build
+    exec:
+      component: dev
+      commandLine: "cd /workspace/frontend && npm run build && cd /workspace/backend && echo 'Backend ready'"
+      workingDir: /workspace
+  - id: test
+    exec:
+      component: dev
+      commandLine: "cd /workspace/frontend && npm test -- --watchAll=false && cd /workspace/backend && echo 'Running backend tests' && python -c 'print(\"Backend tests would run here\")'"
+      workingDir: /workspace

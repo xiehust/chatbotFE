@@ -284,7 +284,8 @@ i18n
             delete_asset:'Delete Asset',
             add_asset:'Delete Asset',
             asset_hub:'Asset Hub',
-            team:'Team'
+            team:'Team',
+            agent_demo_hub:'Agent Demo Hub'
 
         }
       },
@@ -556,7 +557,8 @@ i18n
             delete_asset:'删除Asset',
             add_asset:'增加Asset',
             asset_hub:'方案中心',
-            team:'团队'
+            team:'团队',
+            agent_demo_hub:'Agent演示中心'
         }
       }
     }

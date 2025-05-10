@@ -44,9 +44,11 @@ const navItems_admin = [
   }, 
   {
     type: 'section',
-    text: i18n.t('demo_hub'),
+    text: i18n.t('asset_hub'),
     items: [
-      { type: 'link', text: i18n.t('demo_hub'), href: '/asset_hub' },
+      { type: 'link', text: i18n.t('asset_hub'), href: '/asset_hub' },
+      { type: 'link', text: i18n.t('agent_demo_hub'), href: 'http://agent-demo-hub-1255547555.us-east-1.elb.amazonaws.com',external: true },
+
     ],
   }, 
   {
@@ -54,7 +56,7 @@ const navItems_admin = [
     text: i18n.t('model_hub'),
     items: [
       { type: 'link', text: i18n.t('model_hub'), href: '/model_hub' },
-      { type: 'link', text: i18n.t('model_hub_v2'), href: 'http://modelhub.jugglehub.top/' },
+      { type: 'link', text: i18n.t('model_hub_v2'), href: 'http://modelhub.jugglehub.top/' ,external: true},
     ],
   }, 
   {
@@ -83,9 +85,10 @@ const navItems = [
   }, 
   {
     type: 'section',
-    text: i18n.t('demo_hub'),
+    text: i18n.t('asset_hub'),
     items: [
-      { type: 'link', text: i18n.t('demo_hub'), href: '/asset_hub' },
+      { type: 'link', text: i18n.t('asset_hub'), href: '/asset_hub' },
+      { type: 'link', text: i18n.t('agent_demo_hub'), href: 'http://agent-demo-hub-1255547555.us-east-1.elb.amazonaws.com',external: true },
     ],
   }, 
   {

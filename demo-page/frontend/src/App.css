@@ -1,0 +1,86 @@
+/* Cloudscape AppLayout */
+.awsui-app-layout {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  background-image: url('./aws-logo.svg');
+  background-repeat: no-repeat;
+  background-position: center center;
+  background-size: 300px;
+  background-attachment: fixed;
+  background-color: #f5f5f5; /* Changed to light grey with transparency */
+  position: relative;
+}
+
+.awsui-app-layout::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: #f5f5f5; /* Changed to light grey with transparency */
+  z-index: -1;
+}
+
+.awsui-app-layout__content {
+  flex: 1;
+  padding: 20px;
+  position: relative;
+  z-index: 1;
+}
+
+.awsui-container {
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.awsui-app-layout__footer {
+  background-color: #ffffff;
+  border-top: 1px solid #eaeded;
+  padding: 20px 0;
+  margin-top: auto;
+  position: relative;
+  z-index: 1;
+}
+
+.awsui-footer-content {
+  max-width: 1200px;
+  margin: 0 auto;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  color: #5f6b7a;
+  font-size: 14px;
+}
+
+.awsui-footer-logo {
+  display: flex;
+  align-items: center;
+}
+
+.awsui-footer-logo img {
+  height: 30px;
+  margin-right: 10px;
+  width: auto;
+}
+
+.awsui-footer-links {
+  display: flex;
+  gap: 20px;
+}
+
+.awsui-footer-links a {
+  color: #0972d3;
+  text-decoration: none;
+}
+
+.awsui-footer-links a:hover {
+  text-decoration: underline;
+}
+
+
+/* Modal Open State */
+body.modal-open {
+  overflow: hidden;
+}
