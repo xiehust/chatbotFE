@@ -68,6 +68,7 @@
 .awsui-footer-links {
   display: flex;
   gap: 20px;
+  visibility: hidden;
 }
 
 .awsui-footer-links a {
