@@ -226,6 +226,16 @@ function CardsContent({
   );
 }
 
+function sortItemsByCreateTimeDesc(items) {
+  return items.sort((a, b) => {
+    // Convert date strings to Date objects for comparison
+    const dateA = new Date(a.createtime);
+    const dateB = new Date(b.createtime);
+    
+    // Sort in descending order (newest first)
+    return dateB - dateA;
+  });
+}
 
 export default function PEPlayCard() {
   const appLayout = useRef();
@@ -258,8 +268,11 @@ export default function PEPlayCard() {
     setLoadingState(true);
     getPrompts(headers, queryParams)
       .then(data => {
-        // console.log(data);
-        const items = data.map(it => (it))
+        const items = sortItemsByCreateTimeDesc(data);
+
+        // const items = data.map(it => (it))
+        // console.log(items);
+
         setDocsItems(items);
         setLoadingState(false);
       })
