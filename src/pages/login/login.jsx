@@ -25,9 +25,8 @@ import StepLabel from '@mui/material/StepLabel';
 import Step from '@mui/material/Step';
 import Stepper from '@mui/material/Stepper';
 import { useTranslation } from "react-i18next";
+import { initiateOAuthLogin } from '../../common/oauth-utils';
 
-const DEFAULT_USERNAME = 'guest';
-const DEFAULT_PASSWORD = 'guest';
 
 
 function Copyright(props) {
@@ -69,8 +68,8 @@ const SignUpSteps = ({activeStep}) =>{
 const LoginPage = ()=>{
   const [session, setSession] = useState();
   const [signType, setSignType] = useState('signin');
-  const [username, setUsername] = useState(DEFAULT_USERNAME);
-  const [password, setPassword] = useState(DEFAULT_PASSWORD);
+  const [username, setUsername] = useState();
+  const [password, setPassword] = useState();
   return (
     // signType === 'signin'?
     <SignIn setSession={setSession} signType={signType} setSignType={setSignType} username={username} setUsername={setUsername} password={password} setPassword={setPassword}/>
@@ -276,138 +275,81 @@ const SignUp = ({setSignType,username,setUsername,password,setPassword}) =>{
 const SignIn = ({setSession,signType,setSignType,username,setUsername,password,setPassword}) => {
   const auth = useAuth();
   const {t} = useTranslation();
-  const [checked, setChecked] = useState(false);
-  const [local_stored_crediential,setLocalStoredCred] = useLocalStorage('chatbot-local-credentials',null)
-  const [errorstate, setErrorState] = useState(false);
-  const [errormsg, setErrMsg] = useState('');
-  // const [username, setUsername] = useState();
-  // const [password, setPassword] = useState();
-  const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
   const isAuthenticated = auth.user && auth.user.isAuthorized;
+
   useEffect(()=>{
         if(isAuthenticated){
             navigate('/prompt_hub');
         }
     },[navigate,isAuthenticated]);
 
-  useEffect(()=>{
-    setChecked(local_stored_crediential?.checked);
-    if (local_stored_crediential?.checked) {
-      setUsername(local_stored_crediential.username);
-      setPassword(local_stored_crediential.password);
-    }
-  },[]);
-  const handleSubmit = (event) => {
-    event.preventDefault();
-    setLoading(true);
-    setErrorState(false);
-    setErrMsg('');
-    const formdata = new FormData(event.currentTarget);
-    let username_d = DEFAULT_USERNAME;
-    let password_d = DEFAULT_PASSWORD;
-
-    if (signType !== 'anonymous_signin'){
-      username_d = formdata.get('username');
-      password_d = formdata.get('password')
-    }
-    auth.signin(username_d,password_d)
-    .then((data)=>{
-      setLocalStoredCred({username:username_d,
-                    password:password_d,
-                   checked:checked});
-        console.log(data);
-        if (!(data?data.isAuthorized:false)){
-          setErrorState(true);
-          setErrMsg(data.next_challenge);
-        }
-        setLoading(false);
-    })  
-    .catch(error =>{ 
-      setErrorState(true);
-      setErrMsg(error.response?.data);
-      setLoading(false);
-    })
-
-  };
 
   return (
     <ThemeProvider theme={theme}>
-      <Container component="main" maxWidth="xs" >
-        <CssBaseline />
-        <Box
-          sx={{
-            marginTop: 8,
-            display: 'flex',
-            flexDirection: 'column',
-            alignItems: 'center',
-          }}
-        >
-          <Avatar sx={{ m: 1, bgcolor: 'warning.main' }}>
-            <LockOutlinedIcon />
-          </Avatar>
+      <Box
+        sx={{
+          minHeight: '100vh',
+          backgroundImage: 'url(/background.jpeg)',
+          backgroundSize: 'cover',
+          backgroundPosition: 'center',
+          backgroundRepeat: 'no-repeat',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+        }}
+      >
+        <Container component="main" maxWidth="xs" >
+          <CssBaseline />
+          <Box
+            sx={{
+              marginTop: 8,
+              display: 'flex',
+              flexDirection: 'column',
+              alignItems: 'center',
+              backgroundColor: 'rgba(255, 255, 255, 0.95)',
+              padding: 4,
+              borderRadius: 2,
+              boxShadow: '0 8px 32px rgba(0, 0, 0, 0.1)',
+            }}
+          >
+            <Avatar sx={{ m: 1, bgcolor: 'warning.main' }}>
+              <LockOutlinedIcon />
+            </Avatar>
           <Typography component="h1" variant="h5">
-            Sign in
+            Juggle Hub {t('signin')}
           </Typography>
-         
-          <Box component="form" onSubmit={handleSubmit} noValidate sx={{ mt: 1 }}>
-          <FormControl sx={{width:360}}>
-            <TextField
-              error = {errorstate}
-              margin="normal"
-              required
-              fullWidth
-              id="username"
-              label="Username"
-              name="username"
-              value ={username??''}
-              onChange = {(event) => { setUsername(event.target.value);}}
-              autoFocus
-            />
-            <TextField
-              error = {errorstate}
-              helperText ={errormsg}
-              margin="normal"
-              required
-              fullWidth
-              name="password"
-              label="Password"
-              type="password"
-              id="password"
-              value ={password??''}
-              onChange = {(event) => { setPassword(event.target.value);}}
-              autoComplete="current-password"
-            />
-            <FormControlLabel
-              control={<Checkbox 
-                checked={checked}
-                onChange={(event) =>{
-                  setChecked(event.target.checked);
-                  setLocalStoredCred({checked:event.target.checked});
+
+          <Typography variant="body2" color="text.secondary" sx={{ mt: 2, mb: 3, textAlign: 'center' }}>
+            Sign in with your Amazon Midway account to access the platform
+          </Typography>
+
+          <Box sx={{ mt: 1, width: '100%' }}>
+            <FormControl sx={{width: '100%'}}>
+              <Button
+                fullWidth
+                variant="contained"
+                size="large"
+                sx={{
+                  py: 1.5,
+                  textTransform: 'none',
+                  backgroundColor: '#FF9900',
+                  color: 'white',
+                  '&:hover': {
+                    backgroundColor: '#EC7211',
+                  }
                 }}
-               color="primary" />}
-              label="Remember me"
-            />
-            <LoadingButton
-              type="submit"
-              loading = {loading}
-              fullWidth
-              variant="contained"
-              sx={{ mt: 3, mb: 2}}
-            >
-              {t('signin')}
-            </LoadingButton>
-            <LoadingButton
-              type="submit"
-              color = "secondary"
-              loading = {loading}
-              onClick={()=>setSignType('anonymous_signin')}
-              fullWidth
-              variant="contained"
-              sx={{ mt: 3, mb: 2}}
-            >
-             {t('anonymous_signin')}
-            </LoadingButton>
+                onClick={initiateOAuthLogin}
+              >
+                <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                  <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+                    <path d="M14.82 12.93c-.03.24-.47.34-.86.37-.38.03-.7-.01-.67-.25.03-.24.41-.34.8-.37.39-.03.76.01.73.25M15.19 13.88c-.03.24-.62.34-1.31.22s-1.23-.38-1.2-.62.62-.32 1.31-.2 1.23.36 1.2.6M13.11 10.86s-.31-.08-.31-.21.28-.21.63-.21.64.08.64.21-.28.21-.63.21-.33 0-.33 0" fill="white"/>
+                    <path d="M17.36 13.85c-.76 1.23-2.4 1.97-4.31 1.97-2.05 0-3.89-.76-5.29-2.01-.11-.1-.01-.24.12-.16 1.52.89 3.4 1.43 5.34 1.43 1.31 0 2.74-.27 4.06-.83.2-.08.36.13.18.29M17.73 13.4c-.1-.13-.65-.06-.9-.03-.07.01-.08-.06-.02-.11.44-.31 1.16-.22 1.24-.12.08.11-.02.85-.45 1.2-.07.06-.13.03-.1-.05.09-.23.29-.74.19-.87" fill="white"/>
+                    <circle cx="12" cy="12" r="9" stroke="white" strokeWidth="1.5" fill="none"/>
+                  </svg>
+                  Sign in with Midway
+                </Box>
+              </Button>
             {/* <Button
              fullWidth
               variant="contained"
@@ -432,9 +374,10 @@ const SignIn = ({setSession,signType,setSignType,username,setUsername,password,s
             </FormControl>
           </Box>
 
-        </Box>
-        <Copyright sx={{ mt: 8, mb: 4 }} />
-      </Container>
+          </Box>
+          <Copyright sx={{ mt: 8, mb: 4 }} />
+        </Container>
+      </Box>
     </ThemeProvider>
   );
 }

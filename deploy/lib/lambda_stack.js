@@ -112,9 +112,14 @@ export class LambdaStack extends NestedStack {
       "lambda_auth",
       {
         ...commonProps,
+        environment: {
+          ...commonProps.environment,
+          COGNITO_USER_POOL_ID: process.env.COGNITO_USER_POOL_ID || 'us-east-1_Sq3IYsy06',
+          COGNITO_REGION: process.env.COGNITO_REGION || 'us-east-1',
+        },
         bundling: {
           externalModules: ["@aws-sdk"],
-          nodeModules: ["jsonwebtoken"],
+          nodeModules: ["jsonwebtoken", "jwks-rsa", "node-fetch"],
         },
       }
     );

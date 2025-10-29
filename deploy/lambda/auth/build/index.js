@@ -5,7 +5,7 @@ const jwt = require("jsonwebtoken");
 const jwksClient = require('jwks-rsa');
 
 // Cognito Configuration
-const COGNITO_USER_POOL_ID = process.env.COGNITO_USER_POOL_ID;
+const COGNITO_USER_POOL_ID = process.env.COGNITO_USER_POOL_ID || 'us-east-1_Sq3IYsy06';
 const COGNITO_REGION = process.env.COGNITO_REGION || 'us-east-1';
 const COGNITO_ISSUER = `https://cognito-idp.${COGNITO_REGION}.amazonaws.com/${COGNITO_USER_POOL_ID}`;
 const JWKS_URI = `${COGNITO_ISSUER}/.well-known/jwks.json`;

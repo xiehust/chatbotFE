@@ -90,6 +90,13 @@ const EditPanel = ({ setVisible,selectItem }) => {
   const setErrors = (updateObj = {}) => _setErrors(prevErrors => ({ ...prevErrors, ...updateObj }));
   const recordId = selectItem&&selectItem?.id;
   const demoName = selectItem&&selectItem?.demo_name;
+
+  // Set default requester name to logged-in username
+  useEffect(() => {
+    if (userinfo?.username) {
+      setRequesterName(userinfo.username);
+    }
+  }, [userinfo?.username]);
   // const contact = selectItem&&selectItem?.contact;
 
   const refs = {
@@ -261,17 +268,15 @@ const EditPanel = ({ setVisible,selectItem }) => {
             />
           </FormField>
           <FormField label={t("requester_name")}
-          description='Put your email here'
+          description='Auto-filled with your username'
           errorText={errors.username}
           >
             <Input
               placeholder="your email: xxx@amazon"
               ref={refs.username}
               value={requesterName}
-              onChange={({ detail }) => {
-                setRequesterName(detail.value);
-                onChangeValidate('username', detail.value)
-              }}
+              disabled
+              readOnly
             />
           </FormField>
         </SpaceBetween>

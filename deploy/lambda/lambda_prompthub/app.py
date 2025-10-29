@@ -126,39 +126,72 @@ def delete_template(id):
         logger.info(str(e))
         return False
     
-        
-            
-        
-
-    
-    # try:
-    #     response = table.delete_item(
-    #         Key={
-    #             'id': id
-    #         }
-    #     )
-    #     return True
-    # except Exception as e:
-    #     logger.info(str(e))
-    #     return False
     
    
 def decode_token(event):
-    auth = event['headers']['Authorization']
-    token = auth.split(' ')[1]
-    logger.info(token)
+    """
+    Extract user information from the request context.
+    The Lambda authorizer has already verified the Cognito JWT token
+    and passed user information through requestContext.authorizer
+    """
     try:
-        decoded_token = jwt.decode(token, os.environ['TOKEN_KEY'], algorithms=["HS256"])
-        # Token is valid, you can access the payload
-        logger.info(decoded_token)
-        return decoded_token
-    except jwt.ExpiredSignatureError:
-        # Token has expired
-        logger.info("Token has expired")
-        return None
-    except jwt.InvalidTokenError:
-        # Token is invalid
-        logger.info("Invalid token")
+        # Get user context from authorizer (set by Lambda authorizer)
+        authorizer_context = event.get('requestContext', {}).get('authorizer', {})
+
+        if authorizer_context:
+            # User info was validated by Lambda authorizer
+            logger.info(f"User context from authorizer: {authorizer_context}")
+
+            # Parse groups back to list (it was JSON stringified in authorizer)
+            groups_str = authorizer_context.get('groups', '[]')
+            try:
+                groups = json.loads(groups_str) if isinstance(groups_str, str) else []
+            except:
+                groups = []
+
+            decoded_token = {
+                'username': authorizer_context.get('username'),
+                'sub': authorizer_context.get('sub'),
+                'email': authorizer_context.get('email', ''),
+                'groups': groups,
+                'token_use': authorizer_context.get('token_use', ''),
+                'payload': authorizer_context.get('username')  # For backward compatibility
+            }
+
+            logger.info(f"Decoded user info: {decoded_token}")
+            return decoded_token
+
+        # Fallback: Try old token validation method (for backward compatibility)
+        # This should not be used in production with Cognito
+        logger.warning("No authorizer context found, falling back to direct token validation")
+
+        auth = event.get('headers', {}).get('Authorization') or event.get('headers', {}).get('authorization')
+        if not auth:
+            logger.error("No Authorization header found")
+            return None
+
+        token = auth.split(' ')[1] if ' ' in auth else auth
+        logger.info("Attempting direct token validation (legacy mode)")
+
+        # Try to validate with old method (only for backward compatibility)
+        token_key = os.environ.get('TOKEN_KEY')
+        if token_key:
+            try:
+                decoded_token = jwt.decode(token, token_key, algorithms=["HS256"])
+                logger.info(f"Token validated with legacy method: {decoded_token}")
+                return decoded_token
+            except jwt.ExpiredSignatureError:
+                logger.error("Token has expired")
+                return None
+            except jwt.InvalidTokenError:
+                logger.error("Invalid token")
+                return None
+        else:
+            logger.error("No TOKEN_KEY configured and no authorizer context available")
+            return None
+
+    except Exception as e:
+        logger.error(f"Error in decode_token: {str(e)}")
         return None
      
 

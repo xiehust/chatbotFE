@@ -1,0 +1,5 @@
+{
+  "type": "TOKEN",
+  "authorizationToken": "Bearer eyJraWQiOiJXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX",
+  "methodArn": "arn:aws:execute-api:us-east-1:123456789012:abcdef123/prod/GET/prompt_hub"
+}

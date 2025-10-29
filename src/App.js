@@ -8,7 +8,9 @@ import {
 import NotFound from './pages/commons/not-found';
 import {SimpleNotifications} from "./pages/commons/use-notifications";
 import { ProvideAuth, useAuthSignout} from "./pages/commons/use-auth";
+import SessionExpirationHandler from "./pages/commons/session-expiration-handler";
 import LoginPage from "./pages/login/login";
+import OAuthCallback from "./pages/login/oauth-callback";
 import  {RequireAuth} from './pages/commons/private-route';
 import UserApp from "./pages/admin/user/user-table.index"
 import AddUserApp from "./pages/admin/adduser/adduser";
@@ -33,9 +35,11 @@ export default function App() {
     <Router>
         <ProvideAuth>
        <SimpleNotifications>
+        <SessionExpirationHandler />
         <Routes>
           <Route path="/" element={<LoginPage/>} />
           <Route path="/login" element={<LoginPage/>} />
+          <Route path="/oauth/callback" element={<OAuthCallback/>} />
 
 
           <Route path="/prompt_hub" element={<RequireAuth redirectPath="/login"><PromptHubTable/></RequireAuth>}/>
