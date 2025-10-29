@@ -47,7 +47,7 @@ const navItems_admin = [
     text: i18n.t('asset_hub'),
     items: [
       { type: 'link', text: i18n.t('asset_hub'), href: '/asset_hub' },
-      { type: 'link', text: i18n.t('agent_demo_hub'), href: 'http://agent-demo-hub-1255547555.us-east-1.elb.amazonaws.com',external: true },
+      // { type: 'link', text: i18n.t('agent_demo_hub'), href: 'http://agent-demo-hub-1255547555.us-east-1.elb.amazonaws.com',external: true },
 
     ],
   }, 
@@ -88,7 +88,7 @@ const navItems = [
     text: i18n.t('asset_hub'),
     items: [
       { type: 'link', text: i18n.t('asset_hub'), href: '/asset_hub' },
-      { type: 'link', text: i18n.t('agent_demo_hub'), href: 'http://agent-demo-hub-1255547555.us-east-1.elb.amazonaws.com',external: true },
+      // { type: 'link', text: i18n.t('agent_demo_hub'), href: 'http://agent-demo-hub-1255547555.us-east-1.elb.amazonaws.com',external: true },
     ],
   }, 
   {
